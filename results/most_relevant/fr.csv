@@ -1,2 +1,12 @@
 file_path,lang,duration_sec,bucket
+data/wav/fr/fr10_1729.wav,fr,14.82,10
+data/wav/fr/fr08_1980.wav,fr,11.64,10
 data/wav/fr/fr1.wav,fr,3.00,10
+data/wav/fr/fr01_1987.wav,fr,10.20,10
+data/wav/fr/fr03_1857.wav,fr,8.28,10
+data/wav/fr/fr07_1929.wav,fr,8.40,10
+data/wav/fr/fr06_1853.wav,fr,7.20,10
+data/wav/fr/fr09_1696.wav,fr,7.68,10
+data/wav/fr/fr02_1690.wav,fr,23.40,30
+data/wav/fr/fr05_2004.wav,fr,8.34,10
+data/wav/fr/fr04_1913.wav,fr,10.20,10

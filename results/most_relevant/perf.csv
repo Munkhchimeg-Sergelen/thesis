@@ -1,0 +1,25 @@
+file,system,device,latency_sec,cpu_percent_avg,rss_bytes
+data/wav/New Recording 15_16k.wav,whisper-small,cpu,0.010335445404052734,12.5,12845056
+data/wav/New Recording 13_16k.wav,whisper-small,cpu,0.010266304016113281,0.0,12845056
+data/wav/New Recording 17.m4a,whisper-small,cpu,0.01028752326965332,0.0,12845056
+data/wav/New Recording 14.m4a,whisper-small,cpu,0.010289192199707031,0.0,12845056
+data/wav/New Recording 18.m4a,whisper-small,cpu,0.01034998893737793,0.0,12845056
+data/wav/New Recording 12_16k.wav,whisper-small,cpu,0.010249614715576172,0.0,12845056
+data/wav/New Recording 20.m4a,whisper-small,cpu,0.010320186614990234,0.0,12845056
+data/wav/New Recording 18_16k.wav,whisper-small,cpu,0.010467290878295898,0.0,12845056
+data/wav/New Recording 11.m4a,whisper-small,cpu,0.010392904281616211,0.0,12845056
+data/wav/New Recording 11_16k.wav,whisper-small,cpu,0.010338068008422852,0.0,12845056
+data/wav/New Recording 13.m4a,whisper-small,cpu,0.010339498519897461,0.0,12845056
+data/wav/New Recording 20_16k.wav,whisper-small,cpu,0.010365962982177734,0.0,12845056
+data/wav/New Recording 14_16k.wav,whisper-small,cpu,0.0104522705078125,0.0,12845056
+data/wav/New Recording 17_16k.wav,whisper-small,cpu,0.010487556457519531,0.0,12845056
+data/wav/New Recording 12.m4a,whisper-small,cpu,0.010468482971191406,0.0,12845056
+data/wav/New Recording 19.m4a,whisper-small,cpu,0.010462760925292969,0.0,12845056
+data/wav/New Recording 19_16k.wav,whisper-small,cpu,0.010461091995239258,0.0,12845056
+data/wav/New Recording 16.m4a,whisper-small,cpu,0.01032567024230957,0.0,12845056
+data/wav/New Recording 15.m4a,whisper-small,cpu,0.010438919067382812,0.0,12845056
+data/wav/New Recording 16_16k.wav,whisper-small,cpu,0.010239124298095703,0.0,12845056
+data/wav/fr/fr1.wav,whisper-small,cpu,0.010400772094726562,0.0,12845056
+data/wav/mn/mn1.wav,whisper-small,cpu,0.010329246520996094,0.0,12845056
+data/wav/hu/hu1.wav,whisper-small,cpu,0.010220527648925781,0.0,12845056
+data/wav/es/es1.wav,whisper-small,cpu,0.010263204574584961,0.0,12845056

@@ -2,7 +2,17 @@
 import argparse, os, json, time, whisper
 
 def transcribe(model, wav_path, language, task="transcribe"):
-    return model.transcribe(wav_path, language=language, task=task)
+    import time, soundfile as sf
+    # measure audio duration
+    try:
+        info = sf.info(wav_path); audio_sec = float(info.frames)/float(info.samplerate)
+    except Exception:
+        audio_sec = None
+    t0 = time.time()
+    result = model.transcribe(wav_path, language=language, task=task)
+    dt = time.time() - t0
+    result["_timing"] = {"latency_sec": result.get("_timing",{}).get("latency_sec", dt), "audio_sec": result.get("_timing",{}).get("audio_sec"), "rtf": result.get("_timing",{}).get("rtf"), "audio_sec": audio_sec, "rtf": (audio_sec/dt) if (audio_sec and dt>0) else None}
+    return result
 
 def main():
     ap = argparse.ArgumentParser()
@@ -61,7 +71,7 @@ def main():
                 "file": p, "language_used": language, "segments": result.get("segments",[]),
                 "avg_logprob": result.get("avg_logprob"), "compression_ratio": result.get("compression_ratio"),
                 "no_speech_prob": result.get("no_speech_prob"), "model": args.model,
-                "device": args.device, "latency_sec": dt
+                "device": args.device, "latency_sec": result.get("_timing",{}).get("latency_sec", dt), "audio_sec": result.get("_timing",{}).get("audio_sec"), "rtf": result.get("_timing",{}).get("rtf")
             }
             with open(os.path.join(out_js_dir, base + ".json"), "w", encoding="utf-8") as f:
                 json.dump(side, f, ensure_ascii=False, indent=2)

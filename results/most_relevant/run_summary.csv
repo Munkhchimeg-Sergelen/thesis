@@ -1,0 +1,31 @@
+file,ref_lang,mode,system,path_lang,lid_pred,lid_conf,latency_sec,audio_sec,rtf,avg_logprob,no_speech_prob,bucket,text_len
+data/wav/fr/fr1.wav,fr,hinted,whisper,fr,en,0.38421645760536194,0.7649741172790527,3.0,3.921701312811396,,,10,0
+data/wav/mn/mn1.wav,mn,hinted,whisper,mn,en,0.38421645760536194,0.39112162590026855,3.0,7.670248335398782,,,10,0
+data/wav/hu/hu1.wav,hu,hinted,whisper,hu,en,0.38421645760536194,2.861872673034668,3.0,1.048264665394378,,,10,553
+data/wav/es/es1.wav,es,hinted,whisper,es,en,0.38421645760536194,0.4651641845703125,3.0,6.449335738887978,,,10,0
+data/wav/New Recording 16_16k.wav,unk,lid2asr,whisper,ko,ko,0.4416765868663788,1.3374202251434326,20.5013125,15.32899840646669,,,,214
+data/wav/New Recording 16.m4a,unk,lid2asr,whisper,ko,ko,0.4416765868663788,1.3863720893859863,,,,,,214
+data/wav/New Recording 17.m4a,unk,lid2asr,whisper,en,en,0.885137677192688,0.6277422904968262,,,,,,97
+data/wav/New Recording 18_16k.wav,unk,lid2asr,whisper,en,en,0.8599620461463928,1.4402954578399658,17.728,12.308585647133102,,,,202
+data/wav/mn/mn1.wav,mn,lid2asr,whisper,en,en,0.38421645760536194,0.4938535690307617,3.0,6.074675142852177,,,10,0
+data/wav/New Recording 15.m4a,unk,lid2asr,whisper,en,en,0.9303058385848999,0.737957239151001,,,,,,83
+data/wav/New Recording 13_16k.wav,unk,lid2asr,whisper,en,en,0.9379493594169617,0.756058931350708,10.5386875,13.938976266271352,,,,86
+data/wav/New Recording 13.m4a,unk,lid2asr,whisper,en,en,0.9379493594169617,0.6499388217926025,,,,,,86
+data/wav/New Recording 14.m4a,unk,lid2asr,whisper,en,en,0.955416202545166,0.731332540512085,,,,,,114
+data/wav/New Recording 11_16k.wav,unk,lid2asr,whisper,en,en,0.9236308336257935,0.6700341701507568,12.8,19.10350332897204,,,,87
+data/wav/New Recording 19.m4a,unk,lid2asr,whisper,en,en,0.9264428019523621,0.9315109252929688,,,,,,166
+data/wav/New Recording 18.m4a,unk,lid2asr,whisper,en,en,0.8599620461463928,0.9536900520324707,,,,,,202
+data/wav/fr/fr1.wav,fr,lid2asr,whisper,en,en,0.38421645760536194,0.5101947784423828,3.0,5.880107219362292,,,10,0
+data/wav/New Recording 19_16k.wav,unk,lid2asr,whisper,en,en,0.9264428019523621,0.932354211807251,17.152,18.396441805902302,,,,166
+data/wav/hu/hu1.wav,hu,lid2asr,whisper,en,en,0.38421645760536194,0.46660518646240234,3.0,6.429418461343509,,,10,0
+data/wav/New Recording 15_16k.wav,unk,lid2asr,whisper,en,en,0.9303058385848999,1.8725805282592773,16.64,8.886133199018305,,,,83
+data/wav/New Recording 14_16k.wav,unk,lid2asr,whisper,en,en,0.955416202545166,0.7272894382476807,18.944,26.047401493473306,,,,114
+data/wav/New Recording 12_16k.wav,unk,lid2asr,whisper,en,en,0.9371870756149292,0.8117504119873047,12.6293125,15.558122685865067,,,,104
+data/wav/New Recording 20.m4a,unk,lid2asr,whisper,en,en,0.9718577861785889,1.2333245277404785,,,,,,239
+data/wav/New Recording 16_16k.wav,unk,lid2asr,whisper,en,ko,0.4416765868663788,1.1518869400024414,20.5013125,17.798024951959736,,,,217
+data/wav/New Recording 16.m4a,unk,lid2asr,whisper,en,ko,0.4416765868663788,1.139993667602539,,,,,,217
+data/wav/New Recording 12.m4a,unk,lid2asr,whisper,en,en,0.9371870756149292,0.7220485210418701,,,,,,104
+data/wav/New Recording 11.m4a,unk,lid2asr,whisper,en,en,0.9236308336257935,0.729285478591919,,,,,,87
+data/wav/New Recording 17_16k.wav,unk,lid2asr,whisper,en,en,0.885137677192688,0.6251575946807861,14.4,23.034191894210025,,,,97
+data/wav/New Recording 20_16k.wav,unk,lid2asr,whisper,en,en,0.9718577861785889,0.9914312362670898,15.9573125,16.095228712060802,,,,239
+data/wav/es/es1.wav,es,lid2asr,whisper,en,en,0.38421645760536194,0.5329554080963135,3.0,5.628988756706363,,,10,0

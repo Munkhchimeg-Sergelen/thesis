@@ -24,3 +24,6 @@ summary:
 
 perf:
 	$(PY) scripts/measure_perf.py --in $(DATA) --system whisper-$(WHMODEL) --device $(DEVICE) --out $(OUT)/metrics/perf.csv
+
+most:
+	$(PY) scripts/assemble_most.py

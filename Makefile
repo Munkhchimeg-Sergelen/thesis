@@ -27,3 +27,6 @@ perf:
 
 most:
 	$(PY) scripts/assemble_most.py
+
+metrics_with_ref:
+	PYTHONUTF8=1 $(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --ref-dir data/ref --out $(OUT)/metrics/wer_cer_with_ref.csv

@@ -3,7 +3,7 @@
 PY=python
 DATA=data/wav
 OUT=results
-WHMODEL=small  # change to tiny/small/base as you wish
+WHMODEL=tiny  # change to tiny/small/base as you wish
 DEVICE=cpu     # set to cuda on the GPU server
 
 test_lid:
@@ -17,6 +17,9 @@ manifests:
 	$(PY) scripts/make_manifest.py --in $(DATA) --out results/manifests
 
 metrics:
+
+summary:
+	$(PY) scripts/run_summary.py --out $(OUT)/metrics/run_summary.csv
 	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --out $(OUT)/metrics/wer_cer.csv
 
 perf:

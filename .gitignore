@@ -1,0 +1,6 @@
+data/
+results/
+release/
+__pycache__/
+.env
+

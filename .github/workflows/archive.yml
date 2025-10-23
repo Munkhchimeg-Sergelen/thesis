@@ -1,0 +1,17 @@
+name: Archive results
+on:
+  push:
+    branches: [ main ]
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload metrics and env
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-${{ github.run_number }}-metrics-and-env
+          path: |
+            results/metrics/**
+            env/**
+          if-no-files-found: warn

@@ -1,0 +1,1643 @@
+2025-10-21 18:10:31	source ~/.bashrc
+2025-10-21 18:14:01	conda activate asr-env
+2025-10-21 18:14:10	tail -n 3 docs/commands.log
+2025-10-21 18:18:24	make summary
+2025-10-21 18:23:18	source ~/.bashrc
+2025-10-21 18:23:18	source ~/.bashrc
+2025-10-21 18:41:07	start-asr
+2025-10-21 18:41:07	start-asr
+2025-10-21 18:41:18	data/wav/mn/   data/wav/hu/   data/wav/fr/   data/wav/es/
+2025-10-21 18:41:18	data/wav/mn/   data/wav/hu/   data/wav/fr/   data/wav/es/
+2025-10-21 18:41:24	./scripts/normalize_audio.sh <infile> <outfile.wav>
+2025-10-21 18:41:24	./scripts/normalize_audio.sh <infile> <outfile.wav>
+2025-10-21 18:41:29	make manifests
+2025-10-21 18:41:29	make manifests
+2025-10-21 18:41:36	python - <<'PY'
+from pathlib import Path
+p = Path("scripts/asr_whisper.py")
+src = p.read_text()
+needle = 'def transcribe(model, wav_path, language, task="transcribe"):'
+if needle in src and "audio_sec" not in src:
+    src = src.replace(
+        'def transcribe(model, wav_path, language, task="transcribe"):\n    return model.transcribe(wav_path, language=language, task=task)\n',
+        '''def transcribe(model, wav_path, language, task="transcribe"):
+    import time, soundfile as sf
+    # measure audio duration
+    try:
+        info = sf.info(wav_path); audio_sec = float(info.frames)/float(info.samplerate)
+    except Exception:
+        audio_sec = None
+    t0 = time.time()
+    result = model.transcribe(wav_path, language=language, task=task)
+    dt = time.time() - t0
+    result["_timing"] = {"latency_sec": dt, "audio_sec": audio_sec, "rtf": (audio_sec/dt) if (audio_sec and dt>0) else None}
+    return result
+''')
+    src = src.replace(
+        '"latency_sec": dt',
+        '"latency_sec": result.get("_timing",{}).get("latency_sec", dt), "audio_sec": result.get("_timing",{}).get("audio_sec"), "rtf": result.get("_timing",{}).get("rtf")'
+    )
+    p.write_text(src)
+    print("Patched scripts/asr_whisper.py to include audio_sec & rtf in sidecars.")
+else:
+    print("No patch needed or already patched.")
+PY
+2025-10-21 18:41:36	python - <<'PY'
+from pathlib import Path
+p = Path("scripts/asr_whisper.py")
+src = p.read_text()
+needle = 'def transcribe(model, wav_path, language, task="transcribe"):'
+if needle in src and "audio_sec" not in src:
+    src = src.replace(
+        'def transcribe(model, wav_path, language, task="transcribe"):\n    return model.transcribe(wav_path, language=language, task=task)\n',
+        '''def transcribe(model, wav_path, language, task="transcribe"):
+    import time, soundfile as sf
+    # measure audio duration
+    try:
+        info = sf.info(wav_path); audio_sec = float(info.frames)/float(info.samplerate)
+    except Exception:
+        audio_sec = None
+    t0 = time.time()
+    result = model.transcribe(wav_path, language=language, task=task)
+    dt = time.time() - t0
+    result["_timing"] = {"latency_sec": dt, "audio_sec": audio_sec, "rtf": (audio_sec/dt) if (audio_sec and dt>0) else None}
+    return result
+''')
+    src = src.replace(
+        '"latency_sec": dt',
+        '"latency_sec": result.get("_timing",{}).get("latency_sec", dt), "audio_sec": result.get("_timing",{}).get("audio_sec"), "rtf": result.get("_timing",{}).get("rtf")'
+    )
+    p.write_text(src)
+    print("Patched scripts/asr_whisper.py to include audio_sec & rtf in sidecars.")
+else:
+    print("No patch needed or already patched.")
+PY
+2025-10-21 18:42:17	make run_whisper_small_all WHMODEL=tiny
+2025-10-21 18:42:17	make run_whisper_small_all WHMODEL=tiny
+2025-10-21 18:42:28	column -s, -t < results/metrics/lid_accuracy.csv | head -n 10
+2025-10-21 18:42:28	column -s, -t < results/metrics/lid_accuracy.csv | head -n 10
+2025-10-21 18:42:40	printf "\nmost:\n\t\$(PY) scripts/assemble_most.py\n" >> Makefile
+2025-10-21 18:42:40	printf "\nmost:\n\t\$(PY) scripts/assemble_most.py\n" >> Makefile
+2025-10-21 18:42:49	ls -1 results/most_relevant
+2025-10-21 18:42:49	ls -1 results/most_relevant
+2025-10-21 18:42:58	git push
+2025-10-21 18:42:58	git push
+2025-10-21 19:13:21	printf "docs/commands.log\ndocs/journal/\nrelease/\n" >> .gitignore
+2025-10-21 19:13:21	printf "docs/commands.log\ndocs/journal/\nrelease/\n" >> .gitignore
+2025-10-21 19:13:27	git status
+2025-10-21 19:13:27	git status
+2025-10-21 19:13:34	git push
+2025-10-21 19:13:34	git push
+2025-10-21 19:13:38	git add results/most_relevant
+2025-10-21 19:13:38	git add results/most_relevant
+2025-10-21 19:15:17	git push
+2025-10-21 19:15:17	git push
+2025-10-21 19:15:22	# --- track curated bundle only ---
+2025-10-21 19:15:22	# --- track curated bundle only ---
+2025-10-21 19:15:29	git push
+2025-10-21 19:15:29	git push
+2025-10-21 19:15:33	git check-ignore -v results/most_relevant/INDEX.md
+2025-10-21 19:15:33	git check-ignore -v results/most_relevant/INDEX.md
+2025-10-21 19:15:38	git ls-files results/most_relevant
+2025-10-21 19:15:38	git ls-files results/most_relevant
+2025-10-21 19:19:39	data/ref/es/<file>.txt
+2025-10-21 19:19:39	data/ref/es/<file>.txt
+2025-10-21 19:20:29	mkdir -p data/ref/{mn,hu,fr,es}
+2025-10-21 19:20:29	mkdir -p data/ref/{mn,hu,fr,es}
+2025-10-21 19:20:37	find data/wav -type f \( -iname "*.wav" -o -iname "*.flac" -o -iname "*.mp3" -o -iname "*.m4a" -o -iname "*.ogg" \) | sed 's#^# - #'
+2025-10-21 19:20:37	find data/wav -type f \( -iname "*.wav" -o -iname "*.flac" -o -iname "*.mp3" -o -iname "*.m4a" -o -iname "*.ogg" \) | sed 's#^# - #'
+2025-10-21 19:20:46	for L in mn hu fr es; do   for a in data/wav/$L/*.*; do     [ -e "$a" ] || continue;     b=$(basename "$a"); base=${b%.*};     mkdir -p data/ref/$L;     [ -f "data/ref/$L/$base.txt" ] || printf "" > "data/ref/$L/$base.txt";   done; done
+2025-10-21 19:20:46	for L in mn hu fr es; do   for a in data/wav/$L/*.*; do     [ -e "$a" ] || continue;     b=$(basename "$a"); base=${b%.*};     mkdir -p data/ref/$L;     [ -f "data/ref/$L/$base.txt" ] || printf "" > "data/ref/$L/$base.txt";   done; done
+2025-10-21 19:24:03	# type the real text; save with Ctrl+O, Enter; exit with Ctrl+X
+2025-10-21 19:24:03	# type the real text; save with Ctrl+O, Enter; exit with Ctrl+X
+2025-10-21 19:24:14	column -s, -t < results/metrics/wer_cer_with_ref.csv | head
+2025-10-21 19:24:14	column -s, -t < results/metrics/wer_cer_with_ref.csv | head
+2025-10-21 19:26:44	grep -n metrics_with_ref Makefile
+2025-10-21 19:26:44	grep -n metrics_with_ref Makefile
+2025-10-21 19:26:50	find data/wav -maxdepth 1 -type f -print0 | xargs -0 -I{} mv "{}" data/wav/en/
+2025-10-21 19:26:50	find data/wav -maxdepth 1 -type f -print0 | xargs -0 -I{} mv "{}" data/wav/en/
+2025-10-21 19:27:03	python - <<'PY'
+from datasets import load_dataset
+import soundfile as sf, os, re
+
+langs = {"hu":"hu","fr":"fr","es":"es","mn":"mn"}  # Common Voice locales
+def slug(s): return re.sub(r'[^a-zA-Z0-9_-]+','_', s.strip())[:40] or "utt"
+
+for cv_loc, lang in langs.items():
+    print("Downloading", lang)
+    ds = load_dataset("mozilla-foundation/common_voice_17_0", cv_loc, split="test[:10]")
+    os.makedirs(f"data/wav/{lang}", exist_ok=True)
+    os.makedirs(f"data/ref/{lang}", exist_ok=True)
+    for i, ex in enumerate(ds):
+        # audio
+        arr = ex["audio"]["array"]; sr = ex["audio"]["sampling_rate"]
+        base = f"{lang}{i+1:02d}_{slug(ex.get('client_id','cv'))}"
+        wav_path = f"data/wav/{lang}/{base}.wav"
+        sf.write(wav_path, arr, sr)
+        # reference text
+        txt = (ex.get("sentence") or "").strip()
+        with open(f"data/ref/{lang}/{base}.txt","w",encoding="utf-8") as f:
+            f.write(txt)
+print("Done.")
+PY
+2025-10-21 19:27:03	python - <<'PY'
+from datasets import load_dataset
+import soundfile as sf, os, re
+
+langs = {"hu":"hu","fr":"fr","es":"es","mn":"mn"}  # Common Voice locales
+def slug(s): return re.sub(r'[^a-zA-Z0-9_-]+','_', s.strip())[:40] or "utt"
+
+for cv_loc, lang in langs.items():
+    print("Downloading", lang)
+    ds = load_dataset("mozilla-foundation/common_voice_17_0", cv_loc, split="test[:10]")
+    os.makedirs(f"data/wav/{lang}", exist_ok=True)
+    os.makedirs(f"data/ref/{lang}", exist_ok=True)
+    for i, ex in enumerate(ds):
+        # audio
+        arr = ex["audio"]["array"]; sr = ex["audio"]["sampling_rate"]
+        base = f"{lang}{i+1:02d}_{slug(ex.get('client_id','cv'))}"
+        wav_path = f"data/wav/{lang}/{base}.wav"
+        sf.write(wav_path, arr, sr)
+        # reference text
+        txt = (ex.get("sentence") or "").strip()
+        with open(f"data/ref/{lang}/{base}.txt","w",encoding="utf-8") as f:
+            f.write(txt)
+print("Done.")
+PY
+2025-10-21 19:27:52	column -s, -t < results/metrics/run_summary.csv | head -n 20
+2025-10-21 19:27:52	column -s, -t < results/metrics/run_summary.csv | head -n 20
+2025-10-21 19:28:09	git push
+2025-10-21 19:28:09	git push
+2025-10-21 19:34:31	huggingface-cli login
+2025-10-21 19:34:31	huggingface-cli login
+2025-10-21 19:35:40	[200~python - <<'PY'
+from datasets import load_dataset
+import soundfile as sf, os, re
+
+langs = {"hu":"hu","fr":"fr","es":"es","mn":"mn"}  # Common Voice locales
+def slug(s): return re.sub(r'[^a-zA-Z0-9_-]+','_', (s or '').strip())[:40] or "utt"
+
+for cv_loc, lang in langs.items():
+    print("Downloading", lang)
+    try:
+        ds = load_dataset("mozilla-foundation/common_voice_17_0", cv_loc, split="test[:10]")
+    except Exception as e:
+        print(f"[WARN] {lang} failed on Common Voice ({e}); skipping.")
+        continue
+    os.makedirs(f"data/wav/{lang}", exist_ok=True)
+    os.makedirs(f"data/ref/{lang}", exist_ok=True)
+    for i, ex in enumerate(ds):
+        arr = ex["audio"]["array"]; sr = ex["audio"]["sampling_rate"]
+        base = f"{lang}{i+1:02d}_{slug(ex.get('client_id','cv'))}"
+        sf.write(f"data/wav/{lang}/{base}.wav", arr, sr)
+        txt = (ex.get("sentence") or "").strip()
+        with open(f"data/ref/{lang}/{base}.txt","w",encoding="utf-8") as f:
+            f.write(txt)
+print("Done.")
+PY
+2025-10-21 19:35:41	[200~python - <<'PY'
+from datasets import load_dataset
+import soundfile as sf, os, re
+
+langs = {"hu":"hu","fr":"fr","es":"es","mn":"mn"}  # Common Voice locales
+def slug(s): return re.sub(r'[^a-zA-Z0-9_-]+','_', (s or '').strip())[:40] or "utt"
+
+for cv_loc, lang in langs.items():
+    print("Downloading", lang)
+    try:
+        ds = load_dataset("mozilla-foundation/common_voice_17_0", cv_loc, split="test[:10]")
+    except Exception as e:
+        print(f"[WARN] {lang} failed on Common Voice ({e}); skipping.")
+        continue
+    os.makedirs(f"data/wav/{lang}", exist_ok=True)
+    os.makedirs(f"data/ref/{lang}", exist_ok=True)
+    for i, ex in enumerate(ds):
+        arr = ex["audio"]["array"]; sr = ex["audio"]["sampling_rate"]
+        base = f"{lang}{i+1:02d}_{slug(ex.get('client_id','cv'))}"
+        sf.write(f"data/wav/{lang}/{base}.wav", arr, sr)
+        txt = (ex.get("sentence") or "").strip()
+        with open(f"data/ref/{lang}/{base}.txt","w",encoding="utf-8") as f:
+            f.write(txt)
+print("Done.")
+PY
+2025-10-21 19:35:41	~
+2025-10-21 19:35:41	~
+2025-10-21 19:39:36	python scripts/fetch_small_multilang.py
+2025-10-21 19:39:36	python scripts/fetch_small_multilang.py
+2025-10-21 19:40:31	python scripts/fetch_small_multilang.py
+2025-10-21 19:40:31	python scripts/fetch_small_multilang.py
+2025-10-21 19:42:42	python scripts/fetch_small_multilang.py
+2025-10-21 19:42:42	python scripts/fetch_small_multilang.py
+2025-10-21 19:52:03	make run_whisper_small_all WHMODEL=tiny
+2025-10-21 19:52:03	make run_whisper_small_all WHMODEL=tiny
+2025-10-21 20:07:38	make summary
+2025-10-21 20:07:38	make summary
+2025-10-21 20:07:42	column -s, -t < results/metrics/run_summary.csv | head -n 20
+2025-10-21 20:07:42	column -s, -t < results/metrics/run_summary.csv | head -n 20
+2025-10-21 20:07:50	for L in mn hu fr es; do   echo "== $L";   comm -3 <(ls data/wav/$L/*.wav | sed 's#.*/##;s/\.wav$//' | sort)           <(ls data/ref/$L/*.txt | sed 's#.*/##;s/\.txt$//' | sort) || true; done
+2025-10-21 20:07:50	for L in mn hu fr es; do   echo "== $L";   comm -3 <(ls data/wav/$L/*.wav | sed 's#.*/##;s/\.wav$//' | sort)           <(ls data/ref/$L/*.txt | sed 's#.*/##;s/\.txt$//' | sort) || true; done
+2025-10-21 20:08:04	git push
+2025-10-21 20:08:04	git push
+2025-10-21 20:21:17	column -s, -t < results/metrics/run_summary.csv     | head -n 20
+2025-10-21 20:21:17	column -s, -t < results/metrics/run_summary.csv     | head -n 20
+2025-10-21 20:21:23	python - <<'PY'
+import csv,collections
+acc=collections.defaultdict(lambda:{"wer":0.0,"cer":0.0,"n":0})
+with open("results/metrics/wer_cer_with_ref.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]=="1" and row["wer"]:
+            L=row["lang"]; acc[L]["wer"]+=float(row["wer"]); acc[L]["cer"]+=float(row["cer"]); acc[L]["n"]+=1
+print("lang  n  avg_WER  avg_CER")
+for L,v in sorted(acc.items()):
+    n=v["n"]; print(f"{L:3}  {n:2}  {v['wer']/n:.3f}  {v['cer']/n:.3f}")
+PY
+2025-10-21 20:21:23	python - <<'PY'
+import csv,collections
+acc=collections.defaultdict(lambda:{"wer":0.0,"cer":0.0,"n":0})
+with open("results/metrics/wer_cer_with_ref.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]=="1" and row["wer"]:
+            L=row["lang"]; acc[L]["wer"]+=float(row["wer"]); acc[L]["cer"]+=float(row["cer"]); acc[L]["n"]+=1
+print("lang  n  avg_WER  avg_CER")
+for L,v in sorted(acc.items()):
+    n=v["n"]; print(f"{L:3}  {n:2}  {v['wer']/n:.3f}  {v['cer']/n:.3f}")
+PY
+2025-10-21 20:58:20	end-asr
+2025-10-21 20:58:20	end-asr
+2025-10-23 12:53:51	start-asr
+2025-10-23 12:54:09	applypatch
+2025-10-23 12:54:17	python - <<'PY'
+import csv,collections
+acc=collections.defaultdict(lambda:{"wer":0.0,"cer":0.0,"n":0})
+with open("results/metrics/wer_cer_with_ref.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]=="1" and row["wer"]:
+            L=row["lang"]; acc[L]["wer"]+=float(row["wer"]); acc[L]["cer"]+=float(row["cer"]); acc[L]["n"]+=1
+print("lang  n  avg_WER(norm)  avg_CER(norm)")
+for L,v in sorted(acc.items()):
+    n=v["n"]; print(f"{L:3}  {n:2}  {v['wer']/n:.3f}      {v['cer']/n:.3f}")
+PY
+2025-10-23 12:54:33	pip install faster-whisper
+2025-10-23 12:54:38	chmod +x scripts/asr_faster_whisper.py
+2025-10-23 12:54:55	printf "\nrun_faster_whisper:\n\t\$(PY) scripts/asr_faster_whisper.py --mode hinted --in \$(DATA) --model tiny --device \$(DEVICE) --out \$(OUT)/transcripts/hinted/faster_whisper\n" >> Makefile
+2025-10-23 12:59:38	make summary
+2025-10-23 12:59:43	python - <<'PY'
+import csv, collections
+rows=[]
+with open("results/metrics/wer_cer_with_ref.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]=="1" and row["wer"]:
+            rows.append(row)
+agg=collections.defaultdict(lambda:{"wer":0.0,"cer":0.0,"n":0})
+for r in rows:
+    key=(r["lang"], r["mode"], r["system"])
+    agg[key]["wer"]+=float(r["wer"]); agg[key]["cer"]+=float(r["cer"]); agg[key]["n"]+=1
+print("lang  mode      system            n  avgWER  avgCER")
+for (lang,mode,system),v in sorted(agg.items()):
+    n=v["n"]; print(f"{lang:3}  {mode:8}  {system:16}  {n:2}  {v['wer']/n:.3f}  {v['cer']/n:.3f}")
+PY
+2025-10-23 13:00:32	python - <<'PY'
+import csv, heapq
+worst = []
+with open("results/metrics/wer_cer_with_ref.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]=="1" and row["wer"] and row["lang"] in ("hu","mn"):
+            heapq.heappush(worst,( -float(row["wer"]), row["hyp_file"], row["lang"]))
+            if len(worst)>12: heapq.heappop(worst)
+for neg_wer, path, lang in sorted(worst, reverse=True):
+    print(f"{lang}  WER={-neg_wer:.3f}  {path}")
+PY
+2025-10-23 13:01:01	end-asr
+2025-10-23 13:08:56	column -s, -t < results/metrics/lid_accuracy.csv
+2025-10-23 13:09:07	python scripts/sweep_decode.py --model tiny --in data/wav --out results/transcripts/sweep/whisper
+2025-10-23 13:11:05	python scripts/sweep_decode.py --model tiny --in data/wav --out results/transcripts/sweep/whisper
+2025-10-23 13:11:16	column -s, -t < results/metrics/wer_cer_sweep.csv | head
+2025-10-23 13:11:21	python - <<'PY'
+import csv,collections
+agg=collections.defaultdict(lambda:{"wer":0.0,"n":0})
+with open("results/metrics/wer_cer_sweep.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        tag=row["system"]  # folder name (b*_t*_bo*)
+        lang=row["lang"]
+        agg[(lang,tag)]["wer"]+=float(row["wer"]); agg[(lang,tag)]["n"]+=1
+print("lang  tag                 n  avgWER")
+for (lang,tag),v in sorted(agg.items()):
+    n=v["n"]; print(f"{lang:3}  {tag:18}  {n:2}  {v['wer']/n:.3f}")
+PY
+2025-10-23 13:11:30	git push
+2025-10-23 13:13:25	column -s, -t < results/metrics/wer_cer_sweep.csv | head
+2025-10-23 13:13:35	python - <<'PY'
+import csv,collections,math
+best={}
+with open("results/metrics/wer_cer_sweep.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        lang=row["lang"]; tag=row["system"]; w=float(row["wer"])
+        b=best.get(lang, (math.inf,""))
+        if w<b[0]: best[lang]=(w,tag)
+print("best tag per language (lower WER is better):")
+for lang in sorted(best): print(lang, f"{best[lang][1]}  WER≈{best[lang][0]:.3f}")
+PY
+2025-10-23 13:13:44	git push
+2025-10-23 13:15:09	python scripts/sweep_decode.py --model tiny --in data/wav --out results/transcripts/sweep/whisper
+2025-10-23 13:15:20	column -s, -t < results/metrics/wer_cer_sweep.csv | head
+2025-10-23 13:16:52	python - <<'PY'
+from pathlib import Path, re
+p = Path("scripts/eval_metrics.py")
+s = p.read_text(encoding="utf-8")
+
+# 1) fix imports (drop RemoveDigits)
+s = s.replace(
+    "from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings, RemoveDigits",
+    "from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings"
+)
+
+# 2) add our own regex preprocessor and use it
+if "def preproc(" not in s:
+    s = s.replace(
+        "def main():",
+        "import re\n"
+        "def preproc(t: str) -> str:\n"
+        "    if t is None: return ''\n"
+        "    t = t.lower()\n"
+        "    t = re.sub(r\"\\d+\", \" \", t)\n"
+        "    t = re.sub(r\"[^\\w\\s]\", \" \", t, flags=re.UNICODE)\n"
+        "    t = re.sub(r\"\\s+\", \" \", t).strip()\n"
+        "    return t\n\n"
+        "transforms = Compose([ToLowerCase(), RemovePunctuation(), RemoveMultipleSpaces(), Strip(), RemoveWhiteSpace(replace_by_space=True), RemoveEmptyStrings()])\n\n"
+        "def main():"
+    )
+
+# 3) compute wer/cer on normalized strings
+s = s.replace(
+    "if ref_text:\n                hyp_n = transforms(hyp)\n                ref_n = transforms(ref_text)",
+    "if ref_text:\n                hyp_n = transforms(preproc(hyp))\n                ref_n = transforms(preproc(ref_text))"
+)
+
+p.write_text(s, encoding="utf-8")
+print("✅ Patched scripts/eval_metrics.py (removed RemoveDigits; added regex normalization).")
+PY
+2025-10-23 13:17:07	column -s, -t < results/metrics/wer_cer_sweep.csv | head
+2025-10-23 13:17:13	git push
+2025-10-23 13:17:19	python - <<'PY'
+import csv,collections,math
+best={}
+with open("results/metrics/wer_cer_sweep.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        lang=row["lang"]; tag=row["system"]; w=float(row["wer"])
+        if w < best.get(lang,(math.inf,""))[0]: best[lang]=(w,tag)
+print("best tag per language:")
+for lang in sorted(best): print(f"{lang}: {best[lang][1]}  (WER≈{best[lang][0]:.3f})")
+PY
+2025-10-23 13:18:23	chmod +x scripts/sweep_decode.py
+2025-10-23 13:21:31	column -s, -t < results/metrics/wer_cer_sweep.csv | head
+2025-10-23 13:25:42	cat > scripts/eval_metrics.py <<'PY'
+#!/usr/bin/env python3
+import argparse, os, csv, json, re
+from pathlib import Path
+from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings
+
+def preproc(t: str) -> str:
+    if t is None: return ""
+    t = t.lower()
+    t = re.sub(r"\d+", " ", t)
+    t = re.sub(r"[^\w\s]", " ", t, flags=re.UNICODE)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+TRANSFORMS = Compose([ToLowerCase(), RemovePunctuation(), RemoveMultipleSpaces(), Strip(),
+                      RemoveWhiteSpace(replace_by_space=True), RemoveEmptyStrings()])
+
+def read_text(p):
+    try:
+        return Path(p).read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        return ""
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--hyp-dir", required=True)
+    ap.add_argument("--ref-dir", default=None)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    rows = []
+    for root, _, files in os.walk(args.hyp_dir):
+        for fn in files:
+            if not fn.lower().endswith(".txt"): continue
+            hyp_file = os.path.join(root, fn)
+            base = os.path.splitext(fn)[0]
+
+            # infer lang/mode/system from path parts
+            parts = Path(hyp_file).parts
+            lang = "unk"; mode = ""; system = ""
+            # Expect something like: results/transcripts/<mode>/<system>/<lang>/txt/<file>.txt
+            if "transcripts" in parts:
+                i = parts.index("transcripts")
+                if i+1 < len(parts): mode = parts[i+1]
+                if i+2 < len(parts): system = parts[i+2]
+                if i+3 < len(parts): lang = parts[i+3]
+            # Older layouts fallback
+            for p in parts:
+                if p in ("mn","hu","fr","es","en","ko"): lang = p
+
+            hyp = read_text(hyp_file)
+            has_ref = 0; ref_file = ""
+            w = ""; c = ""
+
+            if args.ref_dir:
+                ref_candidate = os.path.join(args.ref_dir, lang, base + ".txt")
+                if os.path.isfile(ref_candidate):
+                    ref = read_text(ref_candidate)
+                    # normalized scoring
+                    hyp_n = TRANSFORMS(preproc(hyp))
+                    ref_n = TRANSFORMS(preproc(ref))
+                    w = f"{wer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    c = f"{cer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    has_ref = 1; ref_file = ref_candidate
+
+            rows.append({
+                "hyp_file": hyp_file,
+                "lang": lang,
+                "mode": mode,
+                "system": system,
+                "base": base,
+                "wer": w,
+                "cer": c,
+                "has_ref": has_ref,
+                "ref_file": ref_file
+            })
+
+    Path(os.path.dirname(args.out)).mkdir(parents=True, exist_ok=True)
+    with open(args.out, "w", newline="", encoding="utf-8") as f:
+        wr = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else
+                            ["hyp_file","lang","mode","system","base","wer","cer","has_ref","ref_file"])
+        wr.writeheader()
+        wr.writerows(rows)
+    print(f"metrics CSV → {args.out}")
+
+if __name__ == "__main__":
+    main()
+PY
+2025-10-23 13:26:36	cat > scripts/eval_metrics.py <<'PY'
+#!/usr/bin/env python3
+import argparse, os, csv, json, re
+from pathlib import Path
+from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings
+
+def preproc(t: str) -> str:
+    if t is None: return ""
+    t = t.lower()
+    t = re.sub(r"\d+", " ", t)
+    t = re.sub(r"[^\w\s]", " ", t, flags=re.UNICODE)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+TRANSFORMS = Compose([ToLowerCase(), RemovePunctuation(), RemoveMultipleSpaces(), Strip(),
+                      RemoveWhiteSpace(replace_by_space=True), RemoveEmptyStrings()])
+
+def read_text(p):
+    try:
+        return Path(p).read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        return ""
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--hyp-dir", required=True)
+    ap.add_argument("--ref-dir", default=None)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    rows = []
+    for root, _, files in os.walk(args.hyp_dir):
+        for fn in files:
+            if not fn.lower().endswith(".txt"): continue
+            hyp_file = os.path.join(root, fn)
+            base = os.path.splitext(fn)[0]
+
+            # infer lang/mode/system from path parts
+            parts = Path(hyp_file).parts
+            lang = "unk"; mode = ""; system = ""
+            # Expect something like: results/transcripts/<mode>/<system>/<lang>/txt/<file>.txt
+            if "transcripts" in parts:
+                i = parts.index("transcripts")
+                if i+1 < len(parts): mode = parts[i+1]
+                if i+2 < len(parts): system = parts[i+2]
+                if i+3 < len(parts): lang = parts[i+3]
+            # Older layouts fallback
+            for p in parts:
+                if p in ("mn","hu","fr","es","en","ko"): lang = p
+
+            hyp = read_text(hyp_file)
+            has_ref = 0; ref_file = ""
+            w = ""; c = ""
+
+            if args.ref_dir:
+                ref_candidate = os.path.join(args.ref_dir, lang, base + ".txt")
+                if os.path.isfile(ref_candidate):
+                    ref = read_text(ref_candidate)
+                    # normalized scoring
+                    hyp_n = TRANSFORMS(preproc(hyp))
+                    ref_n = TRANSFORMS(preproc(ref))
+                    w = f"{wer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    c = f"{cer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    has_ref = 1; ref_file = ref_candidate
+
+            rows.append({
+                "hyp_file": hyp_file,
+                "lang": lang,
+                "mode": mode,
+                "system": system,
+                "base": base,
+                "wer": w,
+                "cer": c,
+                "has_ref": has_ref,
+                "ref_file": ref_file
+            })
+
+    Path(os.path.dirname(args.out)).mkdir(parents=True, exist_ok=True)
+    with open(args.out, "w", newline="", encoding="utf-8") as f:
+        wr = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else
+                            ["hyp_file","lang","mode","system","base","wer","cer","has_ref","ref_file"])
+        wr.writeheader()
+        wr.writerows(rows)
+    print(f"metrics CSV → {args.out}")
+
+if __name__ == "__main__":
+    main()
+PY
+2025-10-23 13:26:36	cat > scripts/eval_metrics.py <<'PY'
+#!/usr/bin/env python3
+import argparse, os, csv, json, re
+from pathlib import Path
+from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings
+
+def preproc(t: str) -> str:
+    if t is None: return ""
+    t = t.lower()
+    t = re.sub(r"\d+", " ", t)
+    t = re.sub(r"[^\w\s]", " ", t, flags=re.UNICODE)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+TRANSFORMS = Compose([ToLowerCase(), RemovePunctuation(), RemoveMultipleSpaces(), Strip(),
+                      RemoveWhiteSpace(replace_by_space=True), RemoveEmptyStrings()])
+
+def read_text(p):
+    try:
+        return Path(p).read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        return ""
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--hyp-dir", required=True)
+    ap.add_argument("--ref-dir", default=None)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    rows = []
+    for root, _, files in os.walk(args.hyp_dir):
+        for fn in files:
+            if not fn.lower().endswith(".txt"): continue
+            hyp_file = os.path.join(root, fn)
+            base = os.path.splitext(fn)[0]
+
+            # infer lang/mode/system from path parts
+            parts = Path(hyp_file).parts
+            lang = "unk"; mode = ""; system = ""
+            # Expect something like: results/transcripts/<mode>/<system>/<lang>/txt/<file>.txt
+            if "transcripts" in parts:
+                i = parts.index("transcripts")
+                if i+1 < len(parts): mode = parts[i+1]
+                if i+2 < len(parts): system = parts[i+2]
+                if i+3 < len(parts): lang = parts[i+3]
+            # Older layouts fallback
+            for p in parts:
+                if p in ("mn","hu","fr","es","en","ko"): lang = p
+
+            hyp = read_text(hyp_file)
+            has_ref = 0; ref_file = ""
+            w = ""; c = ""
+
+            if args.ref_dir:
+                ref_candidate = os.path.join(args.ref_dir, lang, base + ".txt")
+                if os.path.isfile(ref_candidate):
+                    ref = read_text(ref_candidate)
+                    # normalized scoring
+                    hyp_n = TRANSFORMS(preproc(hyp))
+                    ref_n = TRANSFORMS(preproc(ref))
+                    w = f"{wer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    c = f"{cer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    has_ref = 1; ref_file = ref_candidate
+
+            rows.append({
+                "hyp_file": hyp_file,
+                "lang": lang,
+                "mode": mode,
+                "system": system,
+                "base": base,
+                "wer": w,
+                "cer": c,
+                "has_ref": has_ref,
+                "ref_file": ref_file
+            })
+
+    Path(os.path.dirname(args.out)).mkdir(parents=True, exist_ok=True)
+    with open(args.out, "w", newline="", encoding="utf-8") as f:
+        wr = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else
+                            ["hyp_file","lang","mode","system","base","wer","cer","has_ref","ref_file"])
+        wr.writeheader()
+        wr.writerows(rows)
+    print(f"metrics CSV → {args.out}")
+
+if __name__ == "__main__":
+    main()
+PY
+2025-10-23 13:27:13	cat > scripts/eval_metrics.py <<'PY'
+#!/usr/bin/env python3
+import argparse, os, csv, json, re
+from pathlib import Path
+from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings
+
+def preproc(t: str) -> str:
+    if t is None: return ""
+    t = t.lower()
+    t = re.sub(r"\d+", " ", t)
+    t = re.sub(r"[^\w\s]", " ", t, flags=re.UNICODE)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+TRANSFORMS = Compose([ToLowerCase(), RemovePunctuation(), RemoveMultipleSpaces(), Strip(),
+                      RemoveWhiteSpace(replace_by_space=True), RemoveEmptyStrings()])
+
+def read_text(p):
+    try:
+        return Path(p).read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        return ""
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--hyp-dir", required=True)
+    ap.add_argument("--ref-dir", default=None)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    rows = []
+    for root, _, files in os.walk(args.hyp_dir):
+        for fn in files:
+            if not fn.lower().endswith(".txt"): continue
+            hyp_file = os.path.join(root, fn)
+            base = os.path.splitext(fn)[0]
+
+            # infer lang/mode/system from path parts
+            parts = Path(hyp_file).parts
+            lang = "unk"; mode = ""; system = ""
+            # Expect something like: results/transcripts/<mode>/<system>/<lang>/txt/<file>.txt
+            if "transcripts" in parts:
+                i = parts.index("transcripts")
+                if i+1 < len(parts): mode = parts[i+1]
+                if i+2 < len(parts): system = parts[i+2]
+                if i+3 < len(parts): lang = parts[i+3]
+            # Older layouts fallback
+            for p in parts:
+                if p in ("mn","hu","fr","es","en","ko"): lang = p
+
+            hyp = read_text(hyp_file)
+            has_ref = 0; ref_file = ""
+            w = ""; c = ""
+
+            if args.ref_dir:
+                ref_candidate = os.path.join(args.ref_dir, lang, base + ".txt")
+                if os.path.isfile(ref_candidate):
+                    ref = read_text(ref_candidate)
+                    # normalized scoring
+                    hyp_n = TRANSFORMS(preproc(hyp))
+                    ref_n = TRANSFORMS(preproc(ref))
+                    w = f"{wer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    c = f"{cer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    has_ref = 1; ref_file = ref_candidate
+
+            rows.append({
+                "hyp_file": hyp_file,
+                "lang": lang,
+                "mode": mode,
+                "system": system,
+                "base": base,
+                "wer": w,
+                "cer": c,
+                "has_ref": has_ref,
+                "ref_file": ref_file
+            })
+
+    Path(os.path.dirname(args.out)).mkdir(parents=True, exist_ok=True)
+    with open(args.out, "w", newline="", encoding="utf-8") as f:
+        wr = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else
+                            ["hyp_file","lang","mode","system","base","wer","cer","has_ref","ref_file"])
+        wr.writeheader()
+        wr.writerows(rows)
+    print(f"metrics CSV → {args.out}")
+
+if __name__ == "__main__":
+    main()
+PY
+2025-10-23 13:27:19	column -s, -t < results/metrics/wer_cer_sweep.csv | head
+2025-10-23 13:27:26	python - <<'PY'
+import csv,math
+best={}
+with open("results/metrics/wer_cer_sweep.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        lang=row["lang"]; tag=row["system"]; w=float(row["wer"])
+        if w < best.get(lang,(math.inf,""))[0]: best[lang]=(w,tag)
+print("best tag per language:")
+for lang in sorted(best): print(f"{lang}: {best[lang][1]}  (WER≈{best[lang][0]:.3f})")
+PY
+2025-10-23 13:27:44	git push
+2025-10-23 13:29:39	python - <<'PY'
+import csv,math
+best={}
+with open("results/metrics/wer_cer_sweep.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        lang=row["lang"]; tag=row["system"]; w=float(row["wer"])
+        if w < best.get(lang,(math.inf,""))[0]: best[lang]=(w,tag)
+print("best tag per language:")
+for lang in sorted(best): print(f"{lang}: {best[lang][1]}  (WER≈{best[lang][0]:.3f})")
+PY
+2025-10-23 13:29:46	python - <<'PY'
+import csv,heapq
+worst=[]
+with open("results/metrics/wer_cer_with_ref.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["lang"] in ("hu","mn") and row["has_ref"]=="1" and row["wer"]:
+            heapq.heappush(worst, (-float(row["wer"]), row["hyp_file"]))
+            if len(worst)>6: heapq.heappop(worst)
+for w,p in sorted(worst, reverse=True):
+    print(f"WER={-w:.3f}  {p}")
+PY
+2025-10-23 13:29:52	python - <<'PY'
+import csv,collections
+agg=collections.defaultdict(lambda:{"wer":0.0,"cer":0.0,"n":0})
+with open("results/metrics/wer_cer_with_ref.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        key=(row["lang"], row["mode"], row["system"])
+        agg[key]["wer"]+=float(row["wer"]); agg[key]["cer"]+=float(row["cer"]); agg[key]["n"]+=1
+print("lang  mode      system            n  avgWER  avgCER")
+for (lang,mode,system),v in sorted(agg.items()):
+    n=v["n"]; print(f"{lang:3}  {mode:8}  {system:16}  {n:2}  {v['wer']/n:.3f}  {v['cer']/n:.3f}")
+PY
+2025-10-23 13:30:05	git push
+2025-10-23 13:30:11	git push
+2025-10-23 13:31:23	python - <<'PY'
+import csv,math
+best={}
+with open("results/metrics/wer_cer_sweep.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        lang=row["lang"]; tag=row["system"]; w=float(row["wer"])
+        if w < best.get(lang,(math.inf,""))[0]: best[lang]=(w,tag)
+print("best tag per language:")
+for lang in sorted(best): print(f"{lang}: {best[lang][1]}  (WER≈{best[lang][0]:.3f})")
+PY
+2025-10-23 13:31:29	python - <<'PY'
+import csv,collections
+agg=collections.defaultdict(lambda:{"wer":0.0,"cer":0.0,"n":0})
+with open("results/metrics/wer_cer_with_ref.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        key=(row["lang"], row["mode"], row["system"])
+        agg[key]["wer"]+=float(row["wer"]); agg[key]["cer"]+=float(row["cer"]); agg[key]["n"]+=1
+print("lang  mode      system            n  avgWER  avgCER")
+for (lang,mode,system),v in sorted(agg.items()):
+    n=v["n"]; print(f"{lang:3}  {mode:8}  {system:16}  {n:2}  {v['wer']/n:.3f}  {v['cer']/n:.3f}")
+PY
+2025-10-23 13:31:49	column -s, -t < results/metrics/lid_accuracy.csv | head -n 10
+2025-10-23 13:31:56	git push
+2025-10-23 13:32:07	git push
+2025-10-23 13:37:17	start-asr            # cd to ~/thesis-asr, activate asr-env, git pull
+2025-10-23 13:37:17	start-asr            # cd to ~/thesis-asr, activate asr-env, git pull
+2025-10-23 13:37:31	make exp_design        # auto experiment design doc
+2025-10-23 13:37:31	make exp_design        # auto experiment design doc
+2025-10-23 13:37:35	sed -n '1,80p' docs/exp_design.md
+2025-10-23 13:37:35	sed -n '1,80p' docs/exp_design.md
+2025-10-23 13:37:42	git push
+2025-10-23 13:37:42	git push
+2025-10-23 13:38:17	nano Makefile
+2025-10-23 13:40:11	start-asr
+2025-10-23 13:40:11	start-asr
+2025-10-23 13:40:11	start-asr
+2025-10-23 13:40:11	start-asr
+2025-10-23 13:41:16	cat > Makefile <<'MAKE'
+.PHONY: test_lid run_whisper_small_all manifests metrics summary perf most metrics_with_ref run_faster_whisper run_whisper_tiny_cuda run_whisper_base_cuda score_cuda sweep_small
+
+PY=python
+DATA=data/wav
+OUT=results
+WHMODEL=tiny     # tiny/base/small ...
+DEVICE=cpu       # set to cuda on the GPU server
+
+# --- LID + Whisper baseline ---
+test_lid:
+	$(PY) scripts/lid_from_whisper.py --in $(DATA) --model $(WHMODEL) --head-sec 8 --device $(DEVICE) --out $(OUT)/logs/lid
+
+run_whisper_small_all:
+	$(PY) scripts/asr_whisper.py --mode lid2asr --in $(DATA) --model $(WHMODEL) --device $(DEVICE) --out $(OUT)/transcripts/lid2asr/whisper
+	$(PY) scripts/asr_whisper.py --mode hinted  --in $(DATA) --model $(WHMODEL) --device $(DEVICE) --out $(OUT)/transcripts/hinted/whisper
+
+manifests:
+	$(PY) scripts/make_manifest.py --in $(DATA) --out $(OUT)/manifests
+
+metrics:
+	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --out $(OUT)/metrics/wer_cer.csv
+
+summary:
+	$(PY) scripts/run_summary.py --out $(OUT)/metrics/run_summary.csv
+	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --ref-dir data/ref --out $(OUT)/metrics/wer_cer_with_ref.csv
+
+perf:
+	$(PY) scripts/measure_perf.py --in $(DATA) --system whisper-$(WHMODEL) --device $(DEVICE) --out $(OUT)/metrics/perf.csv
+
+most:
+	$(PY) scripts/assemble_most.py
+
+metrics_with_ref:
+	PYTHONUTF8=1 $(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --ref-dir data/ref --out $(OUT)/metrics/wer_cer_with_ref.csv
+
+# --- faster-whisper (CPU) ---
+run_faster_whisper:
+	$(PY) scripts/asr_faster_whisper.py --mode hinted  --in $(DATA) --model $(WHMODEL) --out $(OUT)/transcripts/hinted/faster_whisper
+	$(PY) scripts/asr_faster_whisper.py --mode lid2asr --in $(DATA) --model $(WHMODEL) --out $(OUT)/transcripts/lid2asr/faster_whisper
+
+# --- CUDA targets for server ---
+run_whisper_tiny_cuda:
+	$(PY) scripts/asr_whisper.py --mode hinted  --in $(DATA) --model tiny --device cuda --out $(OUT)/transcripts/hinted/whisper_tiny_cuda
+	$(PY) scripts/asr_whisper.py --mode lid2asr --in $(DATA) --model tiny --device cuda --out $(OUT)/transcripts/lid2asr/whisper_tiny_cuda
+
+run_whisper_base_cuda:
+	$(PY) scripts/asr_whisper.py --mode hinted  --in $(DATA) --model base --device cuda --out $(OUT)/transcripts/hinted/whisper_base_cuda
+	$(PY) scripts/asr_whisper.py --mode lid2asr --in $(DATA) --model base --device cuda --out $(OUT)/transcripts/lid2asr/whisper_base_cuda
+
+score_cuda:
+	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --ref-dir data/ref --out $(OUT)/metrics/wer_cer_with_ref_cuda.csv
+
+# --- tiny decode sweep (CPU), small sample ---
+sweep_small:
+	$(PY) scripts/sweep_decode.py --model $(WHMODEL) --in $(DATA) --out $(OUT)/transcripts/sweep --limit-per-lang 5
+	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts/sweep --ref-dir data/ref --out $(OUT)/metrics/wer_cer_sweep.csv
+MAKE
+2025-10-23 13:41:16	cat > Makefile <<'MAKE'
+.PHONY: test_lid run_whisper_small_all manifests metrics summary perf most metrics_with_ref run_faster_whisper run_whisper_tiny_cuda run_whisper_base_cuda score_cuda sweep_small
+
+PY=python
+DATA=data/wav
+OUT=results
+WHMODEL=tiny     # tiny/base/small ...
+DEVICE=cpu       # set to cuda on the GPU server
+
+# --- LID + Whisper baseline ---
+test_lid:
+	$(PY) scripts/lid_from_whisper.py --in $(DATA) --model $(WHMODEL) --head-sec 8 --device $(DEVICE) --out $(OUT)/logs/lid
+
+run_whisper_small_all:
+	$(PY) scripts/asr_whisper.py --mode lid2asr --in $(DATA) --model $(WHMODEL) --device $(DEVICE) --out $(OUT)/transcripts/lid2asr/whisper
+	$(PY) scripts/asr_whisper.py --mode hinted  --in $(DATA) --model $(WHMODEL) --device $(DEVICE) --out $(OUT)/transcripts/hinted/whisper
+
+manifests:
+	$(PY) scripts/make_manifest.py --in $(DATA) --out $(OUT)/manifests
+
+metrics:
+	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --out $(OUT)/metrics/wer_cer.csv
+
+summary:
+	$(PY) scripts/run_summary.py --out $(OUT)/metrics/run_summary.csv
+	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --ref-dir data/ref --out $(OUT)/metrics/wer_cer_with_ref.csv
+
+perf:
+	$(PY) scripts/measure_perf.py --in $(DATA) --system whisper-$(WHMODEL) --device $(DEVICE) --out $(OUT)/metrics/perf.csv
+
+most:
+	$(PY) scripts/assemble_most.py
+
+metrics_with_ref:
+	PYTHONUTF8=1 $(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --ref-dir data/ref --out $(OUT)/metrics/wer_cer_with_ref.csv
+
+# --- faster-whisper (CPU) ---
+run_faster_whisper:
+	$(PY) scripts/asr_faster_whisper.py --mode hinted  --in $(DATA) --model $(WHMODEL) --out $(OUT)/transcripts/hinted/faster_whisper
+	$(PY) scripts/asr_faster_whisper.py --mode lid2asr --in $(DATA) --model $(WHMODEL) --out $(OUT)/transcripts/lid2asr/faster_whisper
+
+# --- CUDA targets for server ---
+run_whisper_tiny_cuda:
+	$(PY) scripts/asr_whisper.py --mode hinted  --in $(DATA) --model tiny --device cuda --out $(OUT)/transcripts/hinted/whisper_tiny_cuda
+	$(PY) scripts/asr_whisper.py --mode lid2asr --in $(DATA) --model tiny --device cuda --out $(OUT)/transcripts/lid2asr/whisper_tiny_cuda
+
+run_whisper_base_cuda:
+	$(PY) scripts/asr_whisper.py --mode hinted  --in $(DATA) --model base --device cuda --out $(OUT)/transcripts/hinted/whisper_base_cuda
+	$(PY) scripts/asr_whisper.py --mode lid2asr --in $(DATA) --model base --device cuda --out $(OUT)/transcripts/lid2asr/whisper_base_cuda
+
+score_cuda:
+	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --ref-dir data/ref --out $(OUT)/metrics/wer_cer_with_ref_cuda.csv
+
+# --- tiny decode sweep (CPU), small sample ---
+sweep_small:
+	$(PY) scripts/sweep_decode.py --model $(WHMODEL) --in $(DATA) --out $(OUT)/transcripts/sweep --limit-per-lang 5
+	$(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts/sweep --ref-dir data/ref --out $(OUT)/metrics/wer_cer_sweep.csv
+MAKE
+2025-10-23 13:41:28	make -n run_whisper_tiny_cuda
+2025-10-23 13:41:28	make -n run_whisper_tiny_cuda
+2025-10-23 13:41:37	git push
+2025-10-23 13:41:37	git push
+2025-10-23 13:44:58	echo "$TMUX"
+2025-10-23 13:44:58	echo "$TMUX"
+2025-10-23 13:45:57	xit
+2025-10-23 13:45:57	xit
+2025-10-23 13:45:59	tmux attach -t thesis
+2025-10-23 13:45:59	tmux attach -t thesis
+2025-10-23 13:59:10	python - <<'PY'
+import csv,math
+best={}
+with open("results/metrics/wer_cer_sweep.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        lang=row["lang"]; tag=row["system"]; w=float(row["wer"])
+        if w < best.get(lang,(math.inf,''))[0]: best[lang]=(w,tag)
+print("CPU decode defaults from sweep:")
+for L in sorted(best): print(f"- {L}: {best[L][1]} (WER≈{best[L][0]:.3f})")
+PY
+2025-10-23 13:59:10	python - <<'PY'
+import csv,math
+best={}
+with open("results/metrics/wer_cer_sweep.csv",encoding="utf-8") as f:
+    r=csv.DictReader(f)
+    for row in r:
+        if row["has_ref"]!="1" or not row["wer"]: continue
+        lang=row["lang"]; tag=row["system"]; w=float(row["wer"])
+        if w < best.get(lang,(math.inf,''))[0]: best[lang]=(w,tag)
+print("CPU decode defaults from sweep:")
+for L in sorted(best): print(f"- {L}: {best[L][1]} (WER≈{best[L][0]:.3f})")
+PY
+2025-10-23 13:59:17	git push
+2025-10-23 13:59:17	git push
+2025-10-23 14:06:10	git push
+2025-10-23 14:06:10	git push
+2025-10-23 14:53:46	└─ Makefile
+2025-10-23 14:53:46	└─ Makefile
+2025-10-23 14:53:52	*.ipynb_checkpoints
+2025-10-23 14:53:52	*.ipynb_checkpoints
+2025-10-23 14:56:33	mkdir -p env data docs results/{logs,transcripts,metrics} scripts .github/workflows
+2025-10-23 14:56:33	mkdir -p env data docs results/{logs,transcripts,metrics} scripts .github/workflows
+2025-10-23 14:56:44	cat > .gitignore << 'EOF'
+# data and big artifacts
+data/
+results/**/*
+!results/metrics/**          # keep metrics
+
+.env/
+__pycache__/
+*.ipynb_checkpoints
+EOF
+2025-10-23 14:56:44	cat > .gitignore << 'EOF'
+# data and big artifacts
+data/
+results/**/*
+!results/metrics/**          # keep metrics
+
+.env/
+__pycache__/
+*.ipynb_checkpoints
+EOF
+2025-10-23 14:56:53	cat > env/asr-env-wsl.yml << 'EOF'
+name: asr-env
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.11
+  - pip
+  - pytorch
+  - torchaudio
+  - cudatoolkit
+  - ffmpeg
+  - numpy
+  - pandas
+  - jiwer
+  - librosa
+  - soundfile
+  - tqdm
+  - psutil
+  - pip:
+      - faster-whisper
+      - rich
+      - pynvml
+EOF
+2025-10-23 14:56:53	cat > env/asr-env-wsl.yml << 'EOF'
+name: asr-env
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.11
+  - pip
+  - pytorch
+  - torchaudio
+  - cudatoolkit
+  - ffmpeg
+  - numpy
+  - pandas
+  - jiwer
+  - librosa
+  - soundfile
+  - tqdm
+  - psutil
+  - pip:
+      - faster-whisper
+      - rich
+      - pynvml
+EOF
+2025-10-23 14:57:00	cat > .github/workflows/archive.yml << 'EOF'
+name: Archive results
+on:
+  push:
+    branches: [ main ]
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload metrics and env
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-${{ github.run_number }}-metrics-and-env
+          path: |
+            results/metrics/**
+            env/**
+          if-no-files-found: warn
+EOF
+2025-10-23 14:57:00	cat > .github/workflows/archive.yml << 'EOF'
+name: Archive results
+on:
+  push:
+    branches: [ main ]
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload metrics and env
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-${{ github.run_number }}-metrics-and-env
+          path: |
+            results/metrics/**
+            env/**
+          if-no-files-found: warn
+EOF
+2025-10-23 14:57:10	cat > scripts/lid_from_whisper.py << 'EOF'
+#!/usr/bin/env python
+import json, argparse, time
+from faster_whisper import WhisperModel
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", default="small")
+parser.add_argument("--head-sec", type=float, default=10.0)
+parser.add_argument("--infile", required=True)
+parser.add_argument("--device", default="auto")
+args = parser.parse_args()
+
+t0 = time.time()
+model = WhisperModel(args.model, device=args.device)
+segments, info = model.transcribe(
+    args.infile, task="transcribe", vad_filter=True,
+    language=None, without_timestamps=True, max_initial_timestamp=args.head-sec
+)
+out = {
+    "file": args.infile,
+    "language": getattr(info, "language", None),
+    "language_prob": getattr(info, "language_probability", None),
+    "model": args.model,
+    "head_sec": args.head_sec,
+    "elapsed_sec": round(time.time()-t0, 3)
+}
+print(json.dumps(out, ensure_ascii=False))
+EOF
+2025-10-23 14:57:10	cat > scripts/lid_from_whisper.py << 'EOF'
+#!/usr/bin/env python
+import json, argparse, time
+from faster_whisper import WhisperModel
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", default="small")
+parser.add_argument("--head-sec", type=float, default=10.0)
+parser.add_argument("--infile", required=True)
+parser.add_argument("--device", default="auto")
+args = parser.parse_args()
+
+t0 = time.time()
+model = WhisperModel(args.model, device=args.device)
+segments, info = model.transcribe(
+    args.infile, task="transcribe", vad_filter=True,
+    language=None, without_timestamps=True, max_initial_timestamp=args.head-sec
+)
+out = {
+    "file": args.infile,
+    "language": getattr(info, "language", None),
+    "language_prob": getattr(info, "language_probability", None),
+    "model": args.model,
+    "head_sec": args.head_sec,
+    "elapsed_sec": round(time.time()-t0, 3)
+}
+print(json.dumps(out, ensure_ascii=False))
+EOF
+2025-10-23 14:57:14	cat > scripts/run_whisper.py << 'EOF'
+#!/usr/bin/env python
+import argparse, os, json, time, pathlib
+from faster_whisper import WhisperModel
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--model", default="small")
+ap.add_argument("--mode", choices=["hinted","lid2asr"], required=True)
+ap.add_argument("--infile", required=True)
+ap.add_argument("--hint-lang", help="Required if mode=hinted")
+ap.add_argument("--device", default="auto")
+ap.add_argument("--outdir", default="results/transcripts")
+args = ap.parse_args()
+
+pathlib.Path(args.outdir).mkdir(parents=True, exist_ok=True)
+model = WhisperModel(args.model, device=args.device)
+
+language = None
+lid_meta = {}
+t0 = time.time()
+
+if args.mode == "hinted":
+    assert args.hint_lang, "--hint-lang is required for hinted mode"
+    language = args.hint_lang
+else:
+    segments, info = model.transcribe(args.infile, task="transcribe", without_timestamps=True)
+    language = getattr(info, "language", None)
+    lid_meta = {"lid_language": getattr(info, "language", None),
+                "lid_prob": getattr(info, "language_probability", None)}
+
+segments, info = model.transcribe(args.infile, task="transcribe", language=language)
+text = "".join(s.text for s in segments)
+
+stem = os.path.splitext(os.path.basename(args.infile))[0]
+sysname = f"whisper-{args.model}"
+outbase = os.path.join(args.outdir, f"{args.mode}/whisper/{language or 'unk'}")
+os.makedirs(outbase, exist_ok=True)
+
+with open(os.path.join(outbase, f"{stem}.txt"), "w", encoding="utf-8") as f:
+    f.write(text.strip()+"\n")
+
+sidecar = {
+  "file": args.infile, "system": sysname, "mode": args.mode,
+  "language_used": language, "avg_logprob": getattr(info, "avg_logprob", None),
+  "elapsed_sec": round(time.time()-t0, 3)
+}
+sidecar.update(lid_meta)
+with open(os.path.join(outbase, f"{stem}.json"), "w", encoding="utf-8") as f:
+    json.dump(sidecar, f, ensure_ascii=False, indent=2)
+print(f"Wrote: {outbase}/{stem}.txt")
+EOF
+2025-10-23 14:57:14	cat > scripts/run_whisper.py << 'EOF'
+#!/usr/bin/env python
+import argparse, os, json, time, pathlib
+from faster_whisper import WhisperModel
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--model", default="small")
+ap.add_argument("--mode", choices=["hinted","lid2asr"], required=True)
+ap.add_argument("--infile", required=True)
+ap.add_argument("--hint-lang", help="Required if mode=hinted")
+ap.add_argument("--device", default="auto")
+ap.add_argument("--outdir", default="results/transcripts")
+args = ap.parse_args()
+
+pathlib.Path(args.outdir).mkdir(parents=True, exist_ok=True)
+model = WhisperModel(args.model, device=args.device)
+
+language = None
+lid_meta = {}
+t0 = time.time()
+
+if args.mode == "hinted":
+    assert args.hint_lang, "--hint-lang is required for hinted mode"
+    language = args.hint_lang
+else:
+    segments, info = model.transcribe(args.infile, task="transcribe", without_timestamps=True)
+    language = getattr(info, "language", None)
+    lid_meta = {"lid_language": getattr(info, "language", None),
+                "lid_prob": getattr(info, "language_probability", None)}
+
+segments, info = model.transcribe(args.infile, task="transcribe", language=language)
+text = "".join(s.text for s in segments)
+
+stem = os.path.splitext(os.path.basename(args.infile))[0]
+sysname = f"whisper-{args.model}"
+outbase = os.path.join(args.outdir, f"{args.mode}/whisper/{language or 'unk'}")
+os.makedirs(outbase, exist_ok=True)
+
+with open(os.path.join(outbase, f"{stem}.txt"), "w", encoding="utf-8") as f:
+    f.write(text.strip()+"\n")
+
+sidecar = {
+  "file": args.infile, "system": sysname, "mode": args.mode,
+  "language_used": language, "avg_logprob": getattr(info, "avg_logprob", None),
+  "elapsed_sec": round(time.time()-t0, 3)
+}
+sidecar.update(lid_meta)
+with open(os.path.join(outbase, f"{stem}.json"), "w", encoding="utf-8") as f:
+    json.dump(sidecar, f, ensure_ascii=False, indent=2)
+print(f"Wrote: {outbase}/{stem}.txt")
+EOF
+2025-10-23 14:57:22	cat > scripts/eval_metrics.py << 'EOF'
+#!/usr/bin/env python
+import argparse, csv, os
+from jiwer import wer, cer
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--refs", required=True, help="CSV with columns: file,ref")
+ap.add_argument("--hyps_dir", required=True, help="Folder with .txt transcripts")
+ap.add_argument("--out_csv", default="results/metrics/wer_cer_run.csv")
+args = ap.parse_args()
+
+rows = []
+with open(args.refs, encoding="utf-8") as f:
+    for line in f:
+        if not line.strip(): continue
+        file, ref = line.rstrip("\n").split(",", 1)
+        stem = os.path.splitext(os.path.basename(file))[0]
+        hyp_path = None
+        for root,_,_files in os.walk(args.hyps_dir):
+            cand = os.path.join(root, f"{stem}.txt")
+            if os.path.exists(cand):
+                hyp_path = cand; break
+        if not hyp_path: continue
+        hyp = open(hyp_path, encoding="utf-8").read().strip()
+        rows.append({"file": file, "wer": wer(ref, hyp), "cer": cer(ref, hyp)})
+
+os.makedirs(os.path.dirname(args.out_csv), exist_ok=True)
+with open(args.out_csv, "w", newline="", encoding="utf-8") as f:
+    w = csv.DictWriter(f, fieldnames=["file","wer","cer"])
+    w.writeheader(); w.writerows(rows)
+print(f"Wrote {args.out_csv} ({len(rows)} rows)")
+EOF
+2025-10-23 14:57:22	cat > scripts/eval_metrics.py << 'EOF'
+#!/usr/bin/env python
+import argparse, csv, os
+from jiwer import wer, cer
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--refs", required=True, help="CSV with columns: file,ref")
+ap.add_argument("--hyps_dir", required=True, help="Folder with .txt transcripts")
+ap.add_argument("--out_csv", default="results/metrics/wer_cer_run.csv")
+args = ap.parse_args()
+
+rows = []
+with open(args.refs, encoding="utf-8") as f:
+    for line in f:
+        if not line.strip(): continue
+        file, ref = line.rstrip("\n").split(",", 1)
+        stem = os.path.splitext(os.path.basename(file))[0]
+        hyp_path = None
+        for root,_,_files in os.walk(args.hyps_dir):
+            cand = os.path.join(root, f"{stem}.txt")
+            if os.path.exists(cand):
+                hyp_path = cand; break
+        if not hyp_path: continue
+        hyp = open(hyp_path, encoding="utf-8").read().strip()
+        rows.append({"file": file, "wer": wer(ref, hyp), "cer": cer(ref, hyp)})
+
+os.makedirs(os.path.dirname(args.out_csv), exist_ok=True)
+with open(args.out_csv, "w", newline="", encoding="utf-8") as f:
+    w = csv.DictWriter(f, fieldnames=["file","wer","cer"])
+    w.writeheader(); w.writerows(rows)
+print(f"Wrote {args.out_csv} ({len(rows)} rows)")
+EOF
+2025-10-23 14:57:29	cat > scripts/measure_perf.py << 'EOF'
+#!/usr/bin/env python
+import argparse, json, time, os, psutil, wave, contextlib
+from subprocess import Popen, PIPE
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--cmd", required=True, help="Command to run the ASR (quoted)")
+ap.add_argument("--audio", required=True, help="Path to the audio file used")
+ap.add_argument("--out", default="results/metrics/perf_run.json")
+args = ap.parse_args()
+
+def dur_sec(wav):
+    with contextlib.closing(wave.open(wav,'r')) as wf:
+        return wf.getnframes()/float(wf.getframerate())
+
+start = time.time()
+p = Popen(args.cmd, shell=True, stdout=PIPE, stderr=PIPE)
+cpu_samples = []
+rss_samples = []
+try:
+    ps = psutil.Process(p.pid)
+except psutil.Error:
+    ps = None
+
+while p.poll() is None and ps:
+    try:
+        cpu_samples.append(ps.cpu_percent(interval=0.2))
+        rss_samples.append(ps.memory_info().rss)
+    except psutil.Error:
+        break
+
+stdout, stderr = p.communicate()
+elapsed = time.time() - start
+audio_dur = dur_sec(args.audio)
+rtf = elapsed / max(audio_dur, 1e-6)
+
+out = {
+  "cmd": args.cmd,
+  "audio": args.audio,
+  "elapsed_sec": round(elapsed,3),
+  "audio_sec": round(audio_dur,3),
+  "rtf": round(rtf,3),
+  "cpu_avg_pct": round(sum(cpu_samples)/len(cpu_samples),1) if cpu_samples else None,
+  "rss_peak_mb": round(max(rss_samples)/1e6,1) if rss_samples else None,
+  "stderr_tail": stderr.decode("utf-8")[-400:]
+}
+os.makedirs(os.path.dirname(args.out), exist_ok=True)
+open(args.out,"w",encoding="utf-8").write(json.dumps(out, indent=2))
+print(json.dumps(out, indent=2))
+EOF
+2025-10-23 14:57:29	cat > scripts/measure_perf.py << 'EOF'
+#!/usr/bin/env python
+import argparse, json, time, os, psutil, wave, contextlib
+from subprocess import Popen, PIPE
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--cmd", required=True, help="Command to run the ASR (quoted)")
+ap.add_argument("--audio", required=True, help="Path to the audio file used")
+ap.add_argument("--out", default="results/metrics/perf_run.json")
+args = ap.parse_args()
+
+def dur_sec(wav):
+    with contextlib.closing(wave.open(wav,'r')) as wf:
+        return wf.getnframes()/float(wf.getframerate())
+
+start = time.time()
+p = Popen(args.cmd, shell=True, stdout=PIPE, stderr=PIPE)
+cpu_samples = []
+rss_samples = []
+try:
+    ps = psutil.Process(p.pid)
+except psutil.Error:
+    ps = None
+
+while p.poll() is None and ps:
+    try:
+        cpu_samples.append(ps.cpu_percent(interval=0.2))
+        rss_samples.append(ps.memory_info().rss)
+    except psutil.Error:
+        break
+
+stdout, stderr = p.communicate()
+elapsed = time.time() - start
+audio_dur = dur_sec(args.audio)
+rtf = elapsed / max(audio_dur, 1e-6)
+
+out = {
+  "cmd": args.cmd,
+  "audio": args.audio,
+  "elapsed_sec": round(elapsed,3),
+  "audio_sec": round(audio_dur,3),
+  "rtf": round(rtf,3),
+  "cpu_avg_pct": round(sum(cpu_samples)/len(cpu_samples),1) if cpu_samples else None,
+  "rss_peak_mb": round(max(rss_samples)/1e6,1) if rss_samples else None,
+  "stderr_tail": stderr.decode("utf-8")[-400:]
+}
+os.makedirs(os.path.dirname(args.out), exist_ok=True)
+open(args.out,"w",encoding="utf-8").write(json.dumps(out, indent=2))
+print(json.dumps(out, indent=2))
+EOF
+2025-10-23 14:57:36	chmod +x scripts/*.py
+2025-10-23 14:57:36	chmod +x scripts/*.py
+2025-10-23 14:57:42	cat > Makefile << 'EOF'
+PY=python
+
+# paths
+SEED=data/wav
+OUT=results
+
+# run Whisper in 'hinted' mode for a single file
+run_whisper_hinted:
+	$(PY) scripts/run_whisper.py --mode hinted --model small --infile $(FILE) --hint-lang $(LANG) --outdir $(OUT)/transcripts
+
+# run Whisper in 'lid2asr' mode for a single file
+run_whisper_lid:
+	$(PY) scripts/run_whisper.py --mode lid2asr --model small --infile $(FILE) --outdir $(OUT)/transcripts
+
+# language ID quick check
+lid:
+	$(PY) scripts/lid_from_whisper.py --model small --infile $(FILE)
+
+# evaluate WER/CER given refs CSV and transcripts dir
+eval:
+	$(PY) scripts/eval_metrics.py --refs $(REFS) --hyps_dir $(HYPDIR) --out_csv $(OUT)/metrics/wer_cer_$$(date +%s).csv
+
+# measure performance for any command on an audio
+perf:
+	$(PY) scripts/measure_perf.py --cmd "$(CMD)" --audio $(FILE) --out $(OUT)/metrics/perf_$$(date +%s).json
+EOF
+2025-10-23 14:57:42	cat > Makefile << 'EOF'
+PY=python
+
+# paths
+SEED=data/wav
+OUT=results
+
+# run Whisper in 'hinted' mode for a single file
+run_whisper_hinted:
+	$(PY) scripts/run_whisper.py --mode hinted --model small --infile $(FILE) --hint-lang $(LANG) --outdir $(OUT)/transcripts
+
+# run Whisper in 'lid2asr' mode for a single file
+run_whisper_lid:
+	$(PY) scripts/run_whisper.py --mode lid2asr --model small --infile $(FILE) --outdir $(OUT)/transcripts
+
+# language ID quick check
+lid:
+	$(PY) scripts/lid_from_whisper.py --model small --infile $(FILE)
+
+# evaluate WER/CER given refs CSV and transcripts dir
+eval:
+	$(PY) scripts/eval_metrics.py --refs $(REFS) --hyps_dir $(HYPDIR) --out_csv $(OUT)/metrics/wer_cer_$$(date +%s).csv
+
+# measure performance for any command on an audio
+perf:
+	$(PY) scripts/measure_perf.py --cmd "$(CMD)" --audio $(FILE) --out $(OUT)/metrics/perf_$$(date +%s).json
+EOF
+2025-10-23 14:58:04	tree -a -I .git
+2025-10-23 14:58:04	tree -a -I .git
+2025-10-23 14:58:09	find . -maxdepth 3 -type d -print
+2025-10-23 14:58:09	find . -maxdepth 3 -type d -print
+2025-10-23 15:03:23	make perf CMD="python scripts/run_whisper.py --mode lid2asr --model small --infile data/wav/hu/sample1.wav" FILE=data/wav/hu/sample1.wav
+2025-10-23 15:03:23	make perf CMD="python scripts/run_whisper.py --mode lid2asr --model small --infile data/wav/hu/sample1.wav" FILE=data/wav/hu/sample1.wav
+2025-10-23 15:03:49	python scripts/run_whisper.py --mode lid2asr --model tiny --infile data/wav/hu/sample1.wav
+2025-10-23 15:03:49	python scripts/run_whisper.py --mode lid2asr --model tiny --infile data/wav/hu/sample1.wav
+2025-10-23 15:05:16	AttributeError: 'Namespace' object has no attribute 'head'
+2025-10-23 15:05:16	AttributeError: 'Namespace' object has no attribute 'head'
+2025-10-23 15:05:27	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:05:27	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:05:33	FileNotFoundError: 'data/wav/hu/sample1.wav'
+2025-10-23 15:05:33	FileNotFoundError: 'data/wav/hu/sample1.wav'
+2025-10-23 15:05:38	ls -lah data/wav/hu
+2025-10-23 15:05:38	ls -lah data/wav/hu
+2025-10-23 15:07:18	python scripts/run_whisper.py --mode lid2asr --model tiny --infile data/wav/hu/hu1.wav
+2025-10-23 15:07:18	python scripts/run_whisper.py --mode lid2asr --model tiny --infile data/wav/hu/hu1.wav
+2025-10-23 15:13:18	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny
+2025-10-23 15:13:18	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny
+2025-10-23 15:18:19	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:18:19	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:18:26	chmod +x scripts/run_whisper.py
+2025-10-23 15:18:26	chmod +x scripts/run_whisper.py
+2025-10-23 15:18:47	cat > Makefile << 'EOF'
+PY=python
+MODEL ?= tiny
+DEVICE ?= cpu
+OUT=results
+
+run_whisper_hinted:
+	$(PY) scripts/run_whisper.py --mode hinted --model $(MODEL) --device $(DEVICE) --infile $(FILE) --hint-lang $(LANG) --outdir $(OUT)/transcripts
+
+run_whisper_lid:
+	$(PY) scripts/run_whisper.py --mode lid2asr --model $(MODEL) --device $(DEVICE) --infile $(FILE) --outdir $(OUT)/transcripts
+
+lid:
+	$(PY) scripts/lid_from_whisper.py --model $(MODEL) --device $(DEVICE) --infile $(FILE)
+
+eval:
+	$(PY) scripts/eval_metrics.py --refs $(REFS) --hyps_dir $(HYPDIR) --out_csv $(OUT)/metrics/wer_cer_$$(date +%s).csv
+
+perf:
+	$(PY) scripts/measure_perf.py --cmd "$(CMD)" --audio $(FILE) --out $(OUT)/metrics/perf_$$(date +%s).json
+EOF
+2025-10-23 15:18:47	cat > Makefile << 'EOF'
+PY=python
+MODEL ?= tiny
+DEVICE ?= cpu
+OUT=results
+
+run_whisper_hinted:
+	$(PY) scripts/run_whisper.py --mode hinted --model $(MODEL) --device $(DEVICE) --infile $(FILE) --hint-lang $(LANG) --outdir $(OUT)/transcripts
+
+run_whisper_lid:
+	$(PY) scripts/run_whisper.py --mode lid2asr --model $(MODEL) --device $(DEVICE) --infile $(FILE) --outdir $(OUT)/transcripts
+
+lid:
+	$(PY) scripts/lid_from_whisper.py --model $(MODEL) --device $(DEVICE) --infile $(FILE)
+
+eval:
+	$(PY) scripts/eval_metrics.py --refs $(REFS) --hyps_dir $(HYPDIR) --out_csv $(OUT)/metrics/wer_cer_$$(date +%s).csv
+
+perf:
+	$(PY) scripts/measure_perf.py --cmd "$(CMD)" --audio $(FILE) --out $(OUT)/metrics/perf_$$(date +%s).json
+EOF
+2025-10-23 15:19:06	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny DEVICE=cpu
+2025-10-23 15:19:06	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny DEVICE=cpu
+2025-10-23 15:19:22	make perf CMD="python scripts/run_whisper.py --mode lid2asr --model tiny --device cpu --infile data/wav/hu/hu1.wav" FILE=data/wav/hu/hu1.wav
+2025-10-23 15:19:22	make perf CMD="python scripts/run_whisper.py --mode lid2asr --model tiny --device cpu --infile data/wav/hu/hu1.wav" FILE=data/wav/hu/hu1.wav
+2025-10-23 15:20:03	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:20:03	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:20:10	chmod +x scripts/run_whisper.py
+2025-10-23 15:20:10	chmod +x scripts/run_whisper.py
+2025-10-23 15:20:15	grep -n 'duration=' -n scripts/lid_from_whisper.py || echo "OK: no duration arg"
+2025-10-23 15:20:15	grep -n 'duration=' -n scripts/lid_from_whisper.py || echo "OK: no duration arg"
+2025-10-23 15:20:29	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:20:29	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:20:35	grep -n 'duration=' -n scripts/lid_from_whisper.py || echo "OK: no duration arg"
+2025-10-23 15:20:36	grep -n 'duration=' -n scripts/lid_from_whisper.py || echo "OK: no duration arg"
+2025-10-23 15:20:48	chmod +x scripts/run_whisper.py
+2025-10-23 15:20:48	chmod +x scripts/run_whisper.py
+2025-10-23 15:20:55	cat > Makefile << 'EOF'
+PY=python
+MODEL ?= tiny
+DEVICE ?= cpu
+OUT=results
+
+run_whisper_hinted:
+	$(PY) scripts/run_whisper.py --mode hinted --model $(MODEL) --device $(DEVICE) --infile $(FILE) --hint-lang $(LANG) --outdir $(OUT)/transcripts
+
+run_whisper_lid:
+	$(PY) scripts/run_whisper.py --mode lid2asr --model $(MODEL) --device $(DEVICE) --infile $(FILE) --outdir $(OUT)/transcripts
+
+lid:
+	$(PY) scripts/lid_from_whisper.py --model $(MODEL) --device $(DEVICE) --infile $(FILE)
+
+eval:
+	$(PY) scripts/eval_metrics.py --refs $(REFS) --hyps_dir $(HYPDIR) --out_csv $(OUT)/metrics/wer_cer_$$(date +%s).csv
+
+perf:
+	$(PY) scripts/measure_perf.py --cmd "$(CMD)" --audio $(FILE) --out $(OUT)/metrics/perf_$$(date +%s).json
+EOF
+2025-10-23 15:20:55	cat > Makefile << 'EOF'
+PY=python
+MODEL ?= tiny
+DEVICE ?= cpu
+OUT=results
+
+run_whisper_hinted:
+	$(PY) scripts/run_whisper.py --mode hinted --model $(MODEL) --device $(DEVICE) --infile $(FILE) --hint-lang $(LANG) --outdir $(OUT)/transcripts
+
+run_whisper_lid:
+	$(PY) scripts/run_whisper.py --mode lid2asr --model $(MODEL) --device $(DEVICE) --infile $(FILE) --outdir $(OUT)/transcripts
+
+lid:
+	$(PY) scripts/lid_from_whisper.py --model $(MODEL) --device $(DEVICE) --infile $(FILE)
+
+eval:
+	$(PY) scripts/eval_metrics.py --refs $(REFS) --hyps_dir $(HYPDIR) --out_csv $(OUT)/metrics/wer_cer_$$(date +%s).csv
+
+perf:
+	$(PY) scripts/measure_perf.py --cmd "$(CMD)" --audio $(FILE) --out $(OUT)/metrics/perf_$$(date +%s).json
+EOF
+2025-10-23 15:21:02	sed -n '1,40p' Makefile
+2025-10-23 15:21:02	sed -n '1,40p' Makefile
+2025-10-23 15:21:15	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny DEVICE=cpu
+2025-10-23 15:21:15	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny DEVICE=cpu
+2025-10-23 15:21:23	make perf CMD="python scripts/run_whisper.py --mode lid2asr --model tiny --device cpu --infile data/wav/hu/hu1.wav" FILE=data/wav/hu/hu1.wav
+2025-10-23 15:21:23	make perf CMD="python scripts/run_whisper.py --mode lid2asr --model tiny --device cpu --infile data/wav/hu/hu1.wav" FILE=data/wav/hu/hu1.wav
+2025-10-23 15:21:38	pip install nvidia-ml-py
+2025-10-23 15:21:38	pip install nvidia-ml-py
+2025-10-23 15:24:30	(asr-env) mugi@DESKTOP-2F5KNSE:~/thesis-asr$
+2025-10-23 15:24:30	(asr-env) mugi@DESKTOP-2F5KNSE:~/thesis-asr$
+2025-10-23 15:25:53	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:25:53	chmod +x scripts/lid_from_whisper.py
+2025-10-23 15:26:03	chmod +x scripts/run_whisper.py
+2025-10-23 15:26:03	chmod +x scripts/run_whisper.py
+2025-10-23 15:26:22	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny DEVICE=cpu
+2025-10-23 15:26:22	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny DEVICE=cpu
+2025-10-23 15:29:12	cat results/transcripts/lid2asr/whisper/en/hu1.json | sed -n '1,40p'
+2025-10-23 15:29:12	cat results/transcripts/lid2asr/whisper/en/hu1.json | sed -n '1,40p'
+2025-10-23 15:29:20	applypatch
+2025-10-23 15:29:20	applypatch
+2025-10-23 15:29:33	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny DEVICE=cpu
+2025-10-23 15:29:33	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=tiny DEVICE=cpu
+2025-10-23 15:31:58	for f in data/wav/hu/*.wav; do   make run_whisper_hinted FILE="$f" LANG=hu MODEL=tiny DEVICE=cpu;   make run_whisper_lid    FILE="$f" MODEL=tiny DEVICE=cpu; done
+2025-10-23 15:31:58	for f in data/wav/hu/*.wav; do   make run_whisper_hinted FILE="$f" LANG=hu MODEL=tiny DEVICE=cpu;   make run_whisper_lid    FILE="$f" MODEL=tiny DEVICE=cpu; done
+2025-10-23 15:32:16	make perf CMD="python scripts/run_whisper.py --mode lid2asr --model tiny --device cpu --infile data/wav/hu/hu1.wav" FILE=data/wav/hu/hu1.wav
+2025-10-23 15:32:16	make perf CMD="python scripts/run_whisper.py --mode lid2asr --model tiny --device cpu --infile data/wav/hu/hu1.wav" FILE=data/wav/hu/hu1.wav
+2025-10-23 15:32:40	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=small DEVICE=cpu
+2025-10-23 15:32:40	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=small DEVICE=cpu
+2025-10-23 15:33:06	python scripts/eval_metrics.py   --refs results/manifests/hu_refs_seed.csv   --hyps_dir results/transcripts/lid2asr/whisper/hu   --out_csv results/metrics/wer_cer_$(date +%s).csv
+2025-10-23 15:33:06	python scripts/eval_metrics.py   --refs results/manifests/hu_refs_seed.csv   --hyps_dir results/transcripts/lid2asr/whisper/hu   --out_csv results/metrics/wer_cer_$(date +%s).csv

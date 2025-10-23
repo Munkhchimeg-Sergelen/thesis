@@ -1,9 +1,8 @@
+# data and big artifacts
 data/
-results/
-release/
-__pycache__/
-.env
+results/**/*
+!results/metrics/**          # keep metrics
 
-docs/commands.log
-docs/journal/
-release/
+.env/
+__pycache__/
+*.ipynb_checkpoints

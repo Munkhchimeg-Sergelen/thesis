@@ -1,24 +1,48 @@
-#!/usr/bin/env python3
-import argparse, os, time, psutil, csv
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--in", dest="inp", required=True)
-    ap.add_argument("--system", required=True)
-    ap.add_argument("--device", default="cpu")
-    ap.add_argument("--out", required=True)
-    args = ap.parse_args()
-    os.makedirs(os.path.dirname(args.out), exist_ok=True)
-    proc = psutil.Process()
-    rows=[]
-    for root,_,files in os.walk(args.inp):
-        for fn in files:
-            if not fn.lower().endswith((".wav",".flac",".mp3",".m4a",".ogg")): continue
-            p = os.path.join(root, fn)
-            t0=time.time(); cpu0=psutil.cpu_percent(interval=None); _=proc.memory_info().rss
-            time.sleep(0.01)
-            dt=time.time()-t0; cpu1=psutil.cpu_percent(interval=None); mem1=proc.memory_info().rss
-            rows.append([p,args.system,args.device,dt,(cpu0+cpu1)/2.0,mem1])
-    with open(args.out,"w",newline="",encoding="utf-8") as f:
-        w=csv.writer(f); w.writerow(["file","system","device","latency_sec","cpu_percent_avg","rss_bytes"]); w.writerows(rows)
-    print("perf CSV →", args.out)
-if __name__=="__main__": main()
+#!/usr/bin/env python
+import argparse, json, time, os, psutil, wave, contextlib
+from subprocess import Popen, PIPE
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--cmd", required=True, help="Command to run the ASR (quoted)")
+ap.add_argument("--audio", required=True, help="Path to the audio file used")
+ap.add_argument("--out", default="results/metrics/perf_run.json")
+args = ap.parse_args()
+
+def dur_sec(wav):
+    with contextlib.closing(wave.open(wav,'r')) as wf:
+        return wf.getnframes()/float(wf.getframerate())
+
+start = time.time()
+p = Popen(args.cmd, shell=True, stdout=PIPE, stderr=PIPE)
+cpu_samples = []
+rss_samples = []
+try:
+    ps = psutil.Process(p.pid)
+except psutil.Error:
+    ps = None
+
+while p.poll() is None and ps:
+    try:
+        cpu_samples.append(ps.cpu_percent(interval=0.2))
+        rss_samples.append(ps.memory_info().rss)
+    except psutil.Error:
+        break
+
+stdout, stderr = p.communicate()
+elapsed = time.time() - start
+audio_dur = dur_sec(args.audio)
+rtf = elapsed / max(audio_dur, 1e-6)
+
+out = {
+  "cmd": args.cmd,
+  "audio": args.audio,
+  "elapsed_sec": round(elapsed,3),
+  "audio_sec": round(audio_dur,3),
+  "rtf": round(rtf,3),
+  "cpu_avg_pct": round(sum(cpu_samples)/len(cpu_samples),1) if cpu_samples else None,
+  "rss_peak_mb": round(max(rss_samples)/1e6,1) if rss_samples else None,
+  "stderr_tail": stderr.decode("utf-8")[-400:]
+}
+os.makedirs(os.path.dirname(args.out), exist_ok=True)
+open(args.out,"w",encoding="utf-8").write(json.dumps(out, indent=2))
+print(json.dumps(out, indent=2))

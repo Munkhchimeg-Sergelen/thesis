@@ -1,49 +1,86 @@
 #!/usr/bin/env python3
-import argparse, os, csv
-from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings, RemoveDigits
-LANGS={"mn","hu","fr","es"}
-def lang_of_path(p):
-    for pr in p.replace("\\","/").split("/"):
-        if pr in LANGS: return pr
-    return "unk"
-def read_hypotheses(hyp_dir):
-    outs=[]
-    for root,_,files in os.walk(hyp_dir):
-        for fn in files:
-            if fn.endswith(".txt"):
-                p=os.path.join(root,fn)
-                with open(p,"r",encoding="utf-8") as f: txt=f.read().strip()
-                outs.append((p,lang_of_path(p),fn.rsplit(".",1)[0],txt))
-    return outs
-def read_reference(ref_dir, lang, base):
-    rp=os.path.join(ref_dir,lang,base+".txt")
-    if os.path.exists(rp):
-        with open(rp,"r",encoding="utf-8") as f: return f.read().strip(), rp
-    return None,None
-transforms = Compose([ToLowerCase(), RemoveDigits(), RemovePunctuation(), RemoveMultipleSpaces(), Strip(), RemoveWhiteSpace(replace_by_space=True), RemoveEmptyStrings()])
+import argparse, os, csv, json, re
+from pathlib import Path
+from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings
+
+def preproc(t: str) -> str:
+    if t is None: return ""
+    t = t.lower()
+    t = re.sub(r"\d+", " ", t)
+    t = re.sub(r"[^\w\s]", " ", t, flags=re.UNICODE)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+TRANSFORMS = Compose([ToLowerCase(), RemovePunctuation(), RemoveMultipleSpaces(), Strip(),
+                      RemoveWhiteSpace(replace_by_space=True), RemoveEmptyStrings()])
+
+def read_text(p):
+    try:
+        return Path(p).read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        return ""
 
 def main():
-    ap=argparse.ArgumentParser()
-    ap.add_argument("--hyp-dir",required=True)
-    ap.add_argument("--ref-dir",required=False)
-    ap.add_argument("--out",required=True)
-    args=ap.parse_args()
-    os.makedirs(os.path.dirname(args.out),exist_ok=True)
-    hyps=read_hypotheses(args.hyp_dir)
-    with open(args.out,"w",newline="",encoding="utf-8") as f:
-        w=csv.writer(f)
-        w.writerow(["hyp_file","lang","mode","system","base","wer","cer","has_ref","ref_file"])
-        for hyp_file,lang,base,hyp in hyps:
-            parts=hyp_file.replace("\\","/").split("/")
-            mode=parts[parts.index("transcripts")+1] if "transcripts" in parts else "unk"
-            system=parts[parts.index("transcripts")+2] if "transcripts" in parts else "unk"
-            ref_text,ref_file=(None,None)
-            if args.ref_dir: ref_text,ref_file=read_reference(args.ref_dir,lang,base)
-            if ref_text:
-                hyp_n = transforms(hyp)
-                ref_n = transforms(ref_text)
-                w.writerow([hyp_file,lang,mode,system,base,f"{wer(ref_n,hyp_n):.4f}",f"{cer(ref_n,hyp_n):.4f}",1,ref_file])
-            else:
-                w.writerow([hyp_file,lang,mode,system,base,"","",0,""])
-    print("metrics CSV →",args.out)
-if __name__=="__main__": main()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--hyp-dir", required=True)
+    ap.add_argument("--ref-dir", default=None)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    rows = []
+    for root, _, files in os.walk(args.hyp_dir):
+        for fn in files:
+            if not fn.lower().endswith(".txt"): continue
+            hyp_file = os.path.join(root, fn)
+            base = os.path.splitext(fn)[0]
+
+            # infer lang/mode/system from path parts
+            parts = Path(hyp_file).parts
+            lang = "unk"; mode = ""; system = ""
+            # Expect something like: results/transcripts/<mode>/<system>/<lang>/txt/<file>.txt
+            if "transcripts" in parts:
+                i = parts.index("transcripts")
+                if i+1 < len(parts): mode = parts[i+1]
+                if i+2 < len(parts): system = parts[i+2]
+                if i+3 < len(parts): lang = parts[i+3]
+            # Older layouts fallback
+            for p in parts:
+                if p in ("mn","hu","fr","es","en","ko"): lang = p
+
+            hyp = read_text(hyp_file)
+            has_ref = 0; ref_file = ""
+            w = ""; c = ""
+
+            if args.ref_dir:
+                ref_candidate = os.path.join(args.ref_dir, lang, base + ".txt")
+                if os.path.isfile(ref_candidate):
+                    ref = read_text(ref_candidate)
+                    # normalized scoring
+                    hyp_n = TRANSFORMS(preproc(hyp))
+                    ref_n = TRANSFORMS(preproc(ref))
+                    w = f"{wer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    c = f"{cer(ref_n, hyp_n):.4f}" if ref_n else ""
+                    has_ref = 1; ref_file = ref_candidate
+
+            rows.append({
+                "hyp_file": hyp_file,
+                "lang": lang,
+                "mode": mode,
+                "system": system,
+                "base": base,
+                "wer": w,
+                "cer": c,
+                "has_ref": has_ref,
+                "ref_file": ref_file
+            })
+
+    Path(os.path.dirname(args.out)).mkdir(parents=True, exist_ok=True)
+    with open(args.out, "w", newline="", encoding="utf-8") as f:
+        wr = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else
+                            ["hyp_file","lang","mode","system","base","wer","cer","has_ref","ref_file"])
+        wr.writeheader()
+        wr.writerows(rows)
+    print(f"metrics CSV → {args.out}")
+
+if __name__ == "__main__":
+    main()

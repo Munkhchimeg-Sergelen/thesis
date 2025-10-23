@@ -1641,3 +1641,55 @@ EOF
 2025-10-23 15:32:40	make run_whisper_lid FILE=data/wav/hu/hu1.wav MODEL=small DEVICE=cpu
 2025-10-23 15:33:06	python scripts/eval_metrics.py   --refs results/manifests/hu_refs_seed.csv   --hyps_dir results/transcripts/lid2asr/whisper/hu   --out_csv results/metrics/wer_cer_$(date +%s).csv
 2025-10-23 15:33:06	python scripts/eval_metrics.py   --refs results/manifests/hu_refs_seed.csv   --hyps_dir results/transcripts/lid2asr/whisper/hu   --out_csv results/metrics/wer_cer_$(date +%s).csv
+2025-10-23 15:33:14	git push origin main
+2025-10-23 15:33:14	git push origin main
+2025-10-23 15:36:58	for f in data/wav/hu/*.wav; do   echo "🔹 hinted → $f";   make run_whisper_hinted FILE="$f" LANG=hu MODEL=tiny DEVICE=cpu;   echo "🔸 lid2asr → $f";   make run_whisper_lid FILE="$f" MODEL=tiny DEVICE=cpu; done
+2025-10-23 15:36:58	for f in data/wav/hu/*.wav; do   echo "🔹 hinted → $f";   make run_whisper_hinted FILE="$f" LANG=hu MODEL=tiny DEVICE=cpu;   echo "🔸 lid2asr → $f";   make run_whisper_lid FILE="$f" MODEL=tiny DEVICE=cpu; done
+2025-10-23 15:37:04	cat > results/manifests/hu_refs_seed.csv <<'EOF'
+data/wav/hu/hu1.wav,PUT_TRUE_TEXT_FOR_HU1_HERE
+data/wav/hu/hu02_1874.wav,PUT_TRUE_TEXT_FOR_HU02_HERE
+EOF
+2025-10-23 15:37:04	cat > results/manifests/hu_refs_seed.csv <<'EOF'
+data/wav/hu/hu1.wav,PUT_TRUE_TEXT_FOR_HU1_HERE
+data/wav/hu/hu02_1874.wav,PUT_TRUE_TEXT_FOR_HU02_HERE
+EOF
+2025-10-23 15:37:10	python scripts/eval_metrics.py   --refs results/manifests/hu_refs_seed.csv   --hyps_dir results/transcripts/lid2asr/whisper/hu   --out_csv results/metrics/wer_cer_hu_lid2asr.csv
+2025-10-23 15:37:10	python scripts/eval_metrics.py   --refs results/manifests/hu_refs_seed.csv   --hyps_dir results/transcripts/lid2asr/whisper/hu   --out_csv results/metrics/wer_cer_hu_lid2asr.csv
+2025-10-23 15:38:28	for f in data/wav/hu/*.wav; do   make perf CMD="python scripts/run_whisper.py --mode lid2asr --model tiny --device cpu --infile $f" FILE="$f"; done
+2025-10-23 15:38:28	for f in data/wav/hu/*.wav; do   make perf CMD="python scripts/run_whisper.py --mode lid2asr --model tiny --device cpu --infile $f" FILE="$f"; done
+2025-10-23 15:38:43	python scripts/merge_metrics.py
+2025-10-23 15:38:43	python scripts/merge_metrics.py
+2025-10-23 15:38:51	echo "- [$(date)] ran tiny Whisper on HU; metrics + perf computed." >> docs/appendix_commands.md
+2025-10-23 15:38:51	echo "- [$(date)] ran tiny Whisper on HU; metrics + perf computed." >> docs/appendix_commands.md
+2025-10-23 15:38:57	Metrics: WER, CER, LID accuracy, RTF, CPU %, RSS
+2025-10-23 15:38:57	Metrics: WER, CER, LID accuracy, RTF, CPU %, RSS
+2025-10-23 15:41:08	cat >> docs/exp_design.md <<'EOF'
+## Languages
+MN, HU, FR, ES
+
+## Seed test
+–30 s each, normalized 16 kHz mono
+
+## Metrics
+WER, CER, LID accuracy, RTF, CPU %, RSS
+EOF
+2025-10-23 15:41:08	cat >> docs/exp_design.md <<'EOF'
+## Languages
+MN, HU, FR, ES
+
+## Seed test
+–30 s each, normalized 16 kHz mono
+
+## Metrics
+WER, CER, LID accuracy, RTF, CPU %, RSS
+EOF
+2025-10-23 15:41:20	chmod +x scripts/run_all.sh
+2025-10-23 15:41:20	chmod +x scripts/run_all.sh
+2025-10-23 15:53:37	MODEL=tiny DEVICE=cpu ./scripts/run_all.sh
+2025-10-23 15:53:37	MODEL=tiny DEVICE=cpu ./scripts/run_all.sh
+2025-10-23 15:53:37	MODEL=tiny DEVICE=cpu ./scripts/run_all.sh
+2025-10-23 15:53:37	MODEL=tiny DEVICE=cpu ./scripts/run_all.sh
+2025-10-23 15:53:37	MODEL=tiny DEVICE=cpu ./scripts/run_all.sh
+2025-10-23 15:53:37	MODEL=tiny DEVICE=cpu ./scripts/run_all.sh
+2025-10-23 15:55:03	python scripts/make_manifest_seed.py hu
+2025-10-23 15:55:03	python scripts/make_manifest_seed.py hu

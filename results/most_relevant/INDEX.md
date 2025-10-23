@@ -1,5 +1,5 @@
 # Most Relevant (auto-assembled)
-_Last updated:_ 2025-10-23 13:00:56
+_Last updated:_ 2025-10-23 13:11:28
 
 ## Contents
 - run_summary.csv
@@ -12,5 +12,5 @@ _Last updated:_ 2025-10-23 13:00:56
 
 ## Quick stats
 - run_summary rows: 154
-- lid_accuracy rows: 0
+- lid_accuracy rows: 8
 - perf rows: 24

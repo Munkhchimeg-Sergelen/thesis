@@ -1,59 +1,62 @@
-#!/usr/bin/env python3
-import csv, os, collections
+#!/usr/bin/env python
+import glob, json, os, csv, re, time
+import statistics as stats
 
-IN = "results/metrics/run_summary.csv"
-OUT1 = "results/metrics/lid_accuracy.csv"
-OUT2 = "results/metrics/lid_confusion.csv"
+LANG_RE = re.compile(r"/(mn|hu|fr|es)/", re.IGNORECASE)
 
-LANGS = ["mn","hu","fr","es"]
+def folder_lang(path):
+    m = LANG_RE.search("/" + path.replace("\\","/") + "/")
+    return (m.group(1).lower() if m else None)
 
-def main():
-    os.makedirs("results/metrics", exist_ok=True)
-    tot = 0; correct = 0
-    by_lang = collections.Counter()
-    by_lang_ok = collections.Counter()
-    by_bucket = collections.Counter()
-    by_bucket_ok = collections.Counter()
-    conf = {g:{p:0 for p in LANGS+["en","ko","unk"]} for g in LANGS+["unk"]}
+files = sorted(glob.glob("results/transcripts/lid2asr/whisper/*/*.json"))
+rows = []
+for j in files:
+    d = json.load(open(j, encoding="utf-8"))
+    # derive paths/fields
+    hyp_txt = j.replace(".json",".txt")
+    file_in = d.get("file") or ""
+    true_lang = folder_lang(file_in) or folder_lang(j)  # prefer data path; fallback to results path
+    lid_lang = d.get("lid_language")   # from LID stage
+    lid_prob = d.get("lid_prob")
+    used_lang = d.get("language_used") # language used for transcription (may be fallback)
+    fallback = d.get("fallback") or ("folder_on_low_conf" if isinstance(d.get("tried"), list) and "fallback:folder" in d.get("tried") else None)
 
-    with open(IN, encoding="utf-8") as f:
-        r = csv.DictReader(f)
-        for row in r:
-            # use only files where we know ground-truth language from path
-            g = row["path_lang"]
-            p = row.get("lid_pred","unk") or "unk"
-            b = row.get("bucket","") or ""
-            if g not in LANGS and g != "unk":  # ignore 'en' and others for LID evaluation
-                continue
-            tot += 1
-            by_lang[g]+=1
-            by_bucket[b]+=1
-            ok = (g == p)
-            if ok:
-                correct += 1; by_lang_ok[g]+=1; by_bucket_ok[b]+=1
-            conf[g][p] = conf.get(g, {}).get(p, 0) + 1
+    rows.append({
+        "file": file_in,
+        "true_lang": true_lang,
+        "lid_lang": lid_lang,
+        "lid_prob": lid_prob,
+        "used_lang": used_lang,
+        "fallback": fallback,
+        "hyp_file": hyp_txt
+    })
 
-    # write accuracy tables
-    with open(OUT1, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        w.writerow(["scope","key","n","acc"])
-        w.writerow(["overall","all",tot, f"{(correct/tot):.4f}" if tot else ""])
-        for g in LANGS+["unk"]:
-            n = by_lang[g]; ok = by_lang_ok[g]
-            w.writerow(["per_lang", g, n, f"{(ok/n):.4f}" if n else ""])
-        for b in sorted(by_bucket):
-            n = by_bucket[b]; ok = by_bucket_ok[b]
-            w.writerow(["per_bucket", b, n, f"{(ok/n):.4f}" if n else ""])
+# write per-file table
+os.makedirs("results/metrics", exist_ok=True)
+ts = int(time.time())
+per_file_csv = f"results/metrics/lid_per_file_{ts}.csv"
+with open(per_file_csv, "w", newline="", encoding="utf-8") as f:
+    w = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else ["file","true_lang","lid_lang","lid_prob","used_lang","fallback","hyp_file"])
+    w.writeheader(); w.writerows(rows)
+print(f"✅ wrote {per_file_csv} ({len(rows)} rows)")
 
-    # write confusion matrix
-    cols = LANGS+["en","ko","unk"]
-    with open(OUT2, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f); w.writerow(["gold\\pred"] + cols)
-        for g in LANGS+["unk"]:
-            w.writerow([g] + [conf.get(g,{}).get(p,0) for p in cols])
+# aggregate by true_lang
+by_lang = {}
+for r in rows:
+    tl = r["true_lang"]
+    if not tl: continue
+    by_lang.setdefault(tl, {"n":0,"correct":0,"lowconf":0,"probs":[]})
+    by_lang[tl]["n"] += 1
+    if r["lid_lang"] == tl: by_lang[tl]["correct"] += 1
+    if r["lid_prob"] is not None and r["lid_prob"] < 0.60: by_lang[tl]["lowconf"] += 1
+    if isinstance(r["lid_prob"], (int,float)): by_lang[tl]["probs"].append(r["lid_prob"])
 
-    print("LID accuracy →", OUT1)
-    print("LID confusion →", OUT2)
-
-if __name__ == "__main__":
-    main()
+agg_csv = f"results/metrics/lid_accuracy_{ts}.csv"
+with open(agg_csv, "w", newline="", encoding="utf-8") as f:
+    w = csv.DictWriter(f, fieldnames=["lang","n","correct","acc","low_conf(<0.60)","median_prob"])
+    w.writeheader()
+    for lang, s in sorted(by_lang.items()):
+        acc = (s["correct"]/s["n"]) if s["n"] else 0
+        med = (stats.median(s["probs"]) if s["probs"] else "")
+        w.writerow({"lang":lang,"n":s["n"],"correct":s["correct"],"acc":round(acc,3),"low_conf(<0.60)":s["lowconf"],"median_prob":med})
+print(f"✅ wrote {agg_csv}")

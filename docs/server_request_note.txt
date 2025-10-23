@@ -1,0 +1,19 @@
+Hi <Prof Name>,
+
+I’ve completed a reproducible baseline on my laptop (CPU) across HU/FR/ES/MN with Whisper (tiny), both in:
+  - LID→ASR (automatic language detection with low-confidence fallback)
+  - Hinted (oracle language)
+
+Artifacts:
+  - Transcripts + sidecars under results/transcripts/...
+  - Performance logs (RTF, wall time, CPU/RSS) under results/metrics/perf_*.json
+  - LID metrics: results/metrics/lid_accuracy_<ts>.csv
+  - Combined summary: results/metrics/run_summary_combined.csv
+  - Env: env/asr-env-wsl.yml
+
+I’d like UI access to the GPU server to re-run the exact pipeline with device=cuda and scale to Whisper-small/base and NVIDIA NeMo for Phase 7. This will let me:
+  - Collect GPU VRAM and latency metrics (add pynvml logging)
+  - Compare quality/perf vs CPU
+  - Start NeMo integration with the same I/O
+
+Thanks! — <Your Name>

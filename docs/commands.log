@@ -1693,3 +1693,55 @@ EOF
 2025-10-23 15:53:37	MODEL=tiny DEVICE=cpu ./scripts/run_all.sh
 2025-10-23 15:55:03	python scripts/make_manifest_seed.py hu
 2025-10-23 15:55:03	python scripts/make_manifest_seed.py hu
+2025-10-23 15:55:13	git push origin main
+2025-10-23 15:55:13	git push origin main
+2025-10-23 15:59:27	python scripts/lid_accuracy.py
+2025-10-23 15:59:27	python scripts/lid_accuracy.py
+2025-10-23 15:59:37	python scripts/eval_metrics.py   --refs results/manifests/hu_refs_pseudo.csv   --hyps_dir results/transcripts/lid2asr/whisper/hu   --out_csv results/metrics/wer_cer_hu_lid2asr_vs_pseudo.csv
+2025-10-23 15:59:37	python scripts/eval_metrics.py   --refs results/manifests/hu_refs_pseudo.csv   --hyps_dir results/transcripts/lid2asr/whisper/hu   --out_csv results/metrics/wer_cer_hu_lid2asr_vs_pseudo.csv
+2025-10-23 15:59:47	head -n 5 results/metrics/run_summary_combined.csv
+2025-10-23 15:59:47	head -n 5 results/metrics/run_summary_combined.csv
+2025-10-23 15:59:59	cat > docs/server_request_note.txt <<'EOF'
+Hi <Prof Name>,
+
+I’ve completed a reproducible baseline on my laptop (CPU) across HU/FR/ES/MN with Whisper (tiny), both in:
+  - LID→ASR (automatic language detection with low-confidence fallback)
+  - Hinted (oracle language)
+
+Artifacts:
+  - Transcripts + sidecars under results/transcripts/...
+  - Performance logs (RTF, wall time, CPU/RSS) under results/metrics/perf_*.json
+  - LID metrics: results/metrics/lid_accuracy_<ts>.csv
+  - Combined summary: results/metrics/run_summary_combined.csv
+  - Env: env/asr-env-wsl.yml
+
+I’d like UI access to the GPU server to re-run the exact pipeline with device=cuda and scale to Whisper-small/base and NVIDIA NeMo for Phase 7. This will let me:
+  - Collect GPU VRAM and latency metrics (add pynvml logging)
+  - Compare quality/perf vs CPU
+  - Start NeMo integration with the same I/O
+
+Thanks! — <Your Name>
+EOF
+2025-10-23 15:59:59	cat > docs/server_request_note.txt <<'EOF'
+Hi <Prof Name>,
+
+I’ve completed a reproducible baseline on my laptop (CPU) across HU/FR/ES/MN with Whisper (tiny), both in:
+  - LID→ASR (automatic language detection with low-confidence fallback)
+  - Hinted (oracle language)
+
+Artifacts:
+  - Transcripts + sidecars under results/transcripts/...
+  - Performance logs (RTF, wall time, CPU/RSS) under results/metrics/perf_*.json
+  - LID metrics: results/metrics/lid_accuracy_<ts>.csv
+  - Combined summary: results/metrics/run_summary_combined.csv
+  - Env: env/asr-env-wsl.yml
+
+I’d like UI access to the GPU server to re-run the exact pipeline with device=cuda and scale to Whisper-small/base and NVIDIA NeMo for Phase 7. This will let me:
+  - Collect GPU VRAM and latency metrics (add pynvml logging)
+  - Compare quality/perf vs CPU
+  - Start NeMo integration with the same I/O
+
+Thanks! — <Your Name>
+EOF
+2025-10-23 16:00:49	python scripts/lid_accuracy.py
+2025-10-23 16:00:49	python scripts/lid_accuracy.py

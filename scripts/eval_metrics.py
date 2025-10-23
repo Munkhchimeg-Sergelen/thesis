@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import argparse, os, csv
-from jiwer import wer, cer
+from jiwer import wer, cer, Compose, ToLowerCase, RemovePunctuation, RemoveMultipleSpaces, Strip, RemoveWhiteSpace, RemoveEmptyStrings, RemoveDigits
 LANGS={"mn","hu","fr","es"}
 def lang_of_path(p):
     for pr in p.replace("\\","/").split("/"):
@@ -20,6 +20,8 @@ def read_reference(ref_dir, lang, base):
     if os.path.exists(rp):
         with open(rp,"r",encoding="utf-8") as f: return f.read().strip(), rp
     return None,None
+transforms = Compose([ToLowerCase(), RemoveDigits(), RemovePunctuation(), RemoveMultipleSpaces(), Strip(), RemoveWhiteSpace(replace_by_space=True), RemoveEmptyStrings()])
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--hyp-dir",required=True)
@@ -38,7 +40,9 @@ def main():
             ref_text,ref_file=(None,None)
             if args.ref_dir: ref_text,ref_file=read_reference(args.ref_dir,lang,base)
             if ref_text:
-                w.writerow([hyp_file,lang,mode,system,base,f"{wer(ref_text,hyp):.4f}",f"{cer(ref_text,hyp):.4f}",1,ref_file])
+                hyp_n = transforms(hyp)
+                ref_n = transforms(ref_text)
+                w.writerow([hyp_file,lang,mode,system,base,f"{wer(ref_n,hyp_n):.4f}",f"{cer(ref_n,hyp_n):.4f}",1,ref_file])
             else:
                 w.writerow([hyp_file,lang,mode,system,base,"","",0,""])
     print("metrics CSV →",args.out)

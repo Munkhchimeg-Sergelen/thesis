@@ -30,3 +30,6 @@ most:
 
 metrics_with_ref:
 	PYTHONUTF8=1 $(PY) scripts/eval_metrics.py --hyp-dir $(OUT)/transcripts --ref-dir data/ref --out $(OUT)/metrics/wer_cer_with_ref.csv
+
+run_faster_whisper:
+	$(PY) scripts/asr_faster_whisper.py --mode hinted --in $(DATA) --model tiny --device $(DEVICE) --out $(OUT)/transcripts/hinted/faster_whisper

@@ -1816,3 +1816,4 @@ EOF
     if [ -s "$out_h" ] && [ -s "$out_l" ]; then       echo "✅ skip $L/$base (already done)";       continue;     fi     echo "▶ processing $L/$base";     make run_whisper_hinted FILE="$f" LANG=$L MODEL=small DEVICE=cpu;     make run_whisper_lid    FILE="$f"       MODEL=small DEVICE=cpu;   done; done
 2025-10-24 15:54:57	exit
 2025-10-24 15:55:04	python scripts/plot_lid_acc_safe.py "$LATEST"
+2025-10-24 15:55:13	git push

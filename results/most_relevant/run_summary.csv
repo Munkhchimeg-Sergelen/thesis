@@ -1,3 +1,6 @@
 file,lang,mode,model,wer,cer,elapsed,rtf,cpu_avg_pct,rss_peak_mb
 data/wav/hu/hu1.wav,hu,,,1.0,1.0,5.227,1.742,0.0,1.7
+data/wav/hu/hu1.wav,hu,,,1.0,1.0,5.227,1.742,0.0,1.7
+data/wav/hu/hu02_1874.wav,hu,,,26.0,5.518518518518518,5.225,0.431,0.0,1.7
+data/wav/hu/hu1.wav,hu,,,1.0,1.0,5.227,1.742,0.0,1.7
 data/wav/hu/hu02_1874.wav,hu,,,26.0,5.518518518518518,5.225,0.431,0.0,1.7

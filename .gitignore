@@ -21,3 +21,6 @@ __pycache__/
 !results/
 !results/metrics/
 !results/metrics/perf_summary.csv
+!results/
+!results/metrics/
+!results/metrics/run_summary_combined.csv

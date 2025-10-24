@@ -13,3 +13,7 @@ __pycache__/
 !results/
 !results/most_relevant/
 !results/most_relevant/*
+# track summary snapshots
+!results/
+!results/most_relevant/
+!results/most_relevant/*

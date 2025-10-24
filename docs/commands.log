@@ -1817,3 +1817,121 @@ EOF
 2025-10-24 15:54:57	exit
 2025-10-24 15:55:04	python scripts/plot_lid_acc_safe.py "$LATEST"
 2025-10-24 15:55:13	git push
+2025-10-24 15:56:06	(base) mugi@DESKTOP-2F5KNSE:~/thesis-asr$
+2025-10-24 15:56:12	pip install matplotlib
+2025-10-24 15:56:20	python scripts/plot_lid_acc_safe.py "$LATEST"
+2025-10-24 15:56:28	git push
+2025-10-24 15:59:39	printf '%s\n' '# track summary snapshots' '!results/' '!results/most_relevant/' '!results/most_relevant/*' >> .gitignore
+2025-10-24 15:59:56	git push
+2025-10-24 16:00:00	rm -f main
+2025-10-24 16:00:10	python scripts/plot_lid_acc_safe.py "$LATEST"
+2025-10-24 16:25:20	printf '%s\n' '# track summary snapshots' '!results/' '!results/most_relevant/' '!results/most_relevant/*' >> .gitignore
+2025-10-24 16:25:32	git push
+2025-10-24 16:25:36	git add docs/journal/2025-10-24.md && git commit -m "Journal: CPU sweep + plots" && git push
+2025-10-24 16:28:08	python scripts/perf_summary.py
+2025-10-24 16:28:18	python scripts/plot_lid_acc_safe.py "$LATEST"
+2025-10-24 16:36:58	python - <<'PY'
+import glob, json, os
+bad=[]
+for f in glob.glob("results/metrics/perf_*.json"):
+    try:
+        d=json.load(open(f, encoding="utf-8", errors="ignore"))
+        def nonscalar(x):
+            try:
+                import numpy as np
+                ns = (list, tuple, dict, set, np.ndarray)  # anything not a plain number/str/None
+                return isinstance(x, ns)
+            except Exception:
+                return isinstance(x,(list,tuple,dict,set))
+        fields = {k:v for k,v in d.items() if k in ("audio","elapsed_sec","rtf","cpu_avg_pct","rss_peak_mb")}
+        weird=[k for k,v in fields.items() if nonscalar(v)]
+        if weird:
+            bad.append((f, weird, fields))
+    except Exception as e:
+        bad.append((f, ["<json load failed>"], str(e)))
+if not bad:
+    print("✅ No malformed perf JSONs found.")
+else:
+    print("⚠️ Malformed perf JSONs:")
+    for f, weird, fields in bad:
+        print(" -", f, "bad fields:", weird, " sample:", {k:fields.get(k) for k in weird})
+PY
+2025-10-24 16:37:07	python scripts/perf_summary.py
+2025-10-24 16:37:35	pip install "pandas==2.2.2" "numpy==1.26.4"
+2025-10-24 16:37:40	git push
+2025-10-24 16:40:47	git push
+2025-10-24 16:40:59	git push
+2025-10-24 16:50:18	chmod +x scripts/merge_metrics_safe.py
+2025-10-24 16:50:25	python scripts/plot_lid_acc_safe.py "$LATEST"
+2025-10-24 16:50:35	git push
+2025-10-24 16:55:06	# export CT2_COMPUTE_TYPE=int8      # faster, slight quality loss
+2025-10-24 16:55:20	python scripts/perf_summary.py
+2025-10-24 16:55:37	git push
+2025-10-24 16:55:45	head -n 5 results/most_relevant/run_summary.csv 2>/dev/null || true
+2025-10-24 16:55:58	# detach with:  Ctrl-b then d
+2025-10-24 16:56:03	# detach with:  Ctrl-b then d
+2025-10-24 17:05:40	# tmux new-window -t asr
+2025-10-24 17:05:49	# reattach later:   tmux attach -t asr
+2025-10-24 17:05:56	# (run this before launching more jobs)
+2025-10-24 17:41:12	for L in hu fr es mn; do   for f in data/wav/$L/*.wav; do     out_h="results/transcripts/hinted/whisper/$L/$(basename "${f%.wav}").txt";     out_l="results/transcripts/lid2asr/whisper/$L/$(basename "${f %.wav}").txt";     [ -f "$out_h" ] || python scripts/run_whisper.py --mode hinted  --model small --device cpu --infile "$f" --hint-lang $L --outdir results/transcripts;     [ -f "$out_l" ] || python scripts/run_whisper.py --mode lid2asr --model small --device cpu --infile "$f" --outdir results/transcripts;   done; done
+2025-10-24 17:41:44	git push
+2025-10-24 17:41:48	printf "\nLID→ASR:\n"; find results/transcripts/lid2asr/whisper -name '*.txt' | sed -E 's#.*/(mn|hu|fr|es)/.*#\1#' | sort | uniq -c
+2025-10-24 17:41:56	git push
+2025-10-24 17:46:36	for L in hu mn; do   echo "Missing $L:";   comm -23     <(ls data/wav/$L/*.wav | sed 's#.*/##;s#.wav$##' | sort)     <(find results/transcripts/lid2asr/whisper/$L -name '*.txt' | sed 's#.*/##;s#.txt$##' | sort); done
+2025-10-24 17:46:43	for L in hu mn; do   while read -r base; do     f="data/wav/$L/$base.wav";     [ -f "$f" ] || continue;     echo "LID→ASR: $f";     python scripts/run_whisper.py --mode lid2asr --model small --device cpu --infile "$f" --outdir results/transcripts;   done < <(comm -23 \
+     <(ls data/wav/$L/*.wav | sed 's#.*/##;s#.wav$##' | sort) \
+     <(find results/transcripts/lid2asr/whisper/$L -name '*.txt' | sed 's#.*/##;s#.txt$##' | sort)); done
+2025-10-24 17:46:50	find results/transcripts/lid2asr/whisper -name '*.txt' | sed -E 's#.*/(mn|hu|fr|es)/.*#\1#' | sort | uniq -c
+2025-10-24 17:47:00	git push
+2025-10-24 17:47:03	find results/transcripts/lid2asr/whisper -mindepth 2 -maxdepth 2 -type d  | sed 's#.*/##' | sort | uniq -c | sort -nr | head
+2025-10-24 17:47:14	tmux kill-session -t asr
+2025-10-24 17:47:33	# detach: Ctrl-b then d
+2025-10-24 17:49:50	tmux attach -t asr
+2025-10-24 17:50:11	tmux list-windows -t asr
+2025-10-24 17:50:25	# detach: Ctrl-b then d
+2025-10-24 17:50:28	# detach: Ctrl-b then d
+2025-10-24 17:51:23	find results/transcripts/lid2asr/whisper -name '*.txt' | sed -E 's#.*/(mn|hu|fr|es)/.*#\1#' | sort | uniq -c
+2025-10-24 17:51:40	git push
+2025-10-24 17:51:46	find results/transcripts/lid2asr/whisper -mindepth 2 -maxdepth 2 -type d  | sed 's#.*/##' | sort | uniq -c | sort -nr | head
+2025-10-24 17:51:57	git push origin cpu-sweep-final
+2025-10-24 18:00:54	for L in hu mn; do   comm -23     <(ls results/transcripts/hinted/whisper/$L/*.txt | xargs -n1 -I{} basename "{}" | sort)     <(ls results/transcripts/lid2asr/whisper/$L/*.txt | xargs -n1 -I{} basename "{}" | sort)   | sed 's/.txt$//'   | while read b; do       python scripts/run_whisper.py --mode lid2asr --model small --device cpu         --infile data/wav/$L/${b}.wav --outdir results/transcripts;     done; done
+2025-10-24 18:01:06	python scripts/plot_lid_acc_safe.py "$LATEST"
+2025-10-24 18:01:11	find results/transcripts/lid2asr/whisper -type f -name '*.txt'  | sed -E 's#.*/whisper/([^/]+)/.*#\1#' | sort | uniq -c | sort -nr
+2025-10-24 18:01:19	python - <<'PY'
+import csv, glob, collections
+p=sorted(glob.glob('results/metrics/lid_per_file_*.csv'))[-1]
+C=collections.Counter(); langs=set()
+with open(p,encoding='utf-8',errors='ignore') as f:
+  r=csv.DictReader(f)
+  for row in r:
+    gt=row.get('lang') or row.get('ref_lang') or row.get('gt_lang')
+    pr=row.get('pred_lang') or row.get('pred') or row.get('lid_lang') or row.get('lang_pred')
+    if gt and pr: C[(gt,pr)]+=1; langs.update([gt,pr])
+langs=sorted(langs)
+print('gt\\pred,'+','.join(langs))
+for g in langs:
+  print(','.join([g]+[str(C.get((g,p),0)) for p in langs]))
+PY
+2025-10-24 18:01:27	python - <<'PY'
+import csv, glob, collections
+paths=sorted(glob.glob('results/metrics/wer_cer*.csv'))
+S=collections.defaultdict(lambda: {"wer":[], "cer":[]})
+for p in paths:
+  with open(p,encoding='utf-8',errors='ignore') as f:
+    r=csv.DictReader(f)
+    for row in r:
+      lang = row.get('lang') or row.get('language')
+      mode = row.get('mode')
+      try:
+        wer=float((row.get('wer') or '').strip()); cer=float((row.get('cer') or '').strip())
+      except: continue
+      if lang and mode:
+        S[(lang,mode)]["wer"].append(wer); S[(lang,mode)]["cer"].append(cer)
+print("lang,mode,wer_mean,cer_mean,n")
+for (lang,mode),m in sorted(S.items()):
+  n=len(m["wer"]); wm=sum(m["wer"])/n if n else 0; cm=sum(m["cer"])/n if n else 0
+  print(f"{lang},{mode},{wm:.3f},{cm:.3f},{n}")
+PY
+2025-10-24 18:02:46	mn,sweep,1.479,1.392,30
+2025-10-24 18:08:47	git push
+2025-10-24 18:10:46	git push

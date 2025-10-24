@@ -1,81 +1,86 @@
 #!/usr/bin/env python
-import pandas as pd, glob, os, json, math
+import os, glob, json, re, csv
 
-def as_float(x):
-    # coerce lists/tuples/arrays/strings to float where possible
+os.makedirs("results/metrics", exist_ok=True)
+out = "results/metrics/perf_summary.csv"
+
+lang_re = re.compile(r"/(mn|hu|fr|es)/", re.IGNORECASE)
+
+def to_float(x):
     try:
-        # unwrap 1-length containers
         if isinstance(x, (list, tuple)) and len(x)==1:
             x = x[0]
-        # strings like "0.94" -> 0.94
         if isinstance(x, str):
             x = x.strip()
-            if x == "": return None
+            if not x:
+                return None
             return float(x)
-        # numpy scalars
         try:
             import numpy as np
-            if isinstance(x, (np.generic,)):
-                return float(x)  # type: ignore
+            if isinstance(x, np.generic):
+                return float(x)
+            if isinstance(x, np.ndarray) and x.size==1:
+                return float(x.reshape(()))
         except Exception:
             pass
-        # plain numbers
         if isinstance(x, (int, float)):
             return float(x)
     except Exception:
         return None
     return None
 
-def as_str(x):
-    return str(x) if isinstance(x, str) else None
+sums = {}   # lang -> dict of metric sums
+counts = {} # lang -> count
 
-files = sorted(glob.glob("results/metrics/perf_*.json"))
-rows=[]; bad=[]
-
-for f in files:
+for f in glob.glob("results/metrics/perf_*.json"):
     try:
-        d = json.load(open(f, encoding="utf-8"))
-        if not isinstance(d, dict):
-            raise ValueError("json root is not an object")
-        row = {
-            "file": as_str(d.get("audio")),
-            "elapsed": as_float(d.get("elapsed_sec")),
-            "rtf": as_float(d.get("rtf")),
-            "cpu_avg_pct": as_float(d.get("cpu_avg_pct")),
-            "rss_peak_mb": as_float(d.get("rss_peak_mb")),
-        }
-        # minimal sanity: need file path and an rtf
-        if not row["file"] or row["rtf"] is None:
-            raise ValueError("missing file or rtf")
-        rows.append(row)
-    except Exception as e:
-        bad.append((f, str(e)))
+        with open(f, "r", encoding="utf-8", errors="ignore") as fh:
+            d = json.load(fh)
+    except Exception:
+        continue
 
-if bad:
-    print("⚠️ Skipped {} perf JSONs due to format issues:".format(len(bad)))
-    for f, msg in bad[:5]:
-        print(" -", f, "→", msg)
-    if len(bad) > 5:
-        print("   ...")
+    audio = d.get("audio")
+    if not isinstance(audio, str):
+        continue
+    m = lang_re.search("/" + audio.replace("\\","/") + "/")
+    lang = m.group(1).lower() if m else None
+    if not lang:
+        continue
 
-if not rows:
-    print("no valid perf files")
-    raise SystemExit(0)
+    elapsed = to_float(d.get("elapsed_sec"))
+    rtf     = to_float(d.get("rtf"))
+    cpu     = to_float(d.get("cpu_avg_pct"))
+    rss     = to_float(d.get("rss_peak_mb"))
 
-df = pd.DataFrame(rows)
+    if lang not in sums:
+        sums[lang] = {"elapsed":0.0, "rtf":0.0, "cpu_avg_pct":0.0, "rss_peak_mb":0.0}
+        counts[lang] = 0
 
-# derive language from file path
-df["lang"] = df["file"].str.extract(r"/(mn|hu|fr|es)/", expand=False)
+    # only add if metric is present
+    if elapsed is not None: sums[lang]["elapsed"] += elapsed
+    if rtf     is not None: sums[lang]["rtf"]     += rtf
+    if cpu     is not None: sums[lang]["cpu_avg_pct"] += cpu
+    if rss     is not None: sums[lang]["rss_peak_mb"] += rss
+    counts[lang] += 1
 
-# aggregate means per language
-summary = (df.dropna(subset=["lang"])
-             .groupby("lang")[["elapsed","rtf","cpu_avg_pct","rss_peak_mb"]]
-             .mean()
-             .reset_index()
-             .round(3))
+rows=[]
+for lang in sorted(sums.keys()):
+    c = max(1, counts[lang])
+    agg = {k: (v/c if c else None) for k,v in sums[lang].items()}
+    rows.append({
+        "lang": lang,
+        "elapsed": round(agg["elapsed"], 3),
+        "rtf": round(agg["rtf"], 3),
+        "cpu_avg_pct": round(agg["cpu_avg_pct"], 3),
+        "rss_peak_mb": round(agg["rss_peak_mb"], 3),
+    })
 
-os.makedirs("results/metrics", exist_ok=True)
-out = "results/metrics/perf_summary.csv"
-summary.to_csv(out, index=False)
+with open(out, "w", newline="", encoding="utf-8") as fh:
+    w = csv.DictWriter(fh, fieldnames=["lang","elapsed","rtf","cpu_avg_pct","rss_peak_mb"])
+    w.writeheader()
+    for r in rows:
+        w.writerow(r)
+
 print(f"✅ wrote {out}")
-print(summary.to_string(index=False))
+for r in rows:
+    print(f"{r['lang']:>3}  elapsed={r['elapsed']:<5}  rtf={r['rtf']:<5}  cpu={r['cpu_avg_pct']:<5}  rss_mb={r['rss_peak_mb']:<5}")

@@ -6,3 +6,6 @@ results/**/*
 .env/
 __pycache__/
 *.ipynb_checkpoints
+
+# Windows ADS junk
+*:Zone.Identifier

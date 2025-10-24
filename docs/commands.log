@@ -1940,3 +1940,6 @@ PY
 2025-10-24 18:12:29	tmux kill-session -t asr
 2025-10-24 18:12:38	git push
 2025-10-24 18:12:57	alias asr-end='git add -A && git commit -m "End of session" && git push && conda deactivate && tmux kill-session -t asr 2>/dev/null || true && echo "✅ ASR session closed."'
+2025-10-24 18:13:08	asr-end
+2025-10-24 18:15:39	source ~/.bashrc
+2025-10-24 18:15:39	source ~/.bashrc

@@ -12,7 +12,9 @@ perfs = []
 for j in perf_jsons:
     import json
     data = json.load(open(j))
-    perfs.append({"file": data.get("audio"), **{k:v for k,v in data.items() if k not in ["cmd","audio"]}})
+    tail = (data.get("stderr_tail") or "").replace("\n"," ").replace("\r"," ")[:300]
+    clean = {k:v for k,v in data.items() if k not in ["cmd","audio","stderr_tail"]}
+    perfs.append({"file": data.get("audio"), **clean, "stderr_tail": tail})
 perf_df = pd.DataFrame(perfs)
 
 if not wer_df.empty and not perf_df.empty:

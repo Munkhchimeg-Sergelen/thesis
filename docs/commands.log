@@ -1747,3 +1747,59 @@ EOF
 2025-10-23 16:00:49	python scripts/lid_accuracy.py
 2025-10-23 16:02:06	git push origin main
 2025-10-23 16:02:06	git push origin main
+2025-10-23 17:40:11	end-asr
+2025-10-23 17:40:11	end-asr
+2025-10-24 13:53:53	start-asr
+2025-10-24 13:54:16	cat > docs/background_asr_lid.md <<'EOF'
+# Background: Automatic Speech Recognition and Language Identification
+
+## 1. Overview
+Automatic Speech Recognition (ASR) converts speech waveforms into text. 
+Modern ASR systems rely on deep neural architectures trained on massive multilingual datasets. 
+They commonly process 16 kHz mono audio and output time-aligned tokens.
+
+## 2. Language Identification (LID)
+LID predicts the language of an input segment. 
+Accurate LID enables selecting or constraining the ASR model’s language head, improving recognition quality and reducing hallucinations. 
+Whisper, for example, jointly predicts a language token before transcription.
+
+## 3. Multilingual Strategies
+Typical strategies:
+- **Unified multilingual model** — one shared model for all languages (e.g., Whisper, XLS-R).
+- **Cascade (LID → ASR)** — a light LID model selects which ASR to use.
+- **Hinted / oracle mode** — language is given by metadata.
+- **Adaptive decoding** — dynamic switching when code-switching is detected.
+
+## 4. Metrics
+Core metrics in this work:
+- **Word Error Rate (WER)** and **Character Error Rate (CER)** for quality.
+- **LID accuracy** for language prediction reliability.
+- **Real-Time Factor (RTF)**, **CPU %**, and **memory (RSS/VRAM)** for efficiency.
+
+## 5. Relevance to Thesis
+This study compares LID→ASR vs Hinted modes across four languages (MN, HU, FR, ES) using Whisper and NeMo.  
+The goal is to quantify the trade-offs between automatic language detection and oracle language forcing, 
+and evaluate the performance impact on low-resource and typologically diverse languages.
+EOF
+2025-10-24 13:54:58	python scripts/perf_summary.py
+2025-10-24 13:55:18	applypatch
+2025-10-24 13:55:27	python scripts/plot_rtf.py
+2025-10-24 14:13:23	# or: pip install matplotlib
+2025-10-24 14:14:44	python scripts/plot_rtf.py
+2025-10-24 14:19:28	python scripts/merge_metrics.py
+2025-10-24 14:19:34	python scripts/plot_rtf.py
+2025-10-24 14:25:01	python scripts/perf_summary.py
+2025-10-24 14:25:07	python scripts/plot_rtf.py
+2025-10-24 14:25:29	end-asr
+2025-10-24 14:49:26	start-asr
+2025-10-24 14:50:31	python scripts/perf_summary.py
+2025-10-24 14:53:54	python scripts/perf_summary.py
+2025-10-24 14:54:13	python scripts/plot_rtf.py
+2025-10-24 14:54:32	head -n 10 results/metrics/perf_summary.csv
+2025-10-24 14:57:14	python scripts/plot_rtf.py
+2025-10-24 14:57:24	python scripts/plot_lid_acc.py "$LATEST"
+2025-10-24 15:01:34	python scripts/plot_rtf_from_json.py
+2025-10-24 15:01:44	python scripts/plot_lid_acc_safe.py "$LATEST"
+2025-10-24 15:01:54	tr -cd '\11\12\15\40-\176' < results/metrics/perf_summary.csv > results/metrics/perf_summary.clean.csv
+2025-10-24 15:02:02	git push origin main
+2025-10-24 15:05:39	tar --exclude='.git' -czf ../thesis-asr-working-$(date +%s).tar.gz .

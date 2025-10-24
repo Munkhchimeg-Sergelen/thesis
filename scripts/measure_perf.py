@@ -46,3 +46,16 @@ out = {
 os.makedirs(os.path.dirname(args.out), exist_ok=True)
 open(args.out,"w",encoding="utf-8").write(json.dumps(out, indent=2))
 print(json.dumps(out, indent=2))
+
+
+# --- GPU VRAM logging hook (activates on CUDA) ---
+try:
+    import torch
+    import pynvml
+    if torch.cuda.is_available():
+        pynvml.nvmlInit()
+        handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+        info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+        print(f"GPU VRAM used: {info.used/1e6:.1f} MB / {info.total/1e6:.1f} MB total")
+except Exception as e:
+    pass

@@ -1,0 +1,9 @@
+scope,key,n,acc
+overall,all,120,0.8000
+per_lang,mn,28,0.6429
+per_lang,hu,28,0.6429
+per_lang,fr,32,0.9375
+per_lang,es,32,0.9375
+per_lang,unk,0,
+per_bucket,10,114,0.7895
+per_bucket,30,6,1.0000

@@ -9,3 +9,7 @@ __pycache__/
 
 # Windows ADS junk
 *:Zone.Identifier
+# track summary snapshots
+!results/
+!results/most_relevant/
+!results/most_relevant/*

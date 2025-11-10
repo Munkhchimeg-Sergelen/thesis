@@ -19,8 +19,7 @@ def write_pair(lang, base, arr, sr, text):
 
 def try_fleurs(lang, k=10):
     loc = FLEURS[lang]
-    ds = load_dataset("google/fleurs", loc, split="test",
-                      streaming=True, trust_remote_code=True)
+    ds = load_dataset("google/fleurs", loc, split="test", streaming=True)
     i = 0
     for ex in ds:
         base = f"{lang}{i+1:02d}_{slug(ex.get('id','fleurs'))}"

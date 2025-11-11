@@ -2,9 +2,9 @@
 
 ## For Thesis
 
-### 3.2 Automatic Speech Recognition System
+### 3.2 Automatic Speech Recognition Systems
 
-This study evaluates OpenAI Whisper, a state-of-the-art multilingual ASR system, across multiple model sizes and hardware configurations to assess the trade-offs between accuracy, speed, and resource requirements in multilingual speech recognition.
+This study evaluates two contrasting approaches to multilingual ASR: (1) a unified multilingual model (Whisper) that handles all languages with a single system, and (2) language-specific specialized models (Wav2Vec2-XLSR-53) that are fine-tuned for individual languages. This comparison enables analysis of the trade-offs between multilingual convenience and language-specific optimization.
 
 #### 3.2.1 OpenAI Whisper
 
@@ -45,7 +45,43 @@ To assess the impact of model capacity on both accuracy and computational requir
 
 ---
 
-### 3.2.2 Inference Modes
+#### 3.2.2 Wav2Vec2-XLSR-53 (Language-Specific Models)
+
+**Architecture**: Convolutional encoder + Transformer layers with CTC (Connectionist Temporal Classification) decoder
+
+**Description**: Wav2Vec2-XLS-R [Babu et al., 2021] is a cross-lingual speech representation model trained via self-supervised learning on 436,000 hours of unlabeled multilingual speech across 128 languages. Unlike Whisper's unified multilingual approach, the XLSR-53 checkpoint serves as a foundation that is then fine-tuned for specific languages, resulting in specialized single-language models.
+
+**Key Characteristics**:
+- **Training Paradigm**: Self-supervised pre-training (masked prediction) + supervised fine-tuning per language
+- **Architecture**: Non-autoregressive CTC decoding (parallel processing, faster inference)
+- **Language Coverage**: Separate fine-tuned models per language (not a single multilingual model)
+- **No Built-in LID**: Language must be known a priori (matches language-hinted evaluation mode)
+
+**Language-Specific Models Evaluated**:
+
+Due to availability constraints, only high-resource languages with reliable fine-tuned models were included:
+
+| Language | Model ID | Parameters | Training Data |
+|----------|----------|-----------|---------------|
+| Spanish (ES) | `facebook/wav2vec2-large-xlsr-53-spanish` | 317M | Spanish Common Voice |
+| French (FR) | `facebook/wav2vec2-large-xlsr-53-french` | 317M | French Common Voice |
+
+**Note on Language Coverage**:
+- Hungarian and Mongolian: No reliable fine-tuned models available on HuggingFace
+- These languages are evaluated using Whisper only
+- This limitation itself provides insight: multilingual models (Whisper) offer broader language coverage than relying on language-specific fine-tuning availability
+
+**Rationale for Language-Specific Approach**:
+Fine-tuning on language-specific data can yield higher accuracy for that language by specializing phoneme representations, word-piece vocabularies, and decoding strategies. However, this comes at the cost of:
+1. **Deployment complexity**: Must deploy separate models for each language
+2. **Resource requirements**: ~1.2GB per language model vs. 250MB for multilingual Whisper-small
+3. **Coverage gaps**: Only languages with available fine-tuned models supported
+
+**Implementation**: HuggingFace `transformers` library with custom evaluation wrapper (`scripts/run_wav2vec2.py`) matching the interface of `run_whisper.py` for fair comparison.
+
+---
+
+### 3.2.3 Inference Modes
 
 Two inference modes were evaluated to assess the impact of language information on transcription quality and efficiency:
 
@@ -89,15 +125,29 @@ else:
 
 ---
 
-### 3.3 Evaluation Scope
+### 3.2.4 Evaluation Scope
 
 **Primary Comparisons**:
-1. **Model Scaling**: Impact of model size (tiny → base → small) on accuracy and efficiency
-2. **Hardware Configurations**: CPU vs. GPU deployment scenarios
-3. **Inference Modes**: Oracle (hinted) vs. automatic (LID→ASR) language handling
-4. **Language Diversity**: High-resource (ES, FR) vs. medium-resource (HU) vs. low-resource (MN)
+1. **System Architectures**: Whisper (multilingual) vs. Wav2Vec2 (language-specific) on ES/FR
+2. **Model Scaling**: Impact of model size (tiny → base → small) on Whisper performance
+3. **Hardware Configurations**: CPU vs. GPU deployment scenarios
+4. **Inference Modes**: Oracle (hinted) vs. automatic (LID→ASR) for Whisper
+5. **Language Diversity**: High-resource (ES, FR) vs. medium-resource (HU) vs. low-resource (MN)
 
-**Rationale**: Rather than comparing different ASR architectures, this study provides an in-depth analysis of a single state-of-the-art system (Whisper) across multiple dimensions relevant to practical deployment. This approach yields actionable insights for system designers choosing appropriate configurations for specific use cases.
+**Comparison Matrix**:
+
+| Language | Whisper (tiny/base/small) | Wav2Vec2 (specialized) |
+|----------|---------------------------|------------------------|
+| Spanish (ES) | ✓ All 3 sizes | ✓ Language-specific model |
+| French (FR) | ✓ All 3 sizes | ✓ Language-specific model |
+| Hungarian (HU) | ✓ All 3 sizes | ✗ No model available |
+| Mongolian (MN) | ✓ All 3 sizes | ✗ No model available |
+
+**Research Questions Addressed**:
+1. **Multilingual vs. Specialized**: Do language-specific models (Wav2Vec2-ES/FR) outperform a unified multilingual model (Whisper) on accuracy for high-resource languages?
+2. **Model Scaling**: How does Whisper's accuracy and speed scale with model size (39M → 74M → 244M parameters)?
+3. **Deployment Trade-offs**: What are the practical implications (memory, latency, coverage) of choosing multilingual vs. language-specific approaches?
+4. **Resource Level**: How does Whisper's multilingual approach handle varying language resource levels (high/medium/low)?
 
 ---
 
@@ -108,38 +158,44 @@ else:
 - Wav2Vec2-XLS-R paper: Babu et al. (2021) "XLS-R: Self-supervised Cross-lingual Speech Representation Learning at Scale"
 - Model cards: 
   - https://github.com/openai/whisper
-  - https://huggingface.co/facebook/wav2vec2-xls-r-300m
+  - https://huggingface.co/facebook/wav2vec2-large-xlsr-53-spanish
+  - https://huggingface.co/facebook/wav2vec2-large-xlsr-53-french
 
 **Code**:
 - `scripts/run_whisper.py` - Whisper evaluation wrapper
-- `scripts/asr_wav2vec2.py` - Wav2Vec2 evaluation wrapper
+- `scripts/run_wav2vec2.py` - Wav2Vec2 evaluation wrapper
 - `scripts/lid_from_whisper.py` - Language identification using Whisper
 
 ---
 
 ## Key Points
 
-✅ **Two systems**: Different architectures (encoder-decoder vs encoder-CTC)  
-✅ **Contrasting training**: Supervised vs self-supervised  
-✅ **Speed-accuracy trade-off**: Autoregressive vs parallel decoding  
-✅ **LID handling**: Built-in vs external  
-✅ **Comparable scale**: ~250-300M parameters
+✅ **Two contrasting approaches**: Multilingual (Whisper) vs. Language-specific (Wav2Vec2)  
+✅ **Different architectures**: Encoder-decoder (seq2seq) vs. Encoder-CTC  
+✅ **Contrasting training**: Supervised (680K hrs) vs. self-supervised + fine-tuned (436K hrs)  
+✅ **Speed-accuracy trade-off**: Autoregressive vs. parallel decoding  
+✅ **LID handling**: Built-in (Whisper) vs. not needed (Wav2Vec2 is language-specific)  
+✅ **Coverage vs. specialization**: 4 languages (Whisper) vs. 2 languages (Wav2Vec2)  
+✅ **Deployment complexity**: 1 model (Whisper) vs. N models (Wav2Vec2)  
+
+**This comparison addresses the core thesis requirement of evaluating different multilingual ASR approaches!**
 
 ---
 
 ## Notes for Writing
 
+- Emphasize the **multilingual strategy comparison**: unified vs. specialized
+- This is more interesting than just "two popular models" - it's a fundamental design choice
+- The limitation (only ES/FR for Wav2Vec2) actually strengthens the multilingual argument
 - Cite original papers properly
-- Emphasize architectural diversity (satisfies thesis requirement for comparison)
-- Explain why these two systems (not just "popular models")
 - Link to implementation details in appendix
 - Keep descriptions concise but complete
 
 ---
 
 ## TODO
+- [x] Specify which Wav2Vec2 models used (language-specific ES/FR)
+- [x] Clarify language coverage (Whisper: 4 langs, Wav2Vec2: 2 langs)
 - [ ] Add proper citations to bibliography
-- [ ] Specify which Wav2Vec2 fine-tuned model used (if language-specific)
-- [ ] Clarify LID approach for Wav2Vec2 (Whisper reuse vs filename)
 - [ ] Add model download links to appendix
 - [ ] Include model sizes in MB for deployment discussion

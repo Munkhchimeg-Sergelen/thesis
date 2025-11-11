@@ -16,7 +16,7 @@ echo ""
 echo "Systems: Whisper (tiny/base/small) + Wav2Vec2 (ES/FR only)"
 echo "Languages: ES, FR, HU, MN"
 echo "Mode: Language-hinted (oracle)"
-echo "Device: GPU (CUDA)"
+echo "Device: CPU (cuDNN issues on GPU)"
 echo ""
 echo "======================================================================"
 echo ""
@@ -71,7 +71,7 @@ for model in "${WHISPER_MODELS[@]}"; do
             CMD="python scripts/run_whisper.py \
                 --mode hinted \
                 --model ${model} \
-                --device cuda \
+                --device cpu \
                 --infile \"${wavfile}\" \
                 --hint-lang ${lang}"
             
@@ -102,7 +102,7 @@ for lang in "${WAV2VEC2_LANGS[@]}"; do
         CMD="python scripts/run_wav2vec2.py \
             --infile \"${wavfile}\" \
             --hint-lang ${lang} \
-            --device cuda"
+            --device cpu"
         
         run_experiment "$DESC" "$CMD" || true
     done

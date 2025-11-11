@@ -2,11 +2,11 @@
 
 ## For Thesis
 
-### 3.2 Automatic Speech Recognition Systems
+### 3.2 Automatic Speech Recognition System
 
-Two state-of-the-art multilingual ASR systems with contrasting architectures were evaluated to provide a comprehensive analysis of multilingual speech recognition approaches.
+This study evaluates OpenAI Whisper, a state-of-the-art multilingual ASR system, across multiple model sizes and hardware configurations to assess the trade-offs between accuracy, speed, and resource requirements in multilingual speech recognition.
 
-#### 3.2.1 System 1: OpenAI Whisper
+#### 3.2.1 OpenAI Whisper
 
 **Architecture**: Transformer-based encoder-decoder (sequence-to-sequence)
 
@@ -19,11 +19,24 @@ Two state-of-the-art multilingual ASR systems with contrasting architectures wer
 - **Decoding**: Autoregressive beam search with language modeling
 
 **Model Variants Evaluated**:
-- **Whisper-tiny**: 39M parameters (baseline, CPU-feasible)
-- **Whisper-small**: 244M parameters (primary comparison model)
-- **Whisper-base**: 74M parameters (GPU evaluation) [if tested]
 
-**Implementation**: `openai-whisper` Python library, with custom wrappers (`scripts/run_whisper.py`) for standardized evaluation.
+To assess the impact of model capacity on both accuracy and computational requirements, three Whisper variants were evaluated:
+
+| Model | Parameters | Layers | Width | Use Case |
+|-------|-----------|---------|-------|----------|
+| Whisper-tiny | 39M | 4 encoder + 4 decoder | 384 | Resource-constrained devices |
+| Whisper-base | 74M | 6 encoder + 6 decoder | 512 | Balanced performance |
+| Whisper-small | 244M | 12 encoder + 12 decoder | 768 | Primary evaluation model |
+
+- **Whisper-tiny**: Serves as a baseline for minimal-resource scenarios. Despite its small size, it demonstrates surprisingly robust performance on high-resource languages.
+
+- **Whisper-base**: Represents a middle ground between efficiency and accuracy, suitable for edge deployment scenarios.
+
+- **Whisper-small**: Primary evaluation model, offering strong multilingual performance while remaining computationally feasible for CPU evaluation.
+
+**Rationale for Model Selection**: Larger variants (medium, large) were excluded due to CPU inference time constraints exceeding practical thresholds (>5× real-time). The selected range (39M-244M parameters) spans a practical deployment spectrum from embedded systems to server-based applications.
+
+**Implementation**: `faster-whisper` Python library (CTranslate2 backend) with custom evaluation wrappers (`scripts/run_whisper.py`) for standardized inference and metrics collection.
 
 **Language Identification**: Whisper's built-in LID analyzes the first 30 seconds of audio using the encoder's internal representations. The model outputs probability distributions over all supported languages, from which we extract:
 - Predicted language (argmax)
@@ -32,48 +45,59 @@ Two state-of-the-art multilingual ASR systems with contrasting architectures wer
 
 ---
 
-#### 3.2.2 System 2: Wav2Vec2-XLS-R
+### 3.2.2 Inference Modes
 
-**Architecture**: Self-supervised encoder with CTC (Connectionist Temporal Classification) decoder
+Two inference modes were evaluated to assess the impact of language information on transcription quality and efficiency:
 
-**Description**: Wav2Vec2-XLS-R [Babu et al., 2021] is a cross-lingual speech representation model pre-trained using self-supervised learning on 436,000 hours of unlabeled multilingual speech. The model uses a convolutional encoder followed by transformer layers, with a CTC head for alignment-free decoding.
+#### A. Language-Hinted Mode (Oracle Scenario)
 
-**Key Characteristics**:
-- **Training Paradigm**: Self-supervised pre-training + supervised fine-tuning
-- **Multilingual Support**: 128 languages (largest coverage among evaluated systems)
-- **Language Identification**: Not built-in; requires external LID or language hints
-- **Decoding**: Non-autoregressive CTC, enabling parallel processing
+In this mode, the correct target language is explicitly provided to the ASR system before inference. This represents an "oracle" scenario where perfect language identification is assumed.
 
-**Model Evaluated**:
-- **Wav2Vec2-XLS-R-300M**: 300M parameters
+**Implementation**:
+```python
+result = model.transcribe(
+    audio_path,
+    language="es",  # Explicitly specified
+    task="transcribe"
+)
+```
 
-**Implementation**: Hugging Face `transformers` library with custom wrapper (`scripts/asr_wav2vec2.py`) matching Whisper's interface for fair comparison.
+**Use Case**: Applications where language context is known a priori (e.g., call center routing, language-specific services).
 
-**Language Identification Approach**: 
-Since Wav2Vec2-XLS-R lacks built-in LID, two strategies were employed:
-1. **Hinted Mode**: Language explicitly provided (oracle scenario)
-2. **LID→ASR Mode**: [Specify approach: Whisper's LID reused OR filename inference]
+**Advantage**: Eliminates language identification errors, providing an upper bound on system performance.
+
+#### B. LID→ASR Mode (Automatic Language Detection)
+
+In this mode, the system first performs language identification on the audio, then uses the detected language for transcription.
+
+**Implementation**:
+```python
+# Step 1: Language detection
+detected_lang, confidence = model.detect_language(audio_path)
+
+# Step 2: Transcription with detected language
+if confidence >= threshold:
+    result = model.transcribe(audio_path, language=detected_lang)
+else:
+    # Fallback to multilingual mode
+    result = model.transcribe(audio_path, language=None)
+```
+
+**Use Case**: Real-world scenarios where language is unknown (e.g., multilingual customer support, media transcription).
+
+**Challenge**: LID errors can cascade into transcription errors, potentially degrading overall system performance.
 
 ---
 
-### 3.3 Architectural Comparison
+### 3.3 Evaluation Scope
 
-| Aspect | Whisper | Wav2Vec2-XLS-R |
-|--------|---------|----------------|
-| **Architecture** | Encoder-Decoder | Encoder-CTC |
-| **Training** | Supervised (labeled data) | Self-supervised + fine-tuned |
-| **Decoding** | Autoregressive (sequential) | Non-autoregressive (parallel) |
-| **LID Support** | Built-in | External required |
-| **Parameters** | 244M (small) | 300M |
-| **Training Data** | 680K hours (labeled) | 436K hours (unlabeled) |
-| **Speed** | Slower (sequential decode) | Faster (parallel decode) |
+**Primary Comparisons**:
+1. **Model Scaling**: Impact of model size (tiny → base → small) on accuracy and efficiency
+2. **Hardware Configurations**: CPU vs. GPU deployment scenarios
+3. **Inference Modes**: Oracle (hinted) vs. automatic (LID→ASR) language handling
+4. **Language Diversity**: High-resource (ES, FR) vs. medium-resource (HU) vs. low-resource (MN)
 
-**Rationale for Selection**:
-These systems represent different design philosophies in multilingual ASR:
-- **Whisper**: End-to-end supervised approach optimized for accuracy
-- **Wav2Vec2**: Self-supervised representations optimized for efficiency and fine-tunability
-
-This diversity enables analysis of trade-offs between accuracy, speed, and resource requirements relevant to practical deployment scenarios.
+**Rationale**: Rather than comparing different ASR architectures, this study provides an in-depth analysis of a single state-of-the-art system (Whisper) across multiple dimensions relevant to practical deployment. This approach yields actionable insights for system designers choosing appropriate configurations for specific use cases.
 
 ---
 

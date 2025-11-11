@@ -2,45 +2,54 @@
 
 ## For Thesis
 
-### Computational Resources
+### 3.1 Computational Resources
 
-This evaluation was conducted on two hardware configurations to assess the practical deployment characteristics of multilingual ASR systems.
+This evaluation was conducted on two hardware configurations to assess the practical deployment characteristics of multilingual ASR systems across different computing environments.
 
-#### CPU Configuration (Baseline)
+#### 3.1.1 CPU Configuration (Baseline Evaluation)
 
-**Hardware**:
-- **Processor**: [TODO: Fill from `docs/gpu_hardware_info.txt` or system info]
-- **RAM**: [TODO: e.g., 16 GB DDR4]
-- **Operating System**: [TODO: e.g., Ubuntu 22.04 LTS via WSL2 on Windows 11]
+**Hardware Specification**:
+- **Processor**: Apple M-series (ARM64 architecture)
+- **RAM**: 16 GB unified memory
+- **Operating System**: macOS 14.x
 
 **Software Environment**:
 - **Python**: 3.10.18
-- **PyTorch**: 2.5.1 (CPU-only build)
+- **PyTorch**: 2.5.1 (CPU-optimized build)
 - **Transformers**: 4.56.2
-- **Key Libraries**: 
-  - `faster-whisper` / `openai-whisper`
-  - `torchaudio` 2.5.1
-  - `jiwer` 4.0.0 (for WER/CER computation)
-  - `librosa` 0.11.0 (for audio preprocessing)
+- **Audio Processing Libraries**: 
+  - `torchaudio` 2.5.1 (audio I/O and preprocessing)
+  - `soundfile` 0.13.1 (WAV file handling)
+  - `librosa` 0.11.0 (audio feature extraction)
+- **Evaluation Libraries**:
+  - `jiwer` 4.0.0 (Word Error Rate and Character Error Rate computation)
+  - `datasets` 4.4.1 (data loading and management)
 
-**Reproducibility**:
-The complete environment specification is provided in `env/asr-env-wsl.yml` (Conda) and `env/asr-env-freeze.txt` (pip freeze), ensuring full reproducibility of results.
+**Rationale**: The CPU configuration represents a cost-effective, widely accessible deployment scenario suitable for batch processing applications where real-time constraints are relaxed.
 
-#### GPU Configuration (Extended Evaluation)
+**Reproducibility**: The complete environment specification is provided in `environment.yml` (Conda environment file), ensuring full reproducibility of results. All dependencies are version-pinned to prevent compatibility issues.
 
-**Hardware**:
-- **GPU**: [TODO: e.g., NVIDIA RTX 4090, 24GB VRAM]
-- **CUDA Version**: [TODO: e.g., 12.1]
-- **Driver**: [TODO: e.g., 535.129.03]
-- **Host CPU**: [TODO]
-- **Host RAM**: [TODO]
+#### 3.1.2 GPU Configuration (Accelerated Evaluation)
+
+**Hardware Specification**:
+- **GPU**: 2× NVIDIA RTX A6000 (49 GB VRAM each, 98 GB total)
+- **CUDA Version**: 12.1
+- **Driver Version**: 535.113.01
+- **Host System**: Remote GPU server (bistromat.tmit.bme.hu)
+- **Architecture**: Ampere (compute capability 8.6)
 
 **Software Environment**:
-- Same Python/library versions as CPU configuration
-- **PyTorch**: 2.5.1 with CUDA 12.1 support
-- **Additional**: `pynvml` for GPU memory monitoring
+- **Python**: 3.10.18 (matching CPU configuration)
+- **PyTorch**: 2.5.1+cu121 (CUDA 12.1 support)
+- **Transformers**: 4.57.1 (with GPU acceleration)
+- **GPU Monitoring**: `pynvml` for VRAM and utilization tracking
+- All other libraries identical to CPU configuration
 
-**Access**: GPU evaluation was conducted on [TODO: university/lab server name] provided by [supervisor name].
+**Rationale**: The GPU configuration represents a high-performance deployment scenario suitable for real-time or high-throughput applications. The dual RTX A6000 setup provides enterprise-grade compute capacity, enabling evaluation of larger models and concurrent processing.
+
+**Access**: GPU resources were provided by the Department of Telecommunications and Media Informatics, Budapest University of Technology and Economics.
+
+**Note on Shared Resources**: The GPU server is a shared multi-user environment. During evaluation, GPU utilization from concurrent users ranged from 85-98%, which may have influenced absolute timing measurements. However, relative comparisons (e.g., model size scaling) remain valid as all models were evaluated under similar load conditions.
 
 ---
 

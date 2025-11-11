@@ -93,8 +93,8 @@ def main():
     print("\nEstimated download: ~50-100 MB")
     print("\nNote: First run may take longer as datasets cache.")
     print("=" * 50)
-    
-    input("\nPress Enter to continue or Ctrl+C to cancel...")
+    print("\nStarting download...")
+    print()
     
     total = 0
     successful = 0

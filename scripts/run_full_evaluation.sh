@@ -73,8 +73,7 @@ for model in "${WHISPER_MODELS[@]}"; do
                 --model ${model} \
                 --device cuda \
                 --infile \"${wavfile}\" \
-                --hint-lang ${lang} \
-                --save-json"
+                --hint-lang ${lang}"
             
             run_experiment "$DESC" "$CMD" || true
         done
@@ -103,8 +102,7 @@ for lang in "${WAV2VEC2_LANGS[@]}"; do
         CMD="python scripts/run_wav2vec2.py \
             --infile \"${wavfile}\" \
             --hint-lang ${lang} \
-            --device cuda \
-            --save-json"
+            --device cuda"
         
         run_experiment "$DESC" "$CMD" || true
     done

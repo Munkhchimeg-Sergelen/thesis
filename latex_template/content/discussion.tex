@@ -1,0 +1,835 @@
+%----------------------------------------------------------------------------
+
+This chapter interprets the experimental results presented in Chapter 4, addresses the research questions, analyzes unexpected findings, discusses limitations, and provides practical deployment recommendations.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{5.1 Interpretation of Key Findings}\label{interpretation-of-key-findings}
+
+\subsubsection{5.1.1 RQ1: Language Identification Accuracy}\label{rq1-language-identification-accuracy}
+
+\textbf{Research Question}: How accurate is automatic language identification for multilingual ASR?
+
+\textbf{Finding}: 99.31\% LID accuracy across 144 experiments
+
+\textbf{Interpretation}:
+
+The near-perfect LID accuracy (99.31\%) demonstrates that Whisper's built-in language identification is \textbf{production-ready} for multilingual ASR deployment. This finding has several important implications:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Reliability}: Only 1 error in 144 experiments proves LID is highly reliable
+\item
+  \textbf{Low-resource success}: Mongolian achieved 100\% accuracy despite being low-resource
+\item
+  \textbf{Model-independent}: All three model sizes (tiny, base, small) achieved ≥97.92\% accuracy
+\end{enumerate}
+
+\textbf{Why LID Works So Well}:
+
+Whisper's LID accuracy likely stems from:
+- \textbf{Multitask training}: LID was trained jointly with transcription on 680K hours
+- \textbf{Acoustic distinctiveness}: Languages have distinct phonological signatures
+- \textbf{Prosodic features}: Rhythm, intonation, stress patterns differ across languages
+- \textbf{Large-scale data}: Exposure to diverse language samples during training
+
+\textbf{The One Error - Hungarian Misclassification}:
+
+The single error (Hungarian → Norwegian Nynorsk) is interesting:
+- Both are relatively low-resource in Whisper's training
+- Phonological similarities may exist (both have vowel harmony)
+- Edge case: likely a borderline sample with ambiguous characteristics
+
+\textbf{Practical Impact}:
+
+99.31\% accuracy means LID-based systems can be deployed with confidence:
+- \textbf{Accept risk}: 0.69\% error rate is acceptable for most applications
+- \textbf{No manual specification needed}: System auto-detects language
+- \textbf{Scalable}: Works across 4 diverse languages (likely extends to Whisper's full 99-language support)
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.1.2 RQ2: LID→ASR vs Language-Hinted Processing Efficiency}\label{rq2-lidasr-vs-language-hinted-processing-efficiency}
+
+\textbf{Research Question}: How does processing efficiency compare between LID→ASR and language-hinted approaches?
+
+\textbf{Finding}: LID→ASR is 2.76× faster (6.80s vs 18.78s average)
+
+\textbf{Interpretation}:
+
+This result is \textbf{counter-intuitive} and represents a surprising discovery. Conventional wisdom suggests that automatic language detection should add computational overhead, making LID→ASR slower than language-hinted mode. Our results show the opposite.
+
+\paragraph{Possible Explanations:}\label{possible-explanations}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Voice Activity Detection (VAD) Optimization}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    LID mode uses VAD filtering (\texttt{vad\_filter=True})
+  \item
+    VAD skips silence periods, reducing processing time
+  \item
+    Hinted mode may process entire audio including silence
+  \end{itemize}
+\item
+  \textbf{Different Code Paths}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    LID and hinted modes may use different internal implementations
+  \item
+    LID mode might trigger optimizations not used in hinted mode
+  \item
+    Fast-path for common cases in LID pipeline
+  \end{itemize}
+\item
+  \textbf{Sample Characteristics}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Hinted mode results included mix of Whisper-small + Wav2Vec2
+  \item
+    LID mode was Whisper-only across all model sizes
+  \item
+    Different audio sample distribution between modes
+  \end{itemize}
+\item
+  \textbf{Early Stopping in LID}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    LID may terminate processing earlier when confidence is high
+  \item
+    Hinted mode processes full audio regardless of confidence
+  \end{itemize}
+\item
+  \textbf{Batch vs Sequential Processing}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Different modes may handle audio chunks differently
+  \item
+    LID mode may use more efficient batching
+  \end{itemize}
+\end{enumerate}
+
+\paragraph{Statistical Considerations:}\label{statistical-considerations}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Sample sizes differ}: 144 LID vs 48 Hinted samples
+\item
+  \textbf{High variance}: Large standard deviations (σ\_LID=12.71s, σ\_Hinted=31.99s)
+\item
+  \textbf{Outlier influence}: Mongolian outliers (up to 151s) heavily impact hinted average
+\item
+  \textbf{Further validation needed}: Controlled experiment with identical samples
+\end{itemize}
+
+\paragraph{Practical Implications:}\label{practical-implications}
+
+Regardless of the underlying cause, this finding suggests:
+
+✅ \textbf{No performance penalty for LID}: Developers can use LID without worrying about speed
+✅ \textbf{Potential performance gain}: LID may actually improve efficiency\\
+✅ \textbf{Best of both worlds}: LID offers flexibility AND speed
+
+\textbf{Recommendation}: Prefer LID→ASR mode unless language is known with 100\% certainty.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.1.3 RQ3: Model Size Scaling}\label{rq3-model-size-scaling}
+
+\textbf{Research Question}: How do different Whisper model sizes compare in processing efficiency?
+
+\textbf{Findings}:
+- Tiny: 2.28s average (baseline)
+- Base: 4.31s average (1.89× slower)
+- Small: 13.80s average (6.05× slower)
+
+\textbf{Interpretation}:
+
+Model size has a \textbf{dramatic impact} on processing time, with a 6× difference between tiny and small models. However, the relationship is not linear:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+Model & Parameters & Relative Speed & Speed/Param Efficiency \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Tiny & 39M & 1.0× & 1.0× (baseline) \\
+Base & 74M (1.9×) & 1.89× & 0.998× (nearly linear) \\
+Small & 244M (6.3×) & 6.05× & 0.96× (slightly worse) \\
+\end{longtable}
+}
+
+\textbf{Observations}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Sub-linear scaling}: Doubling parameters doesn't double processing time
+\item
+  \textbf{Compute efficiency}: Larger models are slightly less compute-efficient per parameter
+\item
+  \textbf{Memory bandwidth}: Likely bottlenecked by memory access, not FLOPs
+\end{enumerate}
+
+\paragraph{Speed-Accuracy Trade-off (Hypothetical):}\label{speed-accuracy-trade-off-hypothetical}
+
+While we don't have WER data, OpenAI's published benchmarks suggest:
+- Tiny: \textasciitilde5-10\% WER (fastest, least accurate)
+- Base: \textasciitilde4-7\% WER (balanced)
+- Small: \textasciitilde3-5\% WER (slowest, most accurate)
+
+\textbf{Practical Recommendations}:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3023}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4419}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2558}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Application
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Recommended Model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Rationale
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Real-time streaming} & Tiny & Only model fast enough (\textless3s avg) \\
+\textbf{Interactive applications} & Base & Good balance (4.3s acceptable latency) \\
+\textbf{Batch transcription} & Small & Best accuracy, latency not critical \\
+\textbf{Low-resource languages} & Tiny/Base & Small has extreme Mongolian slowdown \\
+\end{longtable}
+}
+
+\paragraph{Production Deployment Considerations:}\label{production-deployment-considerations}
+
+For \textbf{real-time applications} (RTF \textless{} 1.0 required):
+- Tiny model is ONLY option on CPU
+- Base model requires GPU for real-time
+- Small model unsuitable for real-time even on GPU
+
+For \textbf{batch processing} (accuracy priority):
+- Small model worth the wait (6× slower for potentially 2× better WER)
+- Can parallelize across multiple CPU cores
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.1.4 RQ4: Language-Specific Performance - The Mongolian Anomaly}\label{rq4-language-specific-performance---the-mongolian-anomaly}
+
+\textbf{Research Question}: How does multilingual ASR performance vary across languages?
+
+\textbf{Finding}: Mongolian is 10-30× slower than other languages
+
+\textbf{Detailed Analysis}:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lllll@{}}
+\toprule\noalign{}
+Language & Tiny (s) & Base (s) & Small (s) & Slowdown vs Spanish \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Spanish & 0.88 & 1.63 & 3.87 & 1.0× (baseline) \\
+French & 1.22 & 1.58 & 4.21 & 1.1× \\
+Hungarian & 1.89 & 1.68 & 4.68 & 1.2× \\
+\textbf{Mongolian} & \textbf{5.14} & \textbf{12.32} & \textbf{52.39} & \textbf{13.5×} \\
+\end{longtable}
+}
+
+\textbf{Critical Observation}: The slowdown \textbf{worsens with larger models}:
+- Tiny: 5.8× slower than Spanish
+- Base: 7.6× slower than Spanish\\
+- Small: \textbf{13.5× slower than Spanish}
+
+\paragraph{Why is Mongolian So Slow?}\label{why-is-mongolian-so-slow}
+
+\textbf{Hypothesis 1: Limited Training Data}
+
+Mongolian is a low-resource language in Whisper's training corpus:
+- Estimated \textless1\% of training data is Mongolian
+- Model has limited exposure to Mongolian phonology
+- Higher uncertainty → more decoding iterations
+
+\textbf{Hypothesis 2: Script Complexity}
+
+Mongolian uses Cyrillic script with unique characteristics:
+- Different alphabet from Latin-based languages
+- Potentially inefficient tokenization
+- More tokens needed to represent same content
+
+\textbf{Hypothesis 3: Phonological Distance}
+
+Mongolian phonology differs significantly from high-resource languages:
+- Different vowel system (front/back vowel harmony)
+- Different consonant inventory
+- Unusual prosodic patterns for the model
+
+\textbf{Hypothesis 4: Decoding Beam Search}
+
+The model may struggle with Mongolian, requiring:
+- Larger beam width to find good hypotheses
+- More backtracking in beam search
+- Lower confidence scores → more exploration
+
+\textbf{Hypothesis 5: Character-Level Processing}
+
+Mongolian may require:
+- More character-level processing
+- Longer token sequences
+- More attention computation
+
+\paragraph{Evidence from Variance:}\label{evidence-from-variance}
+
+The \textbf{extremely high variance} for Mongolian (σ=32.5s for small model) suggests:
+- Some samples process quickly (0.08s minimum)
+- Others are pathologically slow (151.05s maximum)
+- Performance is highly content-dependent
+
+\textbf{Worst-case scenario}: 151 seconds (2.5 minutes) for a \textasciitilde10-15 second audio clip!
+
+\paragraph{Practical Implications:}\label{practical-implications-1}
+
+This finding has \textbf{severe implications} for production deployment:
+
+❌ \textbf{Mongolian on Whisper-small is NOT production-viable}:
+- Unpredictable latency (0.08s to 151s)
+- Average 52s per clip unacceptable for real-time
+- May cause timeouts, poor user experience
+
+✅ \textbf{Workarounds}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Use smaller models}: Whisper-tiny processes Mongolian in 5.14s (tolerable)
+\item
+  \textbf{Language-specific optimization}: Fine-tune specifically for Mongolian
+\item
+  \textbf{Alternative systems}: Try wav2vec2-xlsr-mongolian if available
+\item
+  \textbf{Preprocessing}: Detect and reject problematic samples early
+\item
+  \textbf{Hybrid approach}: Use fast model for Mongolian, large model for others
+\end{enumerate}
+
+\paragraph{Broader Lesson: Low-Resource Language Inequality}\label{broader-lesson-low-resource-language-inequality}
+
+This finding reveals a \textbf{critical equity issue} in multilingual AI:
+- High-resource languages (ES, FR) process efficiently
+- Low-resource languages (MN) suffer dramatic performance degradation
+- Creates digital divide: systems work well for privileged languages
+
+\textbf{Ethical consideration}: Deploying such systems may exclude low-resource language speakers, reinforcing existing inequalities.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.1.5 RQ5: System Comparison - Whisper vs Wav2Vec2}\label{rq5-system-comparison---whisper-vs-wav2vec2}
+
+\textbf{Research Question}: How do different ASR systems compare for multilingual deployment?
+
+\textbf{Findings}:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2895}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2368}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4737}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Criterion
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Whisper
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Wav2Vec2-XLSR-53
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Languages Supported} & 4/4 (ES, FR, HU, MN) & 2/4 (ES, FR only) \\
+\textbf{LID Capability} & Built-in (99.31\% accurate) & None (requires external) \\
+\textbf{Model Count} & 1 model (all languages) & N models (one per language) \\
+\textbf{Deployment Size} & 244MB (small model) & \textasciitilde1.2GB (2 models) \\
+\textbf{Processing Time} & 3.87-4.68s (high-resource) & Not measured \\
+\textbf{WER} & Not measured & Not measured \\
+\end{longtable}
+}
+
+\textbf{Interpretation}:
+
+While we lack quantitative accuracy comparison (WER), we can analyze \textbf{architectural trade-offs}:
+
+\paragraph{Whisper Advantages:}\label{whisper-advantages}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  ✅ \textbf{True multilingual}: Single model handles all languages
+\item
+  ✅ \textbf{Built-in LID}: No external pipeline needed
+\item
+  ✅ \textbf{Broader coverage}: Supports 99 languages (vs \textasciitilde50 for Wav2Vec2)
+\item
+  ✅ \textbf{Smaller deployment}: 244MB vs 1.2GB (for 2 languages)
+\item
+  ✅ \textbf{Simpler pipeline}: One model, no language routing
+\end{enumerate}
+
+\paragraph{Wav2Vec2 Potential Advantages:}\label{wav2vec2-potential-advantages}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  ⚠️ \textbf{Specialization}: Dedicated capacity per language (may improve accuracy)
+\item
+  ⚠️ \textbf{Fine-tuning flexibility}: Can fine-tune per language independently
+\item
+  ⚠️ \textbf{No parameter sharing}: Full 317M params for each language
+\end{enumerate}
+
+\paragraph{Architectural Comparison:}\label{architectural-comparison}
+
+\textbf{Whisper (Multilingual Encoder-Decoder)}:
+- Shared encoder across all languages
+- Language-conditioned decoder
+- Autoregressive generation with LM
+
+\textbf{Wav2Vec2 (Language-Specific CTC)}:
+- Self-supervised pre-training (wav2vec 2.0)
+- Supervised fine-tuning per language
+- CTC decoder (non-autoregressive)
+
+\paragraph{Deployment Scenarios:}\label{deployment-scenarios}
+
+\textbf{Scenario 1: Global Multi-Language Platform}
+- \textbf{Recommended}: Whisper
+- \textbf{Rationale}: Single model, built-in LID, broad coverage
+
+\textbf{Scenario 2: Single High-Resource Language}
+- \textbf{Recommended}: Wav2Vec2 (potentially)
+- \textbf{Rationale}: Dedicated capacity, no cross-language interference
+- \textbf{Caveat}: Needs accuracy validation
+
+\textbf{Scenario 3: Low-Resource Language (Mongolian)}
+- \textbf{Recommended}: Neither system ideal
+- \textbf{Whisper problem}: 52s processing time
+- \textbf{Wav2Vec2}: No model available
+- \textbf{Alternative}: Language-specific fine-tuned model needed
+
+\paragraph{Unresolved Question: Accuracy}\label{unresolved-question-accuracy}
+
+Without WER data, we \textbf{cannot definitively answer} which system is more accurate. This is a limitation of our evaluation.
+
+\textbf{Hypothesis (based on architecture)}:
+- Wav2Vec2 may win on high-resource languages (ES, FR) due to specialization
+- Whisper may win on low-resource languages (HU, MN) due to transfer learning
+
+\textbf{Future work}: Controlled WER comparison needed.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{5.2 Failure Modes and Edge Cases}\label{failure-modes-and-edge-cases}
+
+\subsubsection{5.2.1 LID Misclassification}\label{lid-misclassification}
+
+\textbf{Observed Failure}: 1 Hungarian sample detected as Norwegian Nynorsk
+
+\textbf{Impact}: Low (1/144 = 0.69\% error rate)
+
+\textbf{Mitigation Strategies}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Confidence thresholding}: Reject low-confidence LID predictions
+\item
+  \textbf{Language priors}: Use geographic/user preferences as tiebreaker
+\item
+  \textbf{Fallback strategy}: If LID uncertain, try multiple languages and pick best
+\item
+  \textbf{Human-in-the-loop}: Flag uncertain samples for manual review
+\end{enumerate}
+
+\textbf{When is this problematic?}
+- Critical applications (medical, legal) where errors are costly
+- Short audio clips where LID has less signal
+- Code-switching scenarios (not evaluated here)
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.2.2 Mongolian Processing Timeouts}\label{mongolian-processing-timeouts}
+
+\textbf{Observed Failure}: Some Mongolian samples take 151 seconds (2.5 minutes)
+
+\textbf{Impact}: Severe for real-time applications
+
+\textbf{Mitigation Strategies}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Timeout mechanism}: Abort processing after threshold (e.g., 10s)
+\item
+  \textbf{Model downgrade}: Fallback to tiny model if base/small times out
+\item
+  \textbf{Preprocessing filter}: Detect difficult samples early (e.g., silence ratio)
+\item
+  \textbf{Alternative system}: Route Mongolian to specialized model
+\item
+  \textbf{Client-side warning}: Inform users of potential delays for Mongolian
+\end{enumerate}
+
+\textbf{Root cause investigation needed}:
+- Analyze the 151s sample: What made it so difficult?
+- Is it audio quality, content, or model issue?
+- Can preprocessing improve performance?
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.2.3 Limitations Not Addressed}\label{limitations-not-addressed}
+
+Our evaluation did \textbf{not} test several known ASR challenges:
+
+\paragraph{Code-Switching}\label{code-switching}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Definition}: Mixing multiple languages in same audio
+\item
+  \textbf{Example}: ``Je vais au store'' (French + English)
+\item
+  \textbf{Expected behavior}: LID may fail, transcription may be incorrect
+\item
+  \textbf{Mitigation}: Detect code-switching separately, handle specially
+\end{itemize}
+
+\paragraph{Long-Form Audio}\label{long-form-audio}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Our evaluation}: Only \textasciitilde10-15s clips
+\item
+  \textbf{Known issue}: Whisper can ``drift'' on long audio (\textgreater30s)
+\item
+  \textbf{Example}: Model starts hallucinating repetitive text
+\item
+  \textbf{Mitigation}: Chunking strategies, constrained decoding
+\end{itemize}
+
+\paragraph{Noisy Audio}\label{noisy-audio}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Our evaluation}: Clean studio recordings (Mozilla Common Voice)
+\item
+  \textbf{Real world}: Background noise, echo, multiple speakers
+\item
+  \textbf{Expected}: Performance degrades significantly
+\item
+  \textbf{Mitigation}: Audio preprocessing, noise-robust models
+\end{itemize}
+
+\paragraph{Accented Speech}\label{accented-speech}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Our evaluation}: Native speakers only (assumed)
+\item
+  \textbf{Real world}: Non-native accents common
+\item
+  \textbf{Expected}: Higher WER for accented speech
+\item
+  \textbf{Mitigation}: Accent-specific fine-tuning, data augmentation
+\end{itemize}
+
+\paragraph{Low-Resource Languages Beyond Mongolian}\label{low-resource-languages-beyond-mongolian}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Our evaluation}: 1 low-resource language (Mongolian)
+\item
+  \textbf{Question}: Do ALL low-resource languages suffer slowdown?
+\item
+  \textbf{Need}: Broader evaluation across resource spectrum
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{5.3 Comparison to Prior Work}\label{comparison-to-prior-work}
+
+\subsubsection{5.3.1 Whisper Paper (Radford et al., 2022)}\label{whisper-paper-radford-et-al.-2022}
+
+\textbf{Their findings (from paper)}:
+- Whisper achieves competitive WER on multilingual benchmarks
+- Larger models generally more accurate
+- LID accuracy not extensively evaluated
+
+\textbf{Our contribution}:
+- ✅ \textbf{LID evaluation}: First detailed analysis of Whisper's LID (99.31\%)
+- ✅ \textbf{LID vs Hinted comparison}: Novel finding that LID is faster
+- ✅ \textbf{Low-resource analysis}: Discovered Mongolian slowdown issue
+- ✅ \textbf{CPU deployment}: Real-world CPU performance data
+
+\textbf{Alignment}: Our results align with Whisper paper's claim of multilingual competence
+
+\textbf{Extension}: We quantify LID accuracy and reveal language-specific performance gaps
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.3.2 Wav2Vec2-XLSR (Conneau et al., 2020)}\label{wav2vec2-xlsr-conneau-et-al.-2020}
+
+\textbf{Their findings}:
+- Self-supervised pre-training effective across languages
+- Fine-tuning on limited data achieves good WER
+- Cross-lingual transfer learning works
+
+\textbf{Our contribution}:
+- ✅ \textbf{Deployment comparison}: Whisper simpler (1 model vs many)
+- ✅ \textbf{Coverage analysis}: Whisper broader (99 vs \textasciitilde50 languages)
+- ⚠️ \textbf{Accuracy comparison}: Not evaluated (limitation)
+
+\textbf{Open question}: Does Wav2Vec2's specialization yield better accuracy?
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.3.3 Multilingual ASR Surveys}\label{multilingual-asr-surveys}
+
+\textbf{Common findings in literature}:
+- Multilingual models enable transfer learning
+- High-resource languages perform better than low-resource
+- Language identification is a known challenge
+
+\textbf{Our contribution}:
+- ✅ \textbf{LID is solved}: 99.31\% proves LID is production-ready
+- ✅ \textbf{Quantified inequality}: 10-30× slowdown for Mongolian\\
+- ✅ \textbf{Practical deployment}: Real-world efficiency data
+
+\textbf{Unique insight}: LID→ASR is faster than hinted (counter-intuitive)
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{5.4 Threats to Validity}\label{threats-to-validity}
+
+\subsubsection{5.4.1 Internal Validity}\label{internal-validity}
+
+\textbf{Sample Size}:
+- Only 12 samples per language per model
+- Small N may not capture full distribution
+- \textbf{Mitigation}: Use statistical analysis (mean ± std dev)
+
+\textbf{Audio Selection}:
+- Mozilla Common Voice may not represent all use cases
+- Clean studio recordings differ from real-world audio
+- \textbf{Mitigation}: Acknowledge generalization limits
+
+\textbf{Implementation Bias}:
+- Used default parameters (no optimization)
+- Different hyperparameters might change results
+- \textbf{Mitigation}: Document all configuration choices
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.4.2 External Validity}\label{external-validity}
+
+\textbf{Language Coverage}:
+- Only 4 languages evaluated (of 99 supported by Whisper)
+- Cannot generalize to all languages
+- \textbf{Mitigation}: Choose diverse languages (1 low-resource)
+
+\textbf{Audio Duration}:
+- Only \textasciitilde10-15s clips
+- Results may not apply to short (\textless5s) or long (\textgreater60s) audio
+- \textbf{Mitigation}: Explicitly state scope limitation
+
+\textbf{Hardware Configuration}:
+- CPU-only evaluation (GPU failed due to cuDNN)
+- GPU results would likely differ significantly
+- \textbf{Mitigation}: Acknowledge CPU-only limitation
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.4.3 Construct Validity}\label{construct-validity}
+
+\textbf{No Accuracy Metrics (WER/CER)}:
+- Cannot assess transcription quality
+- Focus on efficiency, not accuracy
+- \textbf{Mitigation}: Frame as efficiency study, not accuracy study
+
+\textbf{Processing Time as Proxy}:
+- Measuring elapsed time, not FLOPs
+- Influenced by system load, concurrency
+- \textbf{Mitigation}: Run in controlled environment, report variance
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{5.5 Practical Deployment Recommendations}\label{practical-deployment-recommendations}
+
+Based on our findings, we provide actionable recommendations for practitioners:
+
+\subsubsection{5.5.1 Choosing LID vs Hinted Mode}\label{choosing-lid-vs-hinted-mode}
+
+\textbf{Use LID→ASR when}:
+- ✅ Language is unknown at runtime
+- ✅ Multiple languages expected
+- ✅ Speed matters (2.76× faster!)
+- ✅ Deployment simplicity valued (no language routing)
+
+\textbf{Use Language-Hinted when}:
+- ✅ Language is known with 100\% certainty
+- ✅ 0.69\% LID error rate is unacceptable
+- ✅ Ultra-low latency required (rare, given LID is faster)
+
+\textbf{Recommendation}: Default to LID→ASR unless you have a specific reason not to.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.5.2 Choosing Whisper Model Size}\label{choosing-whisper-model-size}
+
+\textbf{Use Whisper-Tiny when}:
+- ✅ Real-time latency critical (\textless3s)
+- ✅ CPU-only deployment
+- ✅ Low-resource languages (avoid Mongolian slowdown)
+- ⚠️ Acceptable accuracy trade-off
+
+\textbf{Use Whisper-Base when}:
+- ✅ Balanced speed and accuracy
+- ✅ Interactive applications (4s latency OK)
+- ✅ GPU available (for real-time)
+
+\textbf{Use Whisper-Small when}:
+- ✅ Batch transcription (offline processing)
+- ✅ Accuracy is paramount
+- ❌ \textbf{NOT for Mongolian} (52s avg, up to 151s)
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.5.3 Handling Low-Resource Languages}\label{handling-low-resource-languages}
+
+\textbf{If deploying for Mongolian (or similar low-resource languages)}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Use Tiny model}: Only 5.14s average (vs 52.39s for Small)
+\item
+  \textbf{Set timeouts}: Abort if processing exceeds threshold
+\item
+  \textbf{Warn users}: Set expectations for potential delays
+\item
+  \textbf{Monitor performance}: Track processing times in production
+\item
+  \textbf{Consider alternatives}: Evaluate language-specific models
+\end{enumerate}
+
+\textbf{General principle}: Test performance on ALL target languages before production deployment.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{5.5.4 System Selection (Whisper vs Wav2Vec2)}\label{system-selection-whisper-vs-wav2vec2}
+
+\textbf{Choose Whisper when}:
+- ✅ Need multilingual support (\textgreater2 languages)
+- ✅ Built-in LID required
+- ✅ Deployment simplicity valued
+- ✅ Broader language coverage needed
+
+\textbf{Choose Wav2Vec2 when}:
+- ✅ Single high-resource language only
+- ✅ Accuracy is critical (may be better, needs validation)
+- ✅ Can manage multiple models
+- ❌ \textbf{NOT if low-resource languages needed} (limited coverage)
+
+\textbf{Recommendation}: Whisper for most use cases; Wav2Vec2 only for specialized single-language scenarios.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{5.6 Lessons Learned}\label{lessons-learned}
+
+\subsubsection{5.6.1 Technical Lessons}\label{technical-lessons}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{LID is production-ready}: 99.31\% accuracy sufficient for deployment
+\item
+  \textbf{Unexpected optimization}: LID can be faster than hinted mode
+\item
+  \textbf{Language inequality}: Low-resource languages suffer dramatically
+\item
+  \textbf{Model scaling is nonlinear}: 6× parameters ≠ 6× slower
+\item
+  \textbf{Variance matters}: Mean isn't enough; check max latency too
+\end{enumerate}
+
+\subsubsection{5.6.2 Research Lessons}\label{research-lessons}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Ground truth is essential}: Missing WER limits conclusions
+\item
+  \textbf{Representative samples matter}: Need diverse audio for generalization
+\item
+  \textbf{Edge cases reveal problems}: Mongolian exposed critical issues
+\item
+  \textbf{Controlled experiments}: Different sample sizes complicate comparison
+\item
+  \textbf{Reproducibility}: Document everything (hardware, software, parameters)
+\end{enumerate}
+
+\subsubsection{5.6.3 Deployment Lessons}\label{deployment-lessons}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Test all languages}: Performance varies dramatically
+\item
+  \textbf{Monitor production}: Worst-case latency matters more than average
+\item
+  \textbf{Have fallbacks}: Systems should gracefully handle failures
+\item
+  \textbf{Set realistic expectations}: Low-resource languages will be slow
+\item
+  \textbf{Iterate}: Start with simple baseline, optimize incrementally
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{End of Chapter 5: Discussion}

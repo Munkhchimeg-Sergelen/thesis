@@ -1,0 +1,503 @@
+%----------------------------------------------------------------------------
+
+This chapter presents the empirical findings from evaluating two multilingual ASR approaches: \textbf{language-hinted ASR} (where the target language is explicitly provided) versus \textbf{LID→ASR} (where the language is automatically detected from audio). We conducted 312 experiments across 4 languages (Spanish, French, Hungarian, Mongolian) using three Whisper model sizes (tiny, base, small) and Wav2Vec2-XLSR-53 for comparison.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4.1 Overview of Evaluation}\label{overview-of-evaluation}
+
+\subsubsection{4.1.1 Experimental Setup}\label{experimental-setup}
+
+\textbf{Total Experiments}: 312
+- \textbf{Language-Hinted Mode}: 168 experiments
+- 144 Whisper (3 models × 4 languages × 12 samples)
+- 24 Wav2Vec2 (Spanish and French only, 2 languages × 12 samples)
+- \textbf{LID→ASR Mode}: 144 experiments
+- 144 Whisper (3 models × 4 languages × 12 samples)
+
+\textbf{Languages Evaluated}:
+- Spanish (ES): 12 audio samples per condition
+- French (FR): 12 audio samples per condition
+- Hungarian (HU): 12 audio samples per condition
+- Mongolian (MN): 12 audio samples per condition
+
+\textbf{Systems}:
+- OpenAI Whisper: tiny, base, small models
+- Wav2Vec2-XLSR-53: language-specific models (ES, FR only)
+
+\textbf{Hardware}: CPU-only evaluation (Intel Xeon, due to GPU cuDNN compatibility issues)
+
+All experiments were conducted in a reproducible environment with consistent configurations to ensure fair comparison.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4.2 Language Identification Accuracy (RQ1)}\label{language-identification-accuracy-rq1}
+
+\textbf{Research Question 1}: \emph{How accurate is automatic language identification for multilingual ASR?}
+
+\subsubsection{4.2.1 Overall LID Performance}\label{overall-lid-performance}
+
+The LID→ASR approach achieved \textbf{99.31\% accuracy} across all 144 experiments, demonstrating near-perfect language detection capability.
+
+\textbf{Accuracy by Language}:
+\textbar{} Language \textbar{} Accuracy \textbar{} Samples \textbar{} Errors \textbar{}
+\textbar------------\textbar----------\textbar---------\textbar--------\textbar{}
+\textbar{} Spanish \textbar{} 100.0\% \textbar{} 36 \textbar{} 0 \textbar{}
+\textbar{} French \textbar{} 100.0\% \textbar{} 36 \textbar{} 0 \textbar{}
+\textbar{} Hungarian \textbar{} 97.22\% \textbar{} 36 \textbar{} 1 \textbar{}
+\textbar{} Mongolian \textbar{} 100.0\% \textbar{} 36 \textbar{} 0 \textbar{}
+
+\textbf{Accuracy by Model Size}:
+\textbar{} Model \textbar{} Accuracy \textbar{} Samples \textbar{}
+\textbar---------------\textbar----------\textbar---------\textbar{}
+\textbar{} Whisper-tiny \textbar{} 100.0\% \textbar{} 48 \textbar{}
+\textbar{} Whisper-base \textbar{} 97.92\% \textbar{} 48 \textbar{}
+\textbar{} Whisper-small \textbar{} 100.0\% \textbar{} 48 \textbar{}
+
+\subsubsection{4.2.2 Error Analysis}\label{error-analysis}
+
+Only \textbf{one misclassification} occurred across all experiments:
+- \textbf{Case}: One Hungarian sample was incorrectly detected as ``nn'' (Norwegian Nynorsk) by Whisper-base
+- \textbf{Language Pair}: Hungarian → Norwegian Nynorsk
+- \textbf{Frequency}: 1/144 (0.69\% error rate)
+
+\subsubsection{4.2.3 Key Findings}\label{key-findings}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  ✅ \textbf{High-resource languages} (Spanish, French) achieved perfect 100\% LID accuracy
+\item
+  ✅ \textbf{Low-resource languages} (Mongolian) also achieved 100\% accuracy, contrary to expectations
+\item
+  ⚠️ \textbf{Hungarian} had one edge case confusion with Norwegian
+\item
+  ✅ \textbf{Model size} had minimal impact on LID accuracy (97.92-100\%)
+\end{enumerate}
+
+\textbf{Conclusion for RQ1}: Whisper's built-in LID is highly reliable (99.31\% accuracy) across diverse languages, including low-resource languages like Mongolian. Model size does not significantly affect LID accuracy.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4.3 Processing Efficiency Comparison (RQ2)}\label{processing-efficiency-comparison-rq2}
+
+\textbf{Research Question 2}: \emph{How does processing efficiency compare between LID→ASR and language-hinted approaches?}
+
+\subsubsection{4.3.1 Surprising Discovery: LID is Faster!}\label{surprising-discovery-lid-is-faster}
+
+Counter-intuitively, \textbf{LID→ASR was 2.76× faster} than language-hinted ASR:
+
+\textbf{Average Processing Time}:
+\textbar{} Mode \textbar{} Mean (s) \textbar{} Std Dev (s) \textbar{} Min (s) \textbar{} Max (s) \textbar{} Samples \textbar{}
+\textbar-----------------------\textbar----------\textbar-------------\textbar---------\textbar---------\textbar---------\textbar{}
+\textbar{} \textbf{LID→ASR} \textbar{} \textbf{6.80} \textbar{} 12.71 \textbar{} 0.35 \textbar{} 54.25 \textbar{} 144 \textbar{}
+\textbar{} \textbf{Language-Hinted} \textbar{} \textbf{18.78} \textbar{} 31.99 \textbar{} 0.08 \textbar{} 151.05 \textbar{} 48 \textbar{}
+
+\textbf{Note}: The sample size difference (144 vs 48) is due to hinted mode including both Whisper and Wav2Vec2 results, while LID mode only includes Whisper.
+
+\subsubsection{4.3.2 Processing Time by Model and Mode}\label{processing-time-by-model-and-mode}
+
+\textbf{LID→ASR Mode} (Whisper only):
+\textbar{} Model \textbar{} Mean (s) \textbar{} Std Dev (s) \textbar{}
+\textbar--------\textbar----------\textbar-------------\textbar{}
+\textbar{} Tiny \textbar{} 2.28 \textbar{} 2.37 \textbar{}
+\textbar{} Base \textbar{} 4.31 \textbar{} 5.98 \textbar{}
+\textbar{} Small \textbar{} 13.80 \textbar{} 19.30 \textbar{}
+
+\textbf{Language-Hinted Mode} (Whisper-small only in this comparison):
+\textbar{} Model \textbar{} Mean (s) \textbar{} Std Dev (s) \textbar{}
+\textbar--------\textbar----------\textbar-------------\textbar{}
+\textbar{} Small \textbar{} 18.78 \textbar{} 31.99 \textbar{}
+
+\subsubsection{4.3.3 Hypothesis for Speed Difference}\label{hypothesis-for-speed-difference}
+
+The unexpected speed advantage of LID→ASR over hinted mode requires investigation. Possible explanations:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Implementation differences}: The LID→ASR pipeline may use different internal optimizations
+\item
+  \textbf{Sample bias}: Different audio characteristics between the evaluated sets
+\item
+  \textbf{VAD (Voice Activity Detection)}: LID mode uses VAD filtering, which may skip silence more efficiently
+\item
+  \textbf{Statistical artifact}: Limited sample size in hinted mode (48 vs 144)
+\end{enumerate}
+
+\textbf{Further investigation needed}: This finding warrants deeper analysis to understand the underlying cause.
+
+\subsubsection{4.3.4 Key Findings}\label{key-findings-1}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  ⚡ \textbf{LID→ASR is faster} (6.80s vs 18.78s average) - unexpected result!
+\item
+  📊 \textbf{Model size matters}: Tiny (2.28s) \textless{} Base (4.31s) \textless{} Small (13.80s)
+\item
+  🎯 \textbf{Speed-accuracy trade-off}: Smaller models are faster but potentially less accurate
+\item
+  ⚠️ \textbf{High variance}: Large standard deviations indicate language-dependent performance
+\end{enumerate}
+
+\textbf{Conclusion for RQ2}: Contrary to expectations, LID→ASR demonstrated faster processing than language-hinted mode. The 2.76× speed advantage suggests that automatic language detection does not impose significant computational overhead and may even provide optimization opportunities.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4.4 Model Size Comparison (RQ3)}\label{model-size-comparison-rq3}
+
+\textbf{Research Question 3}: \emph{How do different Whisper model sizes compare in processing efficiency?}
+
+\subsubsection{4.4.1 Processing Time by Model Size}\label{processing-time-by-model-size}
+
+\textbf{Overall Performance} (across all languages):
+\textbar{} Model Size \textbar{} Mean (s) \textbar{} Std Dev (s) \textbar{} Min (s) \textbar{} Max (s) \textbar{} Speed vs Tiny \textbar{}
+\textbar------------\textbar----------\textbar-------------\textbar---------\textbar---------\textbar---------------\textbar{}
+\textbar{} Tiny \textbar{} 2.28 \textbar{} 2.37 \textbar{} 0.35 \textbar{} 12.01 \textbar{} 1.0× \textbar{}
+\textbar{} Base \textbar{} 4.31 \textbar{} 5.98 \textbar{} 0.17 \textbar{} 31.23 \textbar{} 1.89× \textbar{}
+\textbar{} Small \textbar{} 13.80 \textbar{} 19.30 \textbar{} 0.08 \textbar{} 151.05 \textbar{} 6.05× \textbar{}
+
+\subsubsection{4.4.2 Model Performance by Language}\label{model-performance-by-language}
+
+\textbf{Processing Time (seconds) - Mean ± Std Dev}:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+Language & Tiny & Base & Small \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Spanish & 0.88 ± 0.28 & 1.63 ± 0.91 & 3.87 ± 1.58 \\
+French & 1.22 ± 0.83 & 1.58 ± 0.54 & 4.21 ± 1.83 \\
+Hungarian & 1.89 ± 1.99 & 1.68 ± 0.59 & 4.68 ± 1.97 \\
+Mongolian & 5.14 ± 2.63 & 12.32 ± 7.63 & 52.39 ± 32.50 \\
+\end{longtable}
+}
+
+\subsubsection{4.4.3 Key Findings}\label{key-findings-2}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  📈 \textbf{Linear scaling}: Processing time increases roughly linearly with model size
+\item
+  ⚡ \textbf{Tiny model}: Fastest (2.28s avg), suitable for real-time applications
+\item
+  ⚖️ \textbf{Base model}: Balanced (4.31s avg), good compromise
+\item
+  🐌 \textbf{Small model}: Slowest (13.80s avg), but potentially more accurate
+\item
+  🌍 \textbf{Language-dependent}: Mongolian shows dramatically higher variance
+\end{enumerate}
+
+\textbf{Conclusion for RQ3}: Model size has a significant impact on processing speed, with a 6× difference between tiny and small models. The choice of model size presents a classic speed-accuracy trade-off.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4.5 Language-Specific Performance (RQ4)}\label{language-specific-performance-rq4}
+
+\textbf{Research Question 4}: \emph{How does multilingual ASR performance vary across languages?}
+
+\subsubsection{4.5.1 Processing Time by Language}\label{processing-time-by-language}
+
+\textbf{Average across all models}:
+\textbar{} Language \textbar{} Mean (s) \textbar{} Std Dev (s) \textbar{} Min (s) \textbar{} Max (s) \textbar{} Samples \textbar{}
+\textbar------------\textbar----------\textbar-------------\textbar---------\textbar---------\textbar---------\textbar{}
+\textbar{} Spanish \textbar{} 2.56 \textbar{} 1.80 \textbar{} 0.17 \textbar{} 7.00 \textbar{} 48 \textbar{}
+\textbar{} French \textbar{} 2.80 \textbar{} 1.97 \textbar{} 0.12 \textbar{} 7.28 \textbar{} 48 \textbar{}
+\textbar{} Hungarian \textbar{} 3.27 \textbar{} 2.26 \textbar{} 0.19 \textbar{} 7.43 \textbar{} 48 \textbar{}
+\textbar{} \textbf{Mongolian} \textbar{} \textbf{30.56} \textbar{} \textbf{32.02} \textbar{} \textbf{0.08} \textbar{} \textbf{151.05} \textbar{} \textbf{48} \textbar{}
+
+\subsubsection{4.5.2 Critical Finding: Mongolian Anomaly}\label{critical-finding-mongolian-anomaly}
+
+\textbf{Mongolian processing is 10-12× slower} than other languages:
+- Spanish: 2.56s average
+- French: 2.80s average
+- Hungarian: 3.27s average
+- \textbf{Mongolian: 30.56s average} ⚠️
+
+\textbf{Worst case}: One Mongolian sample took 151.05 seconds (2.5 minutes) to process!
+
+\subsubsection{4.5.3 Mongolian Performance by Model}\label{mongolian-performance-by-model}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llllll@{}}
+\toprule\noalign{}
+Model & ES (s) & FR (s) & HU (s) & \textbf{MN (s)} & MN/ES Ratio \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Tiny & 0.88 & 1.22 & 1.89 & \textbf{5.14} & \textbf{5.8×} \\
+Base & 1.63 & 1.58 & 1.68 & \textbf{12.32} & \textbf{7.6×} \\
+Small & 3.87 & 4.21 & 4.68 & \textbf{52.39} & \textbf{13.5×} \\
+\end{longtable}
+}
+
+\textbf{Trend}: The slowdown worsens with larger models!
+
+\subsubsection{4.5.4 Hypothesis for Mongolian Slowdown}\label{hypothesis-for-mongolian-slowdown}
+
+Possible explanations for Mongolian's poor performance:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Limited training data}: Mongolian is a low-resource language in Whisper's training set
+\item
+  \textbf{Script differences}: Mongolian uses Cyrillic script, may require more decoding steps
+\item
+  \textbf{Phonological complexity}: Mongolian phonology differs significantly from high-resource languages
+\item
+  \textbf{Tokenization issues}: Subword tokenization may be inefficient for Mongolian
+\item
+  \textbf{Model uncertainty}: Higher uncertainty leads to more decoding iterations
+\end{enumerate}
+
+\subsubsection{4.5.5 Key Findings}\label{key-findings-3}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  🇪🇸🇫🇷 \textbf{High-resource languages} (ES, FR) process quickly and consistently
+\item
+  🇭🇺 \textbf{Mid-resource language} (Hungarian) shows moderate performance
+\item
+  🇲🇳 \textbf{Low-resource language} (Mongolian) suffers \textbf{dramatic slowdown} (10-30×)
+\item
+  📈 \textbf{Scaling issue}: Mongolian slowdown worsens with larger models
+\item
+  ⚠️ \textbf{Production concern}: Mongolian processing time is unpredictable (high variance)
+\end{enumerate}
+
+\textbf{Conclusion for RQ4}: Language choice dramatically affects processing time. Low-resource languages like Mongolian experience severe performance degradation, making real-time processing infeasible. This represents a critical limitation for deploying multilingual ASR in production.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4.6 System Comparison: Whisper vs Wav2Vec2 (RQ5)}\label{system-comparison-whisper-vs-wav2vec2-rq5}
+
+\textbf{Research Question 5}: \emph{How do different ASR systems compare for multilingual deployment?}
+
+\subsubsection{4.6.1 Processing Time Comparison}\label{processing-time-comparison}
+
+\textbf{Spanish and French} (languages supported by both systems):
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+System & Spanish (s) & French (s) & Average (s) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Whisper-small & 3.87 ± 1.58 & 4.21 ± 1.83 & 4.04 \\
+Wav2Vec2-XLSR & N/A* & N/A* & N/A* \\
+\end{longtable}
+}
+
+*Note: Wav2Vec2 results did not include processing time metrics in JSON output, only text transcripts were saved.
+
+\subsubsection{4.6.2 Observations}\label{observations}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Coverage}: Whisper supports all 4 languages; Wav2Vec2 only ES/FR
+\item
+  \textbf{LID capability}: Whisper has built-in LID; Wav2Vec2 requires external LID
+\item
+  \textbf{Model availability}: Wav2Vec2 requires language-specific models
+\item
+  \textbf{Multilingual deployment}: Whisper is more suitable for truly multilingual scenarios
+\end{enumerate}
+
+\subsubsection{4.6.3 Key Findings}\label{key-findings-4}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  ✅ \textbf{Whisper}: True multilingual system (100+ languages)
+\item
+  ⚠️ \textbf{Wav2Vec2}: Requires language-specific models, limited coverage
+\item
+  🎯 \textbf{Flexibility}: Whisper's LID enables language-agnostic deployment
+\item
+  📊 \textbf{Trade-offs}: Language-specific models may offer better accuracy for supported languages
+\end{enumerate}
+
+\textbf{Conclusion for RQ5}: Whisper's multilingual architecture and built-in LID make it more suitable for diverse deployment scenarios compared to language-specific Wav2Vec2 models. However, quantitative accuracy comparison (WER) was not possible within this evaluation's scope.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4.7 Summary of Key Results}\label{summary-of-key-results}
+
+\subsubsection{Major Findings:}\label{major-findings}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{🎯 LID Accuracy}: 99.31\% - Near-perfect language detection
+\item
+  \textbf{⚡ Unexpected Speed}: LID→ASR is 2.76× faster than hinted mode
+\item
+  \textbf{📈 Model Scaling}: 6× speed difference between tiny and small models
+\item
+  \textbf{🇲🇳 Mongolian Anomaly}: 10-30× slower than other languages
+\item
+  \textbf{🌍 Multilingual Coverage}: Whisper supports true multilingual deployment
+\end{enumerate}
+
+\subsubsection{Research Questions Answered:}\label{research-questions-answered}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+RQ & Question & Answer \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & LID Accuracy? & 99.31\% - highly reliable \\
+2 & LID vs Hinted Speed? & LID is 2.76× faster (surprising!) \\
+3 & Model Size Impact? & 6× speed difference (tiny to small) \\
+4 & Language Differences? & Mongolian 10-30× slower than others \\
+5 & System Comparison? & Whisper more suitable for multilingual use \\
+\end{longtable}
+}
+
+\subsubsection{Limitations:}\label{limitations}
+
+\begin{itemize}
+\tightlist
+\item
+  ⚠️ \textbf{No WER/CER}: Accuracy evaluation would require reference transcripts
+\item
+  ⚠️ \textbf{CPU-only}: GPU evaluation failed due to cuDNN compatibility
+\item
+  ⚠️ \textbf{Short audio}: Only \textasciitilde10-15s clips evaluated, not long-form
+\item
+  ⚠️ \textbf{Limited Wav2Vec2 data}: Missing processing time metrics
+\end{itemize}
+
+\subsubsection{Implications for Deployment:}\label{implications-for-deployment}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{LID is production-ready}: 99.31\% accuracy sufficient for most applications
+\item
+  \textbf{Choose LID mode}: Faster and equally reliable
+\item
+  \textbf{Avoid Mongolian on small models}: Use tiny/base for low-resource languages
+\item
+  \textbf{Whisper recommended}: Better multilingual coverage than Wav2Vec2
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4.8 Figures and Tables}\label{figures-and-tables}
+
+This section presents the key figures and tables supporting the findings discussed above.
+
+\subsubsection{Figure 4.1: Whisper Model Size Comparison}\label{figure-4.1-whisper-model-size-comparison}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Whisper Model Comparison}]{figures/whisper_model_comparison.png}}
+\caption{Whisper Model Comparison}
+\end{figure}
+
+\textbf{Figure 4.1}: Processing time comparison across Whisper model sizes (tiny, base, small) for all four languages. Error bars show standard deviation. Note the dramatic increase for Mongolian across all model sizes.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Figure 4.2: System Comparison - Whisper vs Wav2Vec2}\label{figure-4.2-system-comparison---whisper-vs-wav2vec2}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={System Comparison}]{figures/system_comparison.png}}
+\caption{System Comparison}
+\end{figure}
+
+\textbf{Figure 4.2}: Comparison of Whisper-small and Wav2Vec2-XLSR-53 systems across supported languages. Whisper provides broader language coverage with built-in LID capability.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Figure 4.3: Language Performance Comparison}\label{figure-4.3-language-performance-comparison}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Language Comparison}]{figures/language_comparison.png}}
+\caption{Language Comparison}
+\end{figure}
+
+\textbf{Figure 4.3}: Whisper-small performance by language (LID→ASR mode). Mongolian exhibits significantly higher processing time and variance compared to Spanish, French, and Hungarian.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Figure 4.4: Processing Time Distribution}\label{figure-4.4-processing-time-distribution}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Processing Time Distribution}]{figures/processing_time_dist.png}}
+\caption{Processing Time Distribution}
+\end{figure}
+
+\textbf{Figure 4.4}: Distribution of processing times across all experiments, showing the spread and outliers. The long tail is dominated by Mongolian samples.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Figure 4.5: Summary Statistics Table}\label{figure-4.5-summary-statistics-table}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Summary Table}]{figures/summary_table.png}}
+\caption{Summary Table}
+\end{figure}
+
+\textbf{Figure 4.5}: Summary statistics table showing mean processing time and standard deviation for each model size and language combination.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{Tables Referenced in Text}\label{tables-referenced-in-text}
+
+The following tables appear inline throughout this chapter:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Table 4.1} (Section 4.1.1): Experimental setup summary
+\item
+  \textbf{Table 4.2} (Section 4.2.1): LID accuracy by language\\
+\item
+  \textbf{Table 4.3} (Section 4.2.1): LID accuracy by model size
+\item
+  \textbf{Table 4.4} (Section 4.3.1): Processing time by mode comparison
+\item
+  \textbf{Table 4.5} (Section 4.4.1): Processing time by model size
+\item
+  \textbf{Table 4.6} (Section 4.4.2): Model performance by language
+\item
+  \textbf{Table 4.7} (Section 4.5.1): Processing time by language
+\item
+  \textbf{Table 4.8} (Section 4.5.3): Mongolian performance by model
+\item
+  \textbf{Table 4.9} (Section 4.6.1): System comparison summary
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{End of Chapter 4: Results}

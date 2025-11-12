@@ -1,0 +1,570 @@
+%----------------------------------------------------------------------------
+
+\subsection{For Thesis}\label{for-thesis}
+
+\subsubsection{3.1 Computational Resources}\label{computational-resources}
+
+This evaluation was conducted on CPU hardware due to GPU compatibility issues encountered during setup. All 312 experiments were performed on a research server provided by the Department of Telecommunications and Media Informatics, Budapest University of Technology and Economics.
+
+\paragraph{3.1.1 Evaluation Hardware (CPU)}\label{evaluation-hardware-cpu}
+
+\textbf{Hardware Specification}:
+- \textbf{Server}: bistromat.tmit.bme.hu (department research server)
+- \textbf{Processor}: Intel Xeon CPU (x86\_64 architecture)
+- \textbf{RAM}: Sufficient for loading all models (exact specs not critical for CPU evaluation)
+- \textbf{Operating System}: Linux (CentOS/Rocky Linux)
+
+\textbf{Software Environment}:
+- \textbf{Python}: 3.10.18
+- \textbf{PyTorch}: 2.5.1 (CPU-optimized build)
+- \textbf{Transformers}: 4.56.2
+- \textbf{Audio Processing Libraries}:
+- \texttt{torchaudio} 2.5.1 (audio I/O and preprocessing)
+- \texttt{soundfile} 0.13.1 (WAV file handling)
+- \texttt{librosa} 0.11.0 (audio feature extraction)
+- \textbf{Evaluation Libraries}:
+- \texttt{jiwer} 4.0.0 (Word Error Rate and Character Error Rate computation)
+- \texttt{datasets} 4.4.1 (data loading and management)
+
+\textbf{Rationale}: CPU evaluation represents a cost-effective, widely accessible deployment scenario suitable for edge devices, batch processing, and environments without GPU resources. While slower than GPU, CPU evaluation provides realistic performance metrics for resource-constrained deployments.
+
+\textbf{Reproducibility}: The complete environment specification is maintained in a Conda environment file, ensuring full reproducibility of results. All dependencies are version-pinned to prevent compatibility issues.
+
+\textbf{Conda Environment}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{conda}\NormalTok{ create }\AttributeTok{{-}n}\NormalTok{ asr{-}env python=3.10}
+\ExtensionTok{conda}\NormalTok{ activate asr{-}env}
+\ExtensionTok{pip}\NormalTok{ install faster{-}whisper transformers torch librosa soundfile numpy pandas matplotlib seaborn}
+\end{Highlighting}
+\end{Shaded}
+
+\paragraph{3.1.2 GPU Evaluation Attempts (Unsuccessful)}\label{gpu-evaluation-attempts-unsuccessful}
+
+\textbf{Issue Encountered}: Initial attempts to run evaluation on GPU hardware (NVIDIA RTX A6000) failed due to cuDNN compatibility issues between PyTorch 2.5.1, CUDA 12.1, and the Transformers library.
+
+\textbf{Error Details}:
+- cuDNN version mismatch errors when loading Whisper models
+- Incompatibility between faster-whisper and GPU backend
+- Time constraints prevented resolution of these technical issues
+
+\textbf{Decision}: Proceed with CPU-only evaluation to meet thesis deadline. This limitation is acknowledged in the Introduction (Section 1.4) and Discussion (Section 5.3).
+
+\textbf{Impact}: CPU evaluation provides valid comparative results (model size scaling, LID accuracy, mode comparison) but with higher absolute processing times than GPU would achieve. Real-time capability (RTF \textless{} 1.0) assessment is limited to CPU performance.
+
+\textbf{Future Work}: GPU evaluation with resolved dependencies would provide complementary speedup measurements and enable real-time performance analysis.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Supporting Data}\label{supporting-data}
+
+\textbf{Verification Commands}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Verify Python environment}
+\ExtensionTok{python} \AttributeTok{{-}{-}version}  \CommentTok{\# 3.10.18}
+
+\CommentTok{\# Verify PyTorch}
+\ExtensionTok{python} \AttributeTok{{-}c} \StringTok{"import torch; print(f\textquotesingle{}PyTorch: \{torch.\_\_version\_\_\}\textquotesingle{})"}  \CommentTok{\# 2.5.1}
+
+\CommentTok{\# Verify key libraries}
+\ExtensionTok{python} \AttributeTok{{-}c} \StringTok{"import transformers; print(f\textquotesingle{}Transformers: \{transformers.\_\_version\_\_\}\textquotesingle{})"}  \CommentTok{\# 4.56.2}
+\ExtensionTok{python} \AttributeTok{{-}c} \StringTok{"import whisper; print(\textquotesingle{}Whisper available\textquotesingle{})"}
+
+\CommentTok{\# List conda environment}
+\ExtensionTok{conda}\NormalTok{ list}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{3.1.3 Acknowledgments}\label{acknowledgments}
+
+\textbf{Computational Resources}: Server access provided by the Department of Telecommunications and Media Informatics, Budapest University of Technology and Economics.
+
+\textbf{Supervisor}: Dr.~Mihajlik Péter provided guidance on experimental design and access to evaluation infrastructure.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{End of Section 3.1: Computational Resources}
+\# Methods: ASR Systems Evaluated
+
+\subsection{For Thesis}\label{for-thesis-1}
+
+\subsubsection{3.2 Automatic Speech Recognition Systems}\label{automatic-speech-recognition-systems}
+
+This study evaluates two contrasting approaches to multilingual ASR: (1) a unified multilingual model (Whisper) that handles all languages with a single system, and (2) language-specific specialized models (Wav2Vec2-XLSR-53) that are fine-tuned for individual languages. This comparison enables analysis of the trade-offs between multilingual convenience and language-specific optimization.
+
+\paragraph{3.2.1 OpenAI Whisper}\label{openai-whisper}
+
+\textbf{Architecture}: Transformer-based encoder-decoder (sequence-to-sequence)
+
+\textbf{Description}: Whisper {[}Radford et al., 2022{]} is a supervised multilingual ASR system trained on 680,000 hours of labeled audio data. The model employs an encoder-decoder architecture with cross-attention mechanisms, enabling robust performance across diverse acoustic conditions and languages.
+
+\textbf{Key Characteristics}:
+- \textbf{Training Paradigm}: Supervised learning on weakly-supervised internet audio
+- \textbf{Multilingual Support}: 99 languages including the target languages (MN, HU, FR, ES)
+- \textbf{Built-in Language Identification}: Integrated LID as part of the inference pipeline
+- \textbf{Decoding}: Autoregressive beam search with language modeling
+
+\textbf{Model Variants Evaluated}:
+
+To assess the impact of model capacity on both accuracy and computational requirements, three Whisper variants were evaluated:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1591}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2045}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1591}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2273}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Parameters
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Layers
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Width
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Use Case
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Whisper-tiny & 39M & 4 encoder + 4 decoder & 384 & Resource-constrained devices \\
+Whisper-base & 74M & 6 encoder + 6 decoder & 512 & Balanced performance \\
+Whisper-small & 244M & 12 encoder + 12 decoder & 768 & Primary evaluation model \\
+\end{longtable}
+}
+
+\begin{itemize}
+\item
+  \textbf{Whisper-tiny}: Serves as a baseline for minimal-resource scenarios. Despite its small size, it demonstrates surprisingly robust performance on high-resource languages.
+\item
+  \textbf{Whisper-base}: Represents a middle ground between efficiency and accuracy, suitable for edge deployment scenarios.
+\item
+  \textbf{Whisper-small}: Primary evaluation model, offering strong multilingual performance while remaining computationally feasible for CPU evaluation.
+\end{itemize}
+
+\textbf{Rationale for Model Selection}: Larger variants (medium, large) were excluded due to CPU inference time constraints exceeding practical thresholds (\textgreater5× real-time). The selected range (39M-244M parameters) spans a practical deployment spectrum from embedded systems to server-based applications.
+
+\textbf{Implementation}: \texttt{faster-whisper} Python library (CTranslate2 backend) with custom evaluation wrappers (\texttt{scripts/run\_whisper.py}) for standardized inference and metrics collection.
+
+\textbf{Language Identification}: Whisper's built-in LID analyzes the first 30 seconds of audio using the encoder's internal representations. The model outputs probability distributions over all supported languages, from which we extract:
+- Predicted language (argmax)
+- Confidence score (probability of predicted language)
+- Full distribution for confusion analysis
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{3.2.2 Wav2Vec2-XLSR-53 (Language-Specific Models)}\label{wav2vec2-xlsr-53-language-specific-models}
+
+\textbf{Architecture}: Convolutional encoder + Transformer layers with CTC (Connectionist Temporal Classification) decoder
+
+\textbf{Description}: Wav2Vec2-XLS-R {[}Babu et al., 2021{]} is a cross-lingual speech representation model trained via self-supervised learning on 436,000 hours of unlabeled multilingual speech across 128 languages. Unlike Whisper's unified multilingual approach, the XLSR-53 checkpoint serves as a foundation that is then fine-tuned for specific languages, resulting in specialized single-language models.
+
+\textbf{Key Characteristics}:
+- \textbf{Training Paradigm}: Self-supervised pre-training (masked prediction) + supervised fine-tuning per language
+- \textbf{Architecture}: Non-autoregressive CTC decoding (parallel processing, faster inference)
+- \textbf{Language Coverage}: Separate fine-tuned models per language (not a single multilingual model)
+- \textbf{No Built-in LID}: Language must be known a priori (matches language-hinted evaluation mode)
+
+\textbf{Language-Specific Models Evaluated}:
+
+Due to availability constraints, only high-resource languages with reliable fine-tuned models were included:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2174}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2174}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2391}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3261}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Language
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Model ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Parameters
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Training Data
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Spanish (ES) & \texttt{facebook/wav2vec2-large-xlsr-53-spanish} & 317M & Spanish Common Voice \\
+French (FR) & \texttt{facebook/wav2vec2-large-xlsr-53-french} & 317M & French Common Voice \\
+\end{longtable}
+}
+
+\textbf{Note on Language Coverage}:
+- Hungarian and Mongolian: No reliable fine-tuned models available on HuggingFace
+- These languages are evaluated using Whisper only
+- This limitation itself provides insight: multilingual models (Whisper) offer broader language coverage than relying on language-specific fine-tuning availability
+
+\textbf{Rationale for Language-Specific Approach}:
+Fine-tuning on language-specific data can yield higher accuracy for that language by specializing phoneme representations, word-piece vocabularies, and decoding strategies. However, this comes at the cost of:
+1. \textbf{Deployment complexity}: Must deploy separate models for each language
+2. \textbf{Resource requirements}: \textasciitilde1.2GB per language model vs.~250MB for multilingual Whisper-small
+3. \textbf{Coverage gaps}: Only languages with available fine-tuned models supported
+
+\textbf{Implementation}: HuggingFace \texttt{transformers} library with custom evaluation wrapper (\texttt{scripts/run\_wav2vec2.py}) matching the interface of \texttt{run\_whisper.py} for fair comparison.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{3.2.3 Inference Modes}\label{inference-modes}
+
+Two inference modes were evaluated to assess the impact of language information on transcription quality and efficiency:
+
+\paragraph{A. Language-Hinted Mode (Oracle Scenario)}\label{a.-language-hinted-mode-oracle-scenario}
+
+In this mode, the correct target language is explicitly provided to the ASR system before inference. This represents an ``oracle'' scenario where perfect language identification is assumed.
+
+\textbf{Implementation}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{result }\OperatorTok{=}\NormalTok{ model.transcribe(}
+\NormalTok{    audio\_path,}
+\NormalTok{    language}\OperatorTok{=}\StringTok{"es"}\NormalTok{,  }\CommentTok{\# Explicitly specified}
+\NormalTok{    task}\OperatorTok{=}\StringTok{"transcribe"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Use Case}: Applications where language context is known a priori (e.g., call center routing, language-specific services).
+
+\textbf{Advantage}: Eliminates language identification errors, providing an upper bound on system performance.
+
+\paragraph{B. LID→ASR Mode (Automatic Language Detection)}\label{b.-lidasr-mode-automatic-language-detection}
+
+In this mode, the system first performs language identification on the audio, then uses the detected language for transcription.
+
+\textbf{Implementation}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Step 1: Language detection}
+\NormalTok{detected\_lang, confidence }\OperatorTok{=}\NormalTok{ model.detect\_language(audio\_path)}
+
+\CommentTok{\# Step 2: Transcription with detected language}
+\ControlFlowTok{if}\NormalTok{ confidence }\OperatorTok{\textgreater{}=}\NormalTok{ threshold:}
+\NormalTok{    result }\OperatorTok{=}\NormalTok{ model.transcribe(audio\_path, language}\OperatorTok{=}\NormalTok{detected\_lang)}
+\ControlFlowTok{else}\NormalTok{:}
+    \CommentTok{\# Fallback to multilingual mode}
+\NormalTok{    result }\OperatorTok{=}\NormalTok{ model.transcribe(audio\_path, language}\OperatorTok{=}\VariableTok{None}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Use Case}: Real-world scenarios where language is unknown (e.g., multilingual customer support, media transcription).
+
+\textbf{Challenge}: LID errors can cascade into transcription errors, potentially degrading overall system performance.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsubsection{3.2.4 Evaluation Scope}\label{evaluation-scope}
+
+\textbf{Primary Comparisons}:
+1. \textbf{System Architectures}: Whisper (multilingual) vs.~Wav2Vec2 (language-specific) on ES/FR
+2. \textbf{Model Scaling}: Impact of model size (tiny → base → small) on Whisper performance
+3. \textbf{Hardware Configurations}: CPU vs.~GPU deployment scenarios
+4. \textbf{Inference Modes}: Oracle (hinted) vs.~automatic (LID→ASR) for Whisper
+5. \textbf{Language Diversity}: High-resource (ES, FR) vs.~medium-resource (HU) vs.~low-resource (MN)
+
+\textbf{Comparison Matrix}:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Language & Whisper (tiny/base/small) & Wav2Vec2 (specialized) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Spanish (ES) & ✓ All 3 sizes & ✓ Language-specific model \\
+French (FR) & ✓ All 3 sizes & ✓ Language-specific model \\
+Hungarian (HU) & ✓ All 3 sizes & ✗ No model available \\
+Mongolian (MN) & ✓ All 3 sizes & ✗ No model available \\
+\end{longtable}
+}
+
+\textbf{Research Questions Addressed}:
+1. \textbf{Multilingual vs.~Specialized}: Do language-specific models (Wav2Vec2-ES/FR) outperform a unified multilingual model (Whisper) on accuracy for high-resource languages?
+2. \textbf{Model Scaling}: How does Whisper's accuracy and speed scale with model size (39M → 74M → 244M parameters)?
+3. \textbf{Deployment Trade-offs}: What are the practical implications (memory, latency, coverage) of choosing multilingual vs.~language-specific approaches?
+4. \textbf{Resource Level}: How does Whisper's multilingual approach handle varying language resource levels (high/medium/low)?
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Supporting Data}\label{supporting-data-1}
+
+\textbf{References}:
+- Whisper paper: Radford et al.~(2022) ``Robust Speech Recognition via Large-Scale Weak Supervision''
+- Wav2Vec2-XLS-R paper: Babu et al.~(2021) ``XLS-R: Self-supervised Cross-lingual Speech Representation Learning at Scale''
+- Model cards:
+- https://github.com/openai/whisper
+- https://huggingface.co/facebook/wav2vec2-large-xlsr-53-spanish
+- https://huggingface.co/facebook/wav2vec2-large-xlsr-53-french
+
+\textbf{Code}:
+- \texttt{scripts/run\_whisper.py} - Whisper evaluation wrapper
+- \texttt{scripts/run\_wav2vec2.py} - Wav2Vec2 evaluation wrapper
+- \texttt{scripts/lid\_from\_whisper.py} - Language identification using Whisper
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Key Points}\label{key-points}
+
+✅ \textbf{Two contrasting approaches}: Multilingual (Whisper) vs.~Language-specific (Wav2Vec2)\\
+✅ \textbf{Different architectures}: Encoder-decoder (seq2seq) vs.~Encoder-CTC\\
+✅ \textbf{Contrasting training}: Supervised (680K hrs) vs.~self-supervised + fine-tuned (436K hrs)\\
+✅ \textbf{Speed-accuracy trade-off}: Autoregressive vs.~parallel decoding\\
+✅ \textbf{LID handling}: Built-in (Whisper) vs.~not needed (Wav2Vec2 is language-specific)\\
+✅ \textbf{Coverage vs.~specialization}: 4 languages (Whisper) vs.~2 languages (Wav2Vec2)\\
+✅ \textbf{Deployment complexity}: 1 model (Whisper) vs.~N models (Wav2Vec2)
+
+\textbf{This comparison addresses the core thesis requirement of evaluating different multilingual ASR approaches!}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Notes for Writing}\label{notes-for-writing}
+
+\begin{itemize}
+\tightlist
+\item
+  Emphasize the \textbf{multilingual strategy comparison}: unified vs.~specialized
+\item
+  This is more interesting than just ``two popular models'' - it's a fundamental design choice
+\item
+  The limitation (only ES/FR for Wav2Vec2) actually strengthens the multilingual argument
+\item
+  Cite original papers properly
+\item
+  Link to implementation details in appendix
+\item
+  Keep descriptions concise but complete
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{TODO}\label{todo}
+
+\begin{itemize}
+\tightlist
+\item[$\boxtimes$]
+  Specify which Wav2Vec2 models used (language-specific ES/FR)
+\item[$\boxtimes$]
+  Clarify language coverage (Whisper: 4 langs, Wav2Vec2: 2 langs)
+\item[$\square$]
+  Add proper citations to bibliography
+\item[$\square$]
+  Add model download links to appendix
+\item[$\square$]
+  Include model sizes in MB for deployment discussion
+  \# Methods: Evaluation Metrics
+\end{itemize}
+
+\subsection{For Thesis}\label{for-thesis-2}
+
+\subsubsection{3.4 Evaluation Metrics}\label{evaluation-metrics}
+
+System performance was assessed using both accuracy metrics (transcription quality) and efficiency metrics (computational resource usage), providing a comprehensive view of deployment trade-offs.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{3.4.1 Accuracy Metrics}\label{accuracy-metrics}
+
+\subparagraph{Word Error Rate (WER)}\label{word-error-rate-wer}
+
+Word Error Rate (WER) is the primary metric for ASR evaluation, measuring the edit distance between the hypothesis (system output) and reference (ground truth) transcriptions at the word level.
+
+\textbf{Definition}:
+
+\[\text{WER} = \frac{S + D + I}{N} \times 100\%\]
+
+where:
+- \(S\) = number of substitutions (words replaced)
+- \(D\) = number of deletions (words omitted)
+- \(I\) = number of insertions (extra words added)
+- \(N\) = total number of words in reference
+
+\textbf{Interpretation}:
+- WER = 0\%: Perfect transcription
+- WER = 100\%: Complete mismatch
+- WER \textgreater{} 100\%: Possible when insertions exceed reference length
+
+\textbf{Implementation}: Computed using the \texttt{jiwer} library (Levenshtein distance algorithm) with default normalization (lowercasing, punctuation removal).
+
+\textbf{Rationale}: WER is the de facto standard for ASR evaluation, enabling direct comparison with prior work. However, it can be sensitive to inconsequential variations (e.g., ``don't'' vs.~``do not''), potentially overstating errors.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subparagraph{Character Error Rate (CER)}\label{character-error-rate-cer}
+
+Character Error Rate (CER) measures edit distance at the character level, providing finer-grained error analysis.
+
+\textbf{Definition}:
+
+\[\text{CER} = \frac{S_c + D_c + I_c}{N_c} \times 100\%\]
+
+where subscript \(c\) denotes character-level operations.
+
+\textbf{Advantages over WER}:
+1. \textbf{Morphologically rich languages}: Better suited for languages like Hungarian with complex word formation
+2. \textbf{Partial credit}: Recognizes partially correct words (e.g., ``recognize'' → ``reconize'' has low CER, high WER)
+3. \textbf{Language-agnostic}: No word tokenization required (important for Mongolian)
+
+\textbf{Complementary use}: CER and WER together provide nuanced error characterization. High WER with low CER suggests word boundary/morphology issues; high CER indicates phonetic confusions.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{3.4.2 Language Identification Accuracy}\label{language-identification-accuracy}
+
+For the LID→ASR mode, language identification accuracy directly impacts overall system performance.
+
+\textbf{Definition}:
+
+\[\text{LID Accuracy} = \frac{\text{Correctly identified samples}}{\text{Total samples}} \times 100\%\]
+
+\textbf{Confusion Matrix}: We additionally report language confusion matrices to identify systematic misclassifications (e.g., Hungarian ↔ Finnish due to phonological similarity).
+
+\textbf{Confidence Scores}: Whisper's LID module outputs probability distributions over languages. We analyze:
+- Mean confidence for correct predictions
+- Mean confidence for incorrect predictions
+- Confidence threshold selection for fallback strategies
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{3.4.3 Efficiency Metrics}\label{efficiency-metrics}
+
+\subparagraph{Real-Time Factor (RTF)}\label{real-time-factor-rtf}
+
+Real-Time Factor (RTF) measures inference speed relative to audio duration.
+
+\textbf{Definition}:
+
+\[\text{RTF} = \frac{T_{\text{processing}}}{T_{\text{audio}}}\]
+
+where:
+- \(T_{\text{processing}}\) = wall-clock time for transcription
+- \(T_{\text{audio}}\) = duration of input audio
+
+\textbf{Interpretation}:
+- RTF \textless{} 1.0: Faster than real-time (e.g., RTF = 0.5 → 10s audio processed in 5s)
+- RTF = 1.0: Real-time processing
+- RTF \textgreater{} 1.0: Slower than real-time (batch-only scenarios)
+
+\textbf{Threshold for Real-Time Applications}: RTF ≤ 1.0 is required for streaming/live transcription. We report percentage of samples meeting this threshold per configuration.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subparagraph{Absolute Latency}\label{absolute-latency}
+
+While RTF is scale-invariant, absolute latency matters for user experience.
+
+\textbf{Metrics}:
+- \textbf{Mean latency}: Average processing time across samples
+- \textbf{95th percentile}: Tail latency for worst-case planning
+- \textbf{Throughput}: Samples processed per second (batch scenarios)
+
+\textbf{Measurement}: Wall-clock time captured using Python's \texttt{time.perf\_counter()} with microsecond precision.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subparagraph{Resource Utilization}\label{resource-utilization}
+
+\textbf{CPU Metrics} (via \texttt{psutil}):
+- \textbf{CPU percentage}: Core utilization during inference
+- \textbf{RSS (Resident Set Size)}: Memory consumption in MB
+- \textbf{Peak memory}: Maximum memory usage per sample
+
+\textbf{GPU Metrics} (via \texttt{pynvml}):
+- \textbf{VRAM usage}: GPU memory consumption in MB
+- \textbf{GPU utilization}: Compute utilization percentage
+- \textbf{CUDA kernel time}: GPU-specific processing time
+
+\textbf{Rationale}: Resource metrics inform deployment cost estimation:
+- \textbf{Cloud deployment}: CPU/GPU-hour costs
+- \textbf{Edge deployment}: Memory footprint for device selection
+- \textbf{Sustainability}: Energy consumption proxy via utilization
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{3.4.4 Statistical Significance}\label{statistical-significance}
+
+Given the relatively small dataset size (necessity for a BSc thesis timeframe), we report:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Descriptive statistics}: Mean, standard deviation, min/max for all metrics
+\item
+  \textbf{Effect sizes}: Cohen's d for comparing model sizes and hardware configurations
+\item
+  \textbf{Confidence intervals}: 95\% CI for mean WER/CER where applicable
+\end{enumerate}
+
+\textbf{Note on significance testing}: Formal hypothesis testing (e.g., paired t-tests) is presented where sample sizes permit, but emphasis is placed on practical significance (e.g., 5\% WER difference) over purely statistical significance.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Supporting Data}\label{supporting-data-2}
+
+\textbf{Metric Computation Scripts}:
+- \texttt{scripts/eval\_metrics.py}: WER/CER computation
+- \texttt{scripts/measure\_perf.py}: Latency and resource profiling
+- \texttt{scripts/lid\_from\_whisper.py}: LID accuracy evaluation
+
+\textbf{Libraries}:
+- \texttt{jiwer==4.0.0}: WER/CER computation (edit distance)
+- \texttt{psutil}: CPU/memory monitoring
+- \texttt{pynvml}: GPU monitoring (CUDA environments)
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Key Points}\label{key-points-1}
+
+✅ \textbf{Comprehensive}: Both accuracy (WER, CER, LID) and efficiency (RTF, latency, resources)\\
+✅ \textbf{Standard metrics}: WER enables comparison with prior work\\
+✅ \textbf{Practical focus}: RTF and resource usage inform deployment decisions\\
+✅ \textbf{Rigorous}: Statistical measures acknowledge dataset limitations\\
+✅ \textbf{Reproducible}: All metric computation scripts provided
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Notes for Writing}\label{notes-for-writing-1}
+
+\begin{itemize}
+\tightlist
+\item
+  Include example calculations in an appendix (e.g., WER for one sample)
+\item
+  Cross-reference with Results chapter (e.g., ``WER results in Section 4.2'')
+\item
+  Cite foundational papers for WER/CER (e.g., NIST evaluation standards)
+\item
+  Mention any metric normalization choices (e.g., case, punctuation)
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{TODO}\label{todo-1}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Add citation for WER/CER definitions
+\item[$\square$]
+  Add citation for RTF metric
+\item[$\square$]
+  Verify formula rendering in final LaTeX
+\item[$\square$]
+  Add example calculation to appendix
+\end{itemize}

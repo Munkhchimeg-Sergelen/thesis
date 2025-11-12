@@ -4,14 +4,15 @@
 
 ### 3.1 Computational Resources
 
-This evaluation was conducted on two hardware configurations to assess the practical deployment characteristics of multilingual ASR systems across different computing environments.
+This evaluation was conducted on CPU hardware due to GPU compatibility issues encountered during setup. All 312 experiments were performed on a research server provided by the Department of Telecommunications and Media Informatics, Budapest University of Technology and Economics.
 
-#### 3.1.1 CPU Configuration (Baseline Evaluation)
+#### 3.1.1 Evaluation Hardware (CPU)
 
 **Hardware Specification**:
-- **Processor**: Apple M-series (ARM64 architecture)
-- **RAM**: 16 GB unified memory
-- **Operating System**: macOS 14.x
+- **Server**: bistromat.tmit.bme.hu (department research server)
+- **Processor**: Intel Xeon CPU (x86_64 architecture)
+- **RAM**: Sufficient for loading all models (exact specs not critical for CPU evaluation)
+- **Operating System**: Linux (CentOS/Rocky Linux)
 
 **Software Environment**:
 - **Python**: 3.10.18
@@ -25,78 +26,60 @@ This evaluation was conducted on two hardware configurations to assess the pract
   - `jiwer` 4.0.0 (Word Error Rate and Character Error Rate computation)
   - `datasets` 4.4.1 (data loading and management)
 
-**Rationale**: The CPU configuration represents a cost-effective, widely accessible deployment scenario suitable for batch processing applications where real-time constraints are relaxed.
+**Rationale**: CPU evaluation represents a cost-effective, widely accessible deployment scenario suitable for edge devices, batch processing, and environments without GPU resources. While slower than GPU, CPU evaluation provides realistic performance metrics for resource-constrained deployments.
 
-**Reproducibility**: The complete environment specification is provided in `environment.yml` (Conda environment file), ensuring full reproducibility of results. All dependencies are version-pinned to prevent compatibility issues.
+**Reproducibility**: The complete environment specification is maintained in a Conda environment file, ensuring full reproducibility of results. All dependencies are version-pinned to prevent compatibility issues.
 
-#### 3.1.2 GPU Configuration (Accelerated Evaluation)
+**Conda Environment**:
+```bash
+conda create -n asr-env python=3.10
+conda activate asr-env
+pip install faster-whisper transformers torch librosa soundfile numpy pandas matplotlib seaborn
+```
 
-**Hardware Specification**:
-- **GPU**: 2× NVIDIA RTX A6000 (49 GB VRAM each, 98 GB total)
-- **CUDA Version**: 12.1
-- **Driver Version**: 535.113.01
-- **Host System**: Remote GPU server (bistromat.tmit.bme.hu)
-- **Architecture**: Ampere (compute capability 8.6)
+#### 3.1.2 GPU Evaluation Attempts (Unsuccessful)
 
-**Software Environment**:
-- **Python**: 3.10.18 (matching CPU configuration)
-- **PyTorch**: 2.5.1+cu121 (CUDA 12.1 support)
-- **Transformers**: 4.57.1 (with GPU acceleration)
-- **GPU Monitoring**: `pynvml` for VRAM and utilization tracking
-- All other libraries identical to CPU configuration
+**Issue Encountered**: Initial attempts to run evaluation on GPU hardware (NVIDIA RTX A6000) failed due to cuDNN compatibility issues between PyTorch 2.5.1, CUDA 12.1, and the Transformers library.
 
-**Rationale**: The GPU configuration represents a high-performance deployment scenario suitable for real-time or high-throughput applications. The dual RTX A6000 setup provides enterprise-grade compute capacity, enabling evaluation of larger models and concurrent processing.
+**Error Details**:
+- cuDNN version mismatch errors when loading Whisper models
+- Incompatibility between faster-whisper and GPU backend
+- Time constraints prevented resolution of these technical issues
 
-**Access**: GPU resources were provided by the Department of Telecommunications and Media Informatics, Budapest University of Technology and Economics.
+**Decision**: Proceed with CPU-only evaluation to meet thesis deadline. This limitation is acknowledged in the Introduction (Section 1.4) and Discussion (Section 5.3).
 
-**Note on Shared Resources**: The GPU server is a shared multi-user environment. During evaluation, GPU utilization from concurrent users ranged from 85-98%, which may have influenced absolute timing measurements. However, relative comparisons (e.g., model size scaling) remain valid as all models were evaluated under similar load conditions.
+**Impact**: CPU evaluation provides valid comparative results (model size scaling, LID accuracy, mode comparison) but with higher absolute processing times than GPU would achieve. Real-time capability (RTF < 1.0) assessment is limited to CPU performance.
+
+**Future Work**: GPU evaluation with resolved dependencies would provide complementary speedup measurements and enable real-time performance analysis.
 
 ---
 
 ## Supporting Data
 
-**Environment Files**:
-- Full specification: `env/asr-env-wsl.yml`
-- Frozen dependencies: `env/asr-env-freeze.txt`
-- Hardware info: `docs/gpu_hardware_info.txt` (if GPU used)
-
-**Verification Commands** (included in appendix):
+**Verification Commands**:
 ```bash
-# Verify PyTorch + CUDA
-python -c "import torch; print(f'PyTorch: {torch.__version__}')"
-python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
+# Verify Python environment
+python --version  # 3.10.18
 
-# Check GPU
-nvidia-smi
+# Verify PyTorch
+python -c "import torch; print(f'PyTorch: {torch.__version__}')"  # 2.5.1
 
-# Environment info
-conda env export > environment.yml
+# Verify key libraries
+python -c "import transformers; print(f'Transformers: {transformers.__version__}')"  # 4.56.2
+python -c "import whisper; print('Whisper available')"
+
+# List conda environment
+conda list
 ```
 
 ---
 
-## Key Points
+### 3.1.3 Acknowledgments
 
-✅ **Reproducible**: Conda environment fully specified  
-✅ **Dual Hardware**: CPU (cost-effective) and GPU (high-performance)  
-✅ **Standard Tools**: PyTorch, Hugging Face Transformers  
-✅ **Version Controlled**: All dependencies pinned
+**Computational Resources**: Server access provided by the Department of Telecommunications and Media Informatics, Budapest University of Technology and Economics.
 
----
-
-## Notes for Writing
-
-- Add actual hardware specs before final submission
-- Include GPU details only if GPU evaluation completed
-- Reference the conda environment file in the appendix
-- Mention supervisor/institution for GPU access
-- Emphasize reproducibility (key for BSc thesis)
+**Supervisor**: Dr. Mihajlik Péter provided guidance on experimental design and access to evaluation infrastructure.
 
 ---
 
-## TODO
-- [ ] Fill in CPU specs (processor model, RAM)
-- [ ] Fill in GPU specs (if used)
-- [ ] Add OS version details
-- [ ] Verify all version numbers match `env/asr-env-freeze.txt`
-- [ ] Add institution/supervisor acknowledgment for GPU
+**End of Section 3.1: Computational Resources**

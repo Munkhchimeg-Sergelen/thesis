@@ -33,11 +33,26 @@ def load_data():
     return df
 
 def plot_whisper_model_rtf(df, output_dir):
-    """Plot RTF by Whisper model size"""
+    """Plot processing time by Whisper model size"""
     whisper_df = df[df['system'] == 'whisper'].copy()
     
     if whisper_df.empty or 'model_size' not in whisper_df.columns:
-        print("Skipping Whisper model RTF plot (no data)")
+        print("Skipping Whisper model plot (no data)")
+        return
+    
+    # Determine which metric to use
+    if 'rtf' in whisper_df.columns:
+        y_col = 'rtf'
+        y_label = 'Real-Time Factor (RTF)'
+        title = 'Whisper Model Size vs. RTF'
+        add_threshold = True
+    elif 'processing_time_sec' in whisper_df.columns:
+        y_col = 'processing_time_sec'
+        y_label = 'Processing Time (seconds)'
+        title = 'Whisper Model Size vs. Processing Time'
+        add_threshold = False
+    else:
+        print("Skipping Whisper model plot (no metrics available)")
         return
     
     plt.figure(figsize=(10, 6))
@@ -50,20 +65,22 @@ def plot_whisper_model_rtf(df, output_dir):
         ordered=True
     )
     
-    sns.barplot(data=whisper_df, x='model_size', y='rtf', hue='language_used', ci='sd')
+    sns.barplot(data=whisper_df, x='model_size', y=y_col, hue='language_used', errorbar='sd')
     
-    plt.axhline(y=1.0, color='red', linestyle='--', linewidth=2, label='Real-time threshold')
+    if add_threshold:
+        plt.axhline(y=1.0, color='red', linestyle='--', linewidth=2, label='Real-time threshold')
+    
     plt.xlabel('Whisper Model Size')
-    plt.ylabel('Real-Time Factor (RTF)')
-    plt.title('Whisper Model Size vs. Inference Speed')
+    plt.ylabel(y_label)
+    plt.title(title)
     plt.legend(title='Language', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
     
-    plt.savefig(output_dir / 'whisper_model_rtf.png', dpi=300, bbox_inches='tight')
-    plt.savefig(output_dir / 'whisper_model_rtf.pdf', bbox_inches='tight')
+    plt.savefig(output_dir / 'whisper_model_comparison.png', dpi=300, bbox_inches='tight')
+    plt.savefig(output_dir / 'whisper_model_comparison.pdf', bbox_inches='tight')
     plt.close()
     
-    print("✓ Created: whisper_model_rtf.png/pdf")
+    print("✓ Created: whisper_model_comparison.png/pdf")
 
 def plot_system_comparison(df, output_dir):
     """Plot Whisper vs Wav2Vec2 on ES and FR"""
@@ -76,17 +93,16 @@ def plot_system_comparison(df, output_dir):
         (df_comp['system'] == 'wav2vec2')
     ].copy()
     
-    if df_comp.empty:
+    if df_comp.empty or 'processing_time_sec' not in df_comp.columns:
         print("Skipping system comparison plot (no data)")
         return
     
     plt.figure(figsize=(8, 6))
     
-    sns.barplot(data=df_comp, x='language_used', y='rtf', hue='system', ci='sd')
+    sns.barplot(data=df_comp, x='language_used', y='processing_time_sec', hue='system', errorbar='sd')
     
-    plt.axhline(y=1.0, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
     plt.xlabel('Language')
-    plt.ylabel('Real-Time Factor (RTF)')
+    plt.ylabel('Processing Time (seconds)')
     plt.title('System Comparison: Whisper-small vs. Wav2Vec2-XLSR-53')
     plt.legend(title='System')
     plt.tight_layout()
@@ -104,7 +120,7 @@ def plot_language_comparison(df, output_dir):
         (df['model_size'] == 'small')
     ].copy()
     
-    if whisper_small.empty:
+    if whisper_small.empty or 'processing_time_sec' not in whisper_small.columns:
         print("Skipping language comparison plot (no data)")
         return
     
@@ -118,13 +134,11 @@ def plot_language_comparison(df, output_dir):
         ordered=True
     )
     
-    sns.barplot(data=whisper_small, x='language_used', y='rtf', ci='sd', color='steelblue')
+    sns.barplot(data=whisper_small, x='language_used', y='processing_time_sec', errorbar='sd', color='steelblue')
     
-    plt.axhline(y=1.0, color='red', linestyle='--', linewidth=1.5, label='Real-time threshold')
     plt.xlabel('Language')
-    plt.ylabel('Real-Time Factor (RTF)')
+    plt.ylabel('Processing Time (seconds)')
     plt.title('Whisper-small Performance by Language')
-    plt.legend()
     plt.tight_layout()
     
     plt.savefig(output_dir / 'language_comparison.png', dpi=300, bbox_inches='tight')
@@ -134,47 +148,10 @@ def plot_language_comparison(df, output_dir):
     print("✓ Created: language_comparison.png/pdf")
 
 def plot_speed_accuracy_tradeoff(df, output_dir):
-    """Plot speed vs accuracy trade-off (placeholder - needs WER data)"""
-    # This will be populated when WER results are available
-    whisper_df = df[df['system'] == 'whisper'].copy()
-    
-    if whisper_df.empty or 'model_size' not in whisper_df.columns:
-        print("Skipping speed-accuracy plot (no data)")
-        return
-    
-    # Group by model size
-    model_stats = whisper_df.groupby('model_size').agg({
-        'rtf': 'mean',
-        'processing_time_sec': 'mean'
-    }).reset_index()
-    
-    if model_stats.empty:
-        return
-    
-    plt.figure(figsize=(8, 6))
-    
-    model_order = ['tiny', 'base', 'small']
-    colors = {'tiny': 'green', 'base': 'orange', 'small': 'blue'}
-    
-    for _, row in model_stats.iterrows():
-        model = row['model_size']
-        if model in model_order:
-            plt.scatter(row['rtf'], row['processing_time_sec'], 
-                       s=200, label=f'Whisper-{model}',
-                       color=colors.get(model, 'gray'))
-    
-    plt.xlabel('Real-Time Factor (RTF) - Lower is Faster')
-    plt.ylabel('Processing Time (seconds)')
-    plt.title('Model Size Speed Trade-off')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    
-    plt.savefig(output_dir / 'speed_tradeoff.png', dpi=300, bbox_inches='tight')
-    plt.savefig(output_dir / 'speed_tradeoff.pdf', bbox_inches='tight')
-    plt.close()
-    
-    print("✓ Created: speed_tradeoff.png/pdf")
+    """Plot model size comparison (skipped - needs WER data for trade-off)"""
+    # Skip this plot - we don't have WER data to show accuracy trade-off
+    print("Skipping speed-accuracy tradeoff plot (needs WER data)")
+    return
 
 def plot_processing_time_distribution(df, output_dir):
     """Plot distribution of processing times"""

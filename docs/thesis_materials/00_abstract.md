@@ -6,8 +6,8 @@
 
 **Title**: Analysis of Multilingual Automatic Speech Recognition Approaches
 
-**Author**: [Your Name]  
-**Supervisor**: [Supervisor Name]  
+**Author**: Munkhchimeg Sergelen  
+**Supervisor**: Dr. Mihajlik Péter  
 **Institution**: Budapest University of Technology and Economics  
 **Department**: Department of Telecommunications and Media Informatics  
 **Date**: November 2025

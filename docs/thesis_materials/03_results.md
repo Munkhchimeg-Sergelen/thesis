@@ -287,22 +287,61 @@ Possible explanations for Mongolian's poor performance:
 
 ## 4.8 Figures and Tables
 
-*[Placeholder for figures - to be inserted]*
+This section presents the key figures and tables supporting the findings discussed above.
 
-**Figures to include**:
-- Figure 4.1: LID accuracy by language (bar chart)
-- Figure 4.2: Processing time comparison - LID vs Hinted (box plot)
-- Figure 4.3: Model size comparison (bar chart by language)
-- Figure 4.4: Language performance comparison (grouped bar chart)
-- Figure 4.5: Mongolian anomaly visualization (scatter plot showing outliers)
-- Figure 4.6: Whisper vs Wav2Vec2 system comparison
+### Figure 4.1: Whisper Model Size Comparison
 
-**Tables included**:
-- Table 4.1: Overall experimental setup summary
-- Table 4.2: LID accuracy by language
-- Table 4.3: Processing time by mode and model
-- Table 4.4: Language-specific performance metrics
-- Table 4.5: Mongolian performance analysis
+![Whisper Model Comparison](figures/whisper_model_comparison.png)
+
+**Figure 4.1**: Processing time comparison across Whisper model sizes (tiny, base, small) for all four languages. Error bars show standard deviation. Note the dramatic increase for Mongolian across all model sizes.
+
+---
+
+### Figure 4.2: System Comparison - Whisper vs Wav2Vec2
+
+![System Comparison](figures/system_comparison.png)
+
+**Figure 4.2**: Comparison of Whisper-small and Wav2Vec2-XLSR-53 systems across supported languages. Whisper provides broader language coverage with built-in LID capability.
+
+---
+
+### Figure 4.3: Language Performance Comparison
+
+![Language Comparison](figures/language_comparison.png)
+
+**Figure 4.3**: Whisper-small performance by language (LID→ASR mode). Mongolian exhibits significantly higher processing time and variance compared to Spanish, French, and Hungarian.
+
+---
+
+### Figure 4.4: Processing Time Distribution
+
+![Processing Time Distribution](figures/processing_time_dist.png)
+
+**Figure 4.4**: Distribution of processing times across all experiments, showing the spread and outliers. The long tail is dominated by Mongolian samples.
+
+---
+
+### Figure 4.5: Summary Statistics Table
+
+![Summary Table](figures/summary_table.png)
+
+**Figure 4.5**: Summary statistics table showing mean processing time and standard deviation for each model size and language combination.
+
+---
+
+### Tables Referenced in Text
+
+The following tables appear inline throughout this chapter:
+
+- **Table 4.1** (Section 4.1.1): Experimental setup summary
+- **Table 4.2** (Section 4.2.1): LID accuracy by language  
+- **Table 4.3** (Section 4.2.1): LID accuracy by model size
+- **Table 4.4** (Section 4.3.1): Processing time by mode comparison
+- **Table 4.5** (Section 4.4.1): Processing time by model size
+- **Table 4.6** (Section 4.4.2): Model performance by language
+- **Table 4.7** (Section 4.5.1): Processing time by language
+- **Table 4.8** (Section 4.5.3): Mongolian performance by model
+- **Table 4.9** (Section 4.6.1): System comparison summary
 
 ---
 

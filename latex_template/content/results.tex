@@ -414,10 +414,11 @@ This section presents the key figures and tables supporting the findings discuss
 
 \subsubsection{Figure 4.1: Whisper Model Size Comparison}\label{figure-4.1-whisper-model-size-comparison}
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Whisper Model Comparison}]{figures/whisper_model_comparison.png}}
-\caption{Whisper Model Comparison}
+\includegraphics[width=0.85\textwidth]{figures/whisper_model_comparison.pdf}
+\caption{Whisper Model Size Comparison. Processing time comparison across Whisper model sizes (tiny, base, small) for all four languages. Error bars show standard deviation. Note the dramatic increase for Mongolian across all model sizes.}
+\label{fig:whisper-model-comparison}
 \end{figure}
 
 \textbf{Figure 4.1}: Processing time comparison across Whisper model sizes (tiny, base, small) for all four languages. Error bars show standard deviation. Note the dramatic increase for Mongolian across all model sizes.
@@ -426,10 +427,11 @@ This section presents the key figures and tables supporting the findings discuss
 
 \subsubsection{Figure 4.2: System Comparison - Whisper vs Wav2Vec2}\label{figure-4.2-system-comparison---whisper-vs-wav2vec2}
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={System Comparison}]{figures/system_comparison.png}}
-\caption{System Comparison}
+\includegraphics[width=0.85\textwidth]{figures/system_comparison.pdf}
+\caption{System Comparison - Whisper vs Wav2Vec2. Comparison of Whisper-small and Wav2Vec2-XLSR-53 systems across supported languages. Whisper provides broader language coverage with built-in LID capability.}
+\label{fig:system-comparison}
 \end{figure}
 
 \textbf{Figure 4.2}: Comparison of Whisper-small and Wav2Vec2-XLSR-53 systems across supported languages. Whisper provides broader language coverage with built-in LID capability.
@@ -438,10 +440,11 @@ This section presents the key figures and tables supporting the findings discuss
 
 \subsubsection{Figure 4.3: Language Performance Comparison}\label{figure-4.3-language-performance-comparison}
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Language Comparison}]{figures/language_comparison.png}}
-\caption{Language Comparison}
+\includegraphics[width=0.85\textwidth]{figures/language_comparison.pdf}
+\caption{Language Performance Comparison. Whisper-small performance by language (LID→ASR mode). Mongolian exhibits significantly higher processing time and variance compared to Spanish, French, and Hungarian.}
+\label{fig:language-comparison}
 \end{figure}
 
 \textbf{Figure 4.3}: Whisper-small performance by language (LID→ASR mode). Mongolian exhibits significantly higher processing time and variance compared to Spanish, French, and Hungarian.
@@ -450,10 +453,11 @@ This section presents the key figures and tables supporting the findings discuss
 
 \subsubsection{Figure 4.4: Processing Time Distribution}\label{figure-4.4-processing-time-distribution}
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Processing Time Distribution}]{figures/processing_time_dist.png}}
-\caption{Processing Time Distribution}
+\includegraphics[width=0.85\textwidth]{figures/processing_time_dist.pdf}
+\caption{Processing Time Distribution. Distribution of processing times across all experiments, showing the spread and outliers. The long tail is dominated by Mongolian samples.}
+\label{fig:processing-time-dist}
 \end{figure}
 
 \textbf{Figure 4.4}: Distribution of processing times across all experiments, showing the spread and outliers. The long tail is dominated by Mongolian samples.
@@ -462,10 +466,11 @@ This section presents the key figures and tables supporting the findings discuss
 
 \subsubsection{Figure 4.5: Summary Statistics Table}\label{figure-4.5-summary-statistics-table}
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Summary Table}]{figures/summary_table.png}}
-\caption{Summary Table}
+\includegraphics[width=0.95\textwidth]{figures/summary_table.png}
+\caption{Summary Statistics Table. Summary statistics showing mean processing time and standard deviation for each model size and language combination.}
+\label{fig:summary-table}
 \end{figure}
 
 \textbf{Figure 4.5}: Summary statistics table showing mean processing time and standard deviation for each model size and language combination.

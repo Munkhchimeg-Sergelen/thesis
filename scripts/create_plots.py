@@ -192,13 +192,30 @@ def create_summary_table(df, output_dir):
     if whisper_df.empty or 'model_size' not in whisper_df.columns:
         return
     
-    # Compute summary statistics
-    summary = whisper_df.groupby(['model_size', 'language_used']).agg({
-        'rtf': ['mean', 'std'],
-        'duration_sec': 'count'
-    }).round(3)
+    # Build aggregation dict based on available columns
+    agg_dict = {}
+    col_labels = []
     
-    summary.columns = ['RTF Mean', 'RTF Std', 'Samples']
+    if 'processing_time_sec' in whisper_df.columns:
+        agg_dict['processing_time_sec'] = ['mean', 'std']
+        col_labels.extend(['Time Mean (s)', 'Time Std (s)'])
+    
+    # Always include count
+    count_col = 'processing_time_sec' if 'processing_time_sec' in whisper_df.columns else whisper_df.columns[0]
+    if count_col not in agg_dict:
+        agg_dict[count_col] = 'count'
+        col_labels.append('Samples')
+    else:
+        agg_dict[count_col].append('count')
+        col_labels.append('Samples')
+    
+    if not agg_dict:
+        return
+    
+    # Compute summary statistics
+    summary = whisper_df.groupby(['model_size', 'language_used']).agg(agg_dict).round(3)
+    
+    summary.columns = col_labels
     summary = summary.reset_index()
     
     # Create figure

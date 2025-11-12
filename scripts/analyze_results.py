@@ -36,13 +36,25 @@ def results_to_dataframe(results):
     df = pd.DataFrame(results)
     
     # Add derived columns
-    if 'model' in df.columns:
-        # Extract model name (tiny/base/small)
+    if 'system' in df.columns:
+        # Extract model size from system field (e.g., "whisper-small" -> "small")
+        df['model_size'] = df['system'].str.extract(r'whisper-(tiny|base|small)', expand=False)
+        # Normalize system names (whisper-small -> whisper)
+        df['system'] = df['system'].str.replace(r'whisper-(tiny|base|small)', 'whisper', regex=True)
+        df['system'] = df['system'].fillna('whisper')
+    elif 'model' in df.columns:
+        # Fallback: Extract model name (tiny/base/small) from model field
         df['model_size'] = df['model'].str.extract(r'(tiny|base|small)', expand=False)
     
-    if 'system' in df.columns:
-        # Normalize system names
-        df['system'] = df['system'].fillna('whisper')
+    # Compute RTF if not present (RTF = processing_time / duration)
+    if 'rtf' not in df.columns and 'elapsed_sec' in df.columns and 'duration_sec' in df.columns:
+        df['rtf'] = df['elapsed_sec'] / df['duration_sec']
+    elif 'rtf' not in df.columns and 'processing_time_sec' in df.columns and 'duration_sec' in df.columns:
+        df['rtf'] = df['processing_time_sec'] / df['duration_sec']
+    
+    # Rename elapsed_sec to processing_time_sec for consistency
+    if 'elapsed_sec' in df.columns and 'processing_time_sec' not in df.columns:
+        df['processing_time_sec'] = df['elapsed_sec']
     
     return df
 

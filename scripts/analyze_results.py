@@ -82,10 +82,17 @@ def compare_whisper_models(df):
     if whisper_df.empty or 'model_size' not in whisper_df.columns:
         return None
     
-    comparison = whisper_df.groupby(['model_size', 'language_used']).agg({
-        'rtf': ['mean', 'std'],
-        'processing_time_sec': ['mean', 'std']
-    }).round(4)
+    # Build aggregation dict based on available columns
+    agg_dict = {}
+    if 'rtf' in whisper_df.columns:
+        agg_dict['rtf'] = ['mean', 'std']
+    if 'processing_time_sec' in whisper_df.columns:
+        agg_dict['processing_time_sec'] = ['mean', 'std']
+    
+    if not agg_dict:
+        return None
+    
+    comparison = whisper_df.groupby(['model_size', 'language_used']).agg(agg_dict).round(4)
     
     return comparison
 
@@ -105,15 +112,19 @@ def compare_systems(df):
     ]
     wav2vec2 = df_common[df_common['system'] == 'wav2vec2']
     
+    # Build aggregation dict based on available columns
+    agg_dict = {}
+    if 'rtf' in df_common.columns:
+        agg_dict['rtf'] = 'mean'
+    if 'processing_time_sec' in df_common.columns:
+        agg_dict['processing_time_sec'] = 'mean'
+    
+    if not agg_dict or whisper_small.empty or wav2vec2.empty:
+        return None
+    
     comparison = pd.concat([
-        whisper_small.groupby('language_used').agg({
-            'rtf': 'mean',
-            'processing_time_sec': 'mean'
-        }).add_suffix('_whisper'),
-        wav2vec2.groupby('language_used').agg({
-            'rtf': 'mean',
-            'processing_time_sec': 'mean'
-        }).add_suffix('_wav2vec2')
+        whisper_small.groupby('language_used').agg(agg_dict).add_suffix('_whisper'),
+        wav2vec2.groupby('language_used').agg(agg_dict).add_suffix('_wav2vec2')
     ], axis=1).round(4)
     
     return comparison
@@ -125,10 +136,19 @@ def language_analysis(df):
     if whisper_df.empty:
         return None
     
-    lang_stats = whisper_df.groupby('language_used').agg({
-        'rtf': ['mean', 'std', 'min', 'max'],
-        'duration_sec': ['sum', 'count']
-    }).round(4)
+    # Build aggregation dict based on available columns
+    agg_dict = {}
+    if 'rtf' in whisper_df.columns:
+        agg_dict['rtf'] = ['mean', 'std', 'min', 'max']
+    if 'processing_time_sec' in whisper_df.columns:
+        agg_dict['processing_time_sec'] = ['mean', 'std', 'min', 'max']
+    if 'duration_sec' in whisper_df.columns:
+        agg_dict['duration_sec'] = ['sum', 'count']
+    
+    if not agg_dict:
+        return None
+    
+    lang_stats = whisper_df.groupby('language_used').agg(agg_dict).round(4)
     
     return lang_stats
 

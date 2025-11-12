@@ -65,7 +65,8 @@ text = "".join(s.text for s in segments)
 
 stem = os.path.splitext(os.path.basename(args.infile))[0]
 sysname = f"whisper-{args.model}"
-outbase = os.path.join(args.outdir, f"{args.mode}/whisper/{(language or 'unk')}")
+# Include model size in path to prevent overwriting
+outbase = os.path.join(args.outdir, f"{args.mode}/whisper-{args.model}/{(language or 'unk')}")
 os.makedirs(outbase, exist_ok=True)
 
 with open(os.path.join(outbase, f"{stem}.txt"), "w", encoding="utf-8") as f:

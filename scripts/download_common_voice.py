@@ -30,7 +30,7 @@ def slug(text, max_len=40):
     safe = re.sub(r'[^a-zA-Z0-9_-]+', '_', str(text))
     return safe[:max_len]
 
-def download_language(lang, cv_code, num_samples=15):
+def download_language(lang, cv_code, num_samples=1000):
     """Download samples for one language"""
     print(f"\n{'='*50}")
     print(f"Downloading {lang.upper()} ({cv_code})")
@@ -88,9 +88,9 @@ def main():
     print("=" * 50)
     print("Common Voice Downloader for Thesis")
     print("=" * 50)
-    print("\nThis will download ~15 audio samples per language")
+    print("\nThis will download ~1000 audio samples per language")
     print("Languages: Mongolian (MN), Hungarian (HU), French (FR), Spanish (ES)")
-    print("\nEstimated download: ~50-100 MB")
+    print("\nEstimated download: ~3-4 GB")
     print("\nNote: First run may take longer as datasets cache.")
     print("=" * 50)
     print("\nStarting download...")
@@ -100,7 +100,7 @@ def main():
     successful = 0
     
     for lang, cv_code in LANGS.items():
-        count = download_language(lang, cv_code, num_samples=15)
+        count = download_language(lang, cv_code, num_samples=1000)
         if count > 0:
             successful += 1
             total += count

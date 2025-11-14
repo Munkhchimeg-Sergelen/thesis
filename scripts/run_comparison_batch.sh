@@ -17,15 +17,14 @@ echo "Device: ${DEVICE}"
 echo "Output: ${OUTDIR}"
 echo
 
-# Check audio files
-WAV_COUNT=$(find data/wav -name "*.wav" 2>/dev/null | wc -l | tr -d ' ')
-echo "Found ${WAV_COUNT} audio files"
+# Check audio files (both WAV and MP3)
+AUDIO_COUNT=$(find data/wav \( -name "*.wav" -o -name "*.mp3" \) 2>/dev/null | wc -l | tr -d ' ')
+echo "Found ${AUDIO_COUNT} audio files"
 echo
 
-if [ "$WAV_COUNT" -lt 5 ]; then
-    echo "⚠️  WARNING: Only ${WAV_COUNT} files found."
+if [ "$AUDIO_COUNT" -lt 5 ]; then
+    echo "⚠️  WARNING: Only ${AUDIO_COUNT} files found."
     echo "   For meaningful comparison, download more audio data."
-    echo "   See: tomorrow_checklist.sh for instructions"
     echo
     read -p "Continue anyway? (y/n) " -n 1 -r
     echo

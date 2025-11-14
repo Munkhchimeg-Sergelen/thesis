@@ -26,7 +26,7 @@ def run_whisper(audio_path, mode, language=None, model="tiny", device="cpu"):
     if mode == "hinted" and language:
         cmd.extend(["--hint-lang", language])
     
-    print(f"[Whisper] Running: {' '.join(cmd)}", file=sys.stderr)
+    print(f"[Whisper] Running: {' '.join(str(c) for c in cmd)}", file=sys.stderr)
     start = time.time()
     result = subprocess.run(cmd, capture_output=True, text=True)
     elapsed = time.time() - start
@@ -57,7 +57,7 @@ def run_wav2vec2(audio_path, mode, language=None, device="cpu"):
     if mode == "hinted" and language:
         cmd.extend(["--hint-lang", language])
     
-    print(f"[Wav2Vec2] Running: {' '.join(cmd)}", file=sys.stderr)
+    print(f"[Wav2Vec2] Running: {' '.join(str(c) for c in cmd)}", file=sys.stderr)
     start = time.time()
     result = subprocess.run(cmd, capture_output=True, text=True)
     elapsed = time.time() - start
@@ -112,16 +112,16 @@ def compare_batch(audio_dir, mode, languages=None, whisper_model="tiny", device=
     audio_dir = Path(audio_dir)
     results = []
     
-    # Find all wav files
-    wav_files = list(audio_dir.rglob("*.wav"))
+    # Find all audio files (wav and mp3)
+    audio_files = list(audio_dir.rglob("*.wav")) + list(audio_dir.rglob("*.mp3"))
     
-    if not wav_files:
-        print(f"[ERROR] No .wav files found in {audio_dir}", file=sys.stderr)
+    if not audio_files:
+        print(f"[ERROR] No audio files found in {audio_dir}", file=sys.stderr)
         return []
     
-    print(f"[INFO] Found {len(wav_files)} audio files", file=sys.stderr)
+    print(f"[INFO] Found {len(audio_files)} audio files", file=sys.stderr)
     
-    for wav_file in sorted(wav_files):
+    for wav_file in sorted(audio_files):
         # Infer language from path
         lang = None
         if languages:

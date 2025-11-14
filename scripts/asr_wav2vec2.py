@@ -15,8 +15,13 @@ import torchaudio
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 
 
-# Model supports 128 languages - we use base multilingual model
-MODEL_NAME = "facebook/wav2vec2-xls-r-300m"
+# Language-specific fine-tuned models
+LANG_MODELS = {
+    "mn": "bayartsogt/wav2vec2-large-xlsr-mongolian",
+    "hu": "jonatasgrosman/wav2vec2-large-xlsr-53-hungarian",
+    "fr": "jonatasgrosman/wav2vec2-large-xlsr-53-french",
+    "es": "jonatasgrosman/wav2vec2-large-xlsr-53-spanish",
+}
 
 # Language codes mapping
 LANG_MAP = {
@@ -28,15 +33,21 @@ LANG_MAP = {
 
 
 class Wav2Vec2ASR:
-    """Wav2Vec2-XLS-R ASR wrapper"""
+    """Wav2Vec2-XLS-R ASR wrapper with language-specific models"""
     
-    def __init__(self, model_name=MODEL_NAME, device="cpu"):
+    def __init__(self, language="hu", device="cpu"):
         self.device = device
-        self.model_name = model_name
+        self.language = language
         
-        print(f"[Wav2Vec2] Loading {model_name} on {device}...", file=sys.stderr)
-        self.processor = Wav2Vec2Processor.from_pretrained(model_name)
-        self.model = Wav2Vec2ForCTC.from_pretrained(model_name).to(device)
+        # Get language-specific model
+        if language not in LANG_MODELS:
+            raise ValueError(f"Language '{language}' not supported. Available: {list(LANG_MODELS.keys())}")
+        
+        self.model_name = LANG_MODELS[language]
+        
+        print(f"[Wav2Vec2] Loading {self.model_name} ({language}) on {device}...", file=sys.stderr)
+        self.processor = Wav2Vec2Processor.from_pretrained(self.model_name)
+        self.model = Wav2Vec2ForCTC.from_pretrained(self.model_name).to(device)
         self.model.eval()
         print("[Wav2Vec2] Model loaded.", file=sys.stderr)
     
@@ -116,10 +127,7 @@ def main():
                         help="Save detailed JSON output")
     args = parser.parse_args()
     
-    # Initialize model
-    asr = Wav2Vec2ASR(model_name=args.model, device=args.device)
-    
-    # Determine language
+    # Determine language FIRST (needed to load correct model)
     language = None
     if args.mode == "hinted":
         if not args.hint_lang:
@@ -127,17 +135,21 @@ def main():
             sys.exit(1)
         language = args.hint_lang.lower()
     elif args.mode == "lid2asr":
-        # Wav2Vec2-XLS-R base model doesn't have built-in LID
-        # In production, you'd call a separate LID model here
-        # For now, we'll extract from filename or default to multilingual
+        # Wav2Vec2 needs language-specific models, so infer from filename
         from pathlib import Path
         filename = Path(args.infile).name.lower()
         for code in ["mn", "hu", "fr", "es"]:
             if code in filename:
                 language = code
                 break
+        if not language:
+            print("[ERROR] Could not infer language from filename for LID mode", file=sys.stderr)
+            sys.exit(1)
         print(f"[Wav2Vec2] LID mode: inferred language '{language}' from filename", 
               file=sys.stderr)
+    
+    # Initialize language-specific model
+    asr = Wav2Vec2ASR(language=language, device=args.device)
     
     # Transcribe
     print(f"[Wav2Vec2] Transcribing: {args.infile}", file=sys.stderr)

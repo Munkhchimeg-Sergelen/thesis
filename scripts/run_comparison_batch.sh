@@ -46,7 +46,7 @@ echo
 python scripts/compare_systems.py \
     --audio data/wav \
     --mode hinted \
-    --langs mn hu fr es \
+    --langs mn hu \
     --whisper-model "${WHISPER_MODEL}" \
     --device "${DEVICE}" \
     --out-csv "${OUTDIR}/system_comparison.csv"

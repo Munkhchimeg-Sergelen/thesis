@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Download audio samples from Common Voice for thesis evaluation
-Works with Mozilla Common Voice 17.0 (latest at time of writing)
+Works with Mozilla Common Voice (using HuggingFace datasets)
 """
 import os
 import sys
@@ -44,11 +44,14 @@ def download_language(lang, cv_code, num_samples=1000):
         # Load dataset (streaming to avoid downloading everything)
         print(f"Loading Common Voice dataset for {lang}...")
         ds = load_dataset(
-            "mozilla-foundation/common_voice_17_0",
+            "mozilla-foundation/common_voice_16_1",
             cv_code,
-            split=f"test[:{num_samples}]",
-            streaming=False
+            split=f"test"
         )
+        
+        # Select subset of samples
+        if len(ds) > num_samples:
+            ds = ds.select(range(num_samples))
         
         print(f"Processing {num_samples} samples...")
         count = 0

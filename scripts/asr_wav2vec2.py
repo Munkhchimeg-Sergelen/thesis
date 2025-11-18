@@ -11,7 +11,8 @@ import time
 from pathlib import Path
 
 import torch
-import torchaudio
+import soundfile as sf
+import numpy as np
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 
 
@@ -53,18 +54,10 @@ class Wav2Vec2ASR:
     
     def load_audio(self, audio_path, target_sr=16000):
         """Load and resample audio to 16kHz mono"""
-        waveform, sample_rate = torchaudio.load(audio_path)
-        
-        # Convert to mono if stereo
-        if waveform.shape[0] > 1:
-            waveform = torch.mean(waveform, dim=0, keepdim=True)
-        
-        # Resample if needed
-        if sample_rate != target_sr:
-            resampler = torchaudio.transforms.Resample(sample_rate, target_sr)
-            waveform = resampler(waveform)
-        
-        return waveform.squeeze().numpy()
+        import librosa
+        # Load audio with librosa (handles MP3 and resampling)
+        waveform, _ = librosa.load(audio_path, sr=target_sr, mono=True)
+        return waveform
     
     def transcribe(self, audio_path, language=None):
         """
@@ -113,10 +106,9 @@ class Wav2Vec2ASR:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Wav2Vec2-XLS-R ASR")
+    parser = argparse.ArgumentParser(description="Wav2Vec2-XLS-R ASR with language-specific models")
     parser.add_argument("--mode", choices=["hinted", "lid2asr"], default="hinted",
                         help="Inference mode (hinted=language provided, lid2asr=auto-detect)")
-    parser.add_argument("--model", default=MODEL_NAME, help="Model name/path")
     parser.add_argument("--device", default="cpu", choices=["cpu", "cuda"],
                         help="Device (cpu/cuda)")
     parser.add_argument("--infile", required=True, help="Input audio file")
@@ -136,7 +128,6 @@ def main():
         language = args.hint_lang.lower()
     elif args.mode == "lid2asr":
         # Wav2Vec2 needs language-specific models, so infer from filename
-        from pathlib import Path
         filename = Path(args.infile).name.lower()
         for code in ["mn", "hu", "fr", "es"]:
             if code in filename:

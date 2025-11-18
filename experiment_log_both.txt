@@ -1,0 +1,38 @@
+======================================
+🔬 System Comparison Batch Run
+======================================
+Whisper Model: small
+Device: cpu
+Output: results/comparison_20251114_173646
+
+Found 2004 audio files
+
+======================================
+Starting batch comparison...
+======================================
+
+[INFO] Found 2004 audio files
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/es/es_test.wav --outdir results/transcripts
+[Whisper] ERROR: [2025-11-14 17:36:49.439] [ctranslate2] [thread 6833231] [warning] The compute type inferred from the saved model is float16, but the target device or backend do not support efficient float16 computation. The model weights have been automatically converted to use the float32 compute type instead.
+Traceback (most recent call last):
+  File "/Users/mugi/thesis-asr/scripts/run_whisper.py", line 30, in <module>
+    assert args.hint_lang, "--hint-lang is required for hinted mode"
+           ^^^^^^^^^^^^^^
+AssertionError: --hint-lang is required for hinted mode
+
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/es/es_test.wav --outdir results/transcripts --save-json
+[Wav2Vec2] ERROR: [ERROR] --hint-lang required for hinted mode
+
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/fr/fr_test.wav --outdir results/transcripts
+[Whisper] ERROR: [2025-11-14 17:36:54.379] [ctranslate2] [thread 6833352] [warning] The compute type inferred from the saved model is float16, but the target device or backend do not support efficient float16 computation. The model weights have been automatically converted to use the float32 compute type instead.
+Traceback (most recent call last):
+  File "/Users/mugi/thesis-asr/scripts/run_whisper.py", line 30, in <module>
+    assert args.hint_lang, "--hint-lang is required for hinted mode"
+           ^^^^^^^^^^^^^^
+AssertionError: --hint-lang is required for hinted mode
+
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/fr/fr_test.wav --outdir results/transcripts --save-json
+[Wav2Vec2] ERROR: [ERROR] --hint-lang required for hinted mode
+
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0001.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0001.mp3 --outdir results/transcripts --save-json --hint-lang hu

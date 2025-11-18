@@ -1,0 +1,1091 @@
+======================================
+🔬 System Comparison Batch Run
+======================================
+Whisper Model: small
+Device: cpu
+Output: results/comparison_20251117_092221
+
+Found 2004 audio files
+
+======================================
+Starting batch comparison...
+======================================
+
+[INFO] Found 2004 audio files
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/es/es_test.wav --outdir results/transcripts
+[Whisper] ERROR: [2025-11-17 09:22:23.788] [ctranslate2] [thread 7138363] [warning] The compute type inferred from the saved model is float16, but the target device or backend do not support efficient float16 computation. The model weights have been automatically converted to use the float32 compute type instead.
+Traceback (most recent call last):
+  File "/Users/mugi/thesis-asr/scripts/run_whisper.py", line 30, in <module>
+    assert args.hint_lang, "--hint-lang is required for hinted mode"
+           ^^^^^^^^^^^^^^
+AssertionError: --hint-lang is required for hinted mode
+
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/es/es_test.wav --outdir results/transcripts --save-json
+[Wav2Vec2] ERROR: [ERROR] --hint-lang required for hinted mode
+
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/fr/fr_test.wav --outdir results/transcripts
+[Whisper] ERROR: [2025-11-17 09:22:28.083] [ctranslate2] [thread 7138438] [warning] The compute type inferred from the saved model is float16, but the target device or backend do not support efficient float16 computation. The model weights have been automatically converted to use the float32 compute type instead.
+Traceback (most recent call last):
+  File "/Users/mugi/thesis-asr/scripts/run_whisper.py", line 30, in <module>
+    assert args.hint_lang, "--hint-lang is required for hinted mode"
+           ^^^^^^^^^^^^^^
+AssertionError: --hint-lang is required for hinted mode
+
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/fr/fr_test.wav --outdir results/transcripts --save-json
+[Wav2Vec2] ERROR: [ERROR] --hint-lang required for hinted mode
+
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0001.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0001.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0002.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0002.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0003.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0003.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0004.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0004.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0005.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0005.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0006.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0006.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0007.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0007.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0008.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0008.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0009.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0009.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0010.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0010.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0011.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0011.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0012.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0012.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0013.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0013.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0014.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0014.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0015.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0015.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0016.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0016.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0017.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0017.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0018.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0018.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0019.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0019.mp3 --outdir results/transcripts --save-json --hint-lang hu
+
+============================================================
+Audio: data/wav/es/es_test.wav
+Mode: hinted, Language: auto
+============================================================
+
+
+============================================================
+
+
+============================================================
+Audio: data/wav/fr/fr_test.wav
+Mode: hinted, Language: auto
+============================================================
+
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0001.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.11s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0001.txt
+
+[WAV2VEC2] (6.72s)
+  A TÉMA TERMISZETESEN NEM MENTES A VITÁGTÓL
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0002.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.94s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0002.txt
+
+[WAV2VEC2] (8.81s)
+  A BELVÁROSSAL A CSIGGADOMBON ÁTÍVELŰ ÚT KÖTI ÖSSZE
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0003.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.27s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0003.txt
+
+[WAV2VEC2] (7.01s)
+  A TÜNTETÜK FELGYÚJTOTTÁK A BÁSZPÁRT ABUKA MÁLIK KÖZPONTJÁT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0004.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.44s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0004.txt
+
+[WAV2VEC2] (6.61s)
+  APJA KŐFARAGÓKÉNT DOLGOZOTT A KÖLNI DÓM ÉPÍTÉSÉN
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0005.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.41s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0005.txt
+
+[WAV2VEC2] (6.52s)
+  ELŐTTE MINISZTERÁLNAK HELYETTES ÉS PÉNZÜGD MINISZTERÉS VOLT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0006.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.57s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0006.txt
+
+[WAV2VEC2] (76.92s)
+  EZZEL A REPÜLŐ TÉR FONTOSABBÁ VÁLT ÉS TEJESEN ÚJSZEREPEDT NYERT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0007.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.72s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0007.txt
+
+[WAV2VEC2] (6.91s)
+  MIND KÉT SZERVEZET ÉLÉN Ő AZ ELSŐ NŐI VEZETŐ
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0008.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.02s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0008.txt
+
+[WAV2VEC2] (7.85s)
+  MÚZEUMA NINCS
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0009.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.68s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0009.txt
+
+[WAV2VEC2] (6.79s)
+  AZ ELLENFÉRÉSZTORSZÁG VOLT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0010.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.14s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0010.txt
+
+[WAV2VEC2] (7.90s)
+  AZ AKADÉMIAI KUTATÓ INTÉZETT SZÁMOS KIEMELT VÁLLALKOZÁSÁBAN VETRÉSZT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0011.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.23s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0011.txt
+
+[WAV2VEC2] (7.22s)
+  MÁR KORÁN NAGY ÉRDEKLŐDÉS MULATOTT A SZÁMOK IRÁNT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0012.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.09s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0012.txt
+
+[WAV2VEC2] (7.61s)
+  AZ ELEKTROMOS REDSZERHIBÁJAN MIATT ASZONDA NEM TUDOD PÁJÁRA ÁLNYI A MARSD KÖRÜL
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0013.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.40s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0013.txt
+
+[WAV2VEC2] (6.95s)
+  FÖLDES URAI A NÁDASDIGRÓFOG VOLTAK
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0014.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.96s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0014.txt
+
+[WAV2VEC2] (6.14s)
+  BÜSZKÉK VAGYUNK A MAGYAR EMBEREK NAGYSZERŰ SZELLEMI ALKOTÁSAIRE
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0015.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.54s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0015.txt
+
+[WAV2VEC2] (6.76s)
+  KÉT MÁSIK KLIP IS KÉSZÜLT A DAR REMIXCEÍHEZ
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0016.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.24s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0016.txt
+
+[WAV2VEC2] (6.50s)
+  FÜLÖPHATALMI TÁMASZPONTJA AZ OTTÓ MELLETT ÁLÓ ÉSZAKNYOVAT NÉLETORSZÁGGAL SZEMBEN AKÉSŐ BILTBEN TÉLEN LETT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0017.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.65s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0017.txt
+
+[WAV2VEC2] (6.50s)
+  AZ URUKHAÍRÓL EGY AMBIANT EGYÜTTEST ÉS ÁNEVEZTEK
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0018.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.11s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0018.txt
+
+[WAV2VEC2] (7.61s)
+  EZT KÖVETŐEN A DRÁMAK KLUB TOGJA LETT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0019.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.71s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0019.txt
+
+[WAV2VEC2] (7.76s)
+  A MAGYAR NÉV EZT KÖVETI
+
+============================================================
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0020.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0020.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0021.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0021.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0022.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0022.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0023.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0023.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0024.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0024.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0025.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0025.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0026.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0026.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0027.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0027.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0028.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0028.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0029.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0029.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0030.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0030.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0031.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0031.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0032.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0032.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0033.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0033.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0034.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0034.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0035.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0035.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0036.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0036.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0037.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0037.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0038.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0038.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0039.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0039.mp3 --outdir results/transcripts --save-json --hint-lang hu
+
+
+============================================================
+Audio: data/wav/hu/hu0020.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.86s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0020.txt
+
+[WAV2VEC2] (6.52s)
+  A DALT AZ ÉZRA ELÍTANA INTERNÉSEENEL ADTA ELŐ HÉBER ÉS ANGOL KEVERT NYELBEN
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0021.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.26s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0021.txt
+
+[WAV2VEC2] (6.25s)
+  TERVEZŐJE A KÖZPONTI KÍSÉRLETI GÉPGYÁRTÁSI TERVEZŐ ÍR ODA
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0022.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.73s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0022.txt
+
+[WAV2VEC2] (8.39s)
+  A KRISZTUS SZÍNE VÁLTOZÁSA AZ EVANGÉL JOMOK EGYIK KÖZPONTIASEMÉNYE
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0023.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.84s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0023.txt
+
+[WAV2VEC2] (6.66s)
+  SZABÁLYOS ALATP RAJZÚ TELEPÜLÉS
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0024.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.41s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0024.txt
+
+[WAV2VEC2] (6.32s)
+  EGY IDŐKBEN A NÉPSZÍNHÁZ ÜGYELŐJE VOLT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0025.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.21s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0025.txt
+
+[WAV2VEC2] (6.45s)
+  SZÓBA KERÜLT MÉG EGY MAGYARORSZÁGI REGULÁRIS HATSEREG ÉS EGY FLOTT ILL A FELÁLLÍTÁSÁNAK TERVE IS
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0026.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.93s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0026.txt
+
+[WAV2VEC2] (6.47s)
+  EGYIKE OLASZORSZÁG KŐL-FÖLDENLEGSIKERESEBB MAI OPERA SZERZŐINEK
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0027.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.56s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0027.txt
+
+[WAV2VEC2] (7.39s)
+  A FORGACTOKÖNYVEZ FILHÉ ÉS METMEN FEDÍRTEK
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0028.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (3.88s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0028.txt
+
+[WAV2VEC2] (6.14s)
+  A MESZES TAJT KEDVELI
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0029.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.06s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0029.txt
+
+[WAV2VEC2] (6.24s)
+  MÉG ABVAN AZ ÉVBEN A NÉPKÖZTÁRSASÁG ELNÖKI TANÁCSA A MINISZTER ELSŐ HELYETTESÉVÉNEVESZTEKIT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0030.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.47s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0030.txt
+
+[WAV2VEC2] (6.37s)
+  SZÜLŐVÁROSÁBAN EGY IDŐPEN TÉR VIS JÁLTE A NEVÉT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0031.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.95s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0031.txt
+
+[WAV2VEC2] (6.60s)
+  RÓMÁBAN ISMÉT KETTŐS PONCSZÉLZÉST ÜNNEPELHETETT A CSAPAT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0032.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (3.58s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0032.txt
+
+[WAV2VEC2] (6.31s)
+  MOLLAK TESTV
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0033.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.20s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0033.txt
+
+[WAV2VEC2] (6.48s)
+  KELNE RERNŐ NYOMDÁJA ÁLLÍTOTTA ELŐ
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0034.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.33s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0034.txt
+
+[WAV2VEC2] (6.16s)
+  EKKOR SZAPOLYAIJÁNOS FAMILI ÁRISE VOLT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0035.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.55s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0035.txt
+
+[WAV2VEC2] (6.04s)
+  A KEZDET IDŐSZAKBAN ATLÉTIKA ÉS LAPDRÚKÓ SZAKOSZTÁJA VOLT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0036.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.64s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0036.txt
+
+[WAV2VEC2] (6.47s)
+  ELLEN SZOLGÁTATÁS NÉLKÜL TEMOGATÁS NYÚJTÁSA
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0037.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.22s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0037.txt
+
+[WAV2VEC2] (6.54s)
+  A VÁROSZ OSSZAKUPANT A BASZTAS LELÚ FŐVÁROSSRA
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0038.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.86s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0038.txt
+
+[WAV2VEC2] (6.77s)
+  TISZTA IDŐBEN AKÁR A BAKONYBÓL HOGY A MÁTRÁBÓL IS LÁTSZANAK
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0039.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.63s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0039.txt
+
+[WAV2VEC2] (7.21s)
+  ÍRORSZÁGBAN KISEJÁTÍTOTTA AZ ANGOSSZÁZ NAGYBIRTOKOKAT ÉS KÁRPUTLAS FEJIBEN SZÉTOSZTOTTA AZ ÍRPARASZTOKNAK
+
+============================================================
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0040.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0040.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0041.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0041.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0042.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0042.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0043.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0043.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0044.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0044.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0045.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0045.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0046.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0046.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Wav2Vec2] ERROR: [Wav2Vec2] Loading jonatasgrosman/wav2vec2-large-xlsr-53-hungarian (hu) on cpu...
+/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/site-packages/transformers/configuration_utils.py:335: UserWarning: Passing `gradient_checkpointing` to a config initialization is deprecated and will be removed in v5 Transformers. Using `model.gradient_checkpointing_enable()` instead, or if you are using the `Trainer` API, pass `gradient_checkpointing=True` in your `TrainingArguments`.
+  warnings.warn(
+[Wav2Vec2] Model loaded.
+[Wav2Vec2] Transcribing: data/wav/hu/hu0046.mp3
+[Wav2Vec2] Saved: results/transcripts/hinted/wav2vec2/hu/hu0046.txt
+[Wav2Vec2] Saved: results/transcripts/hinted/wav2vec2/hu/hu0046.json
+[Wav2Vec2] Duration: 6.08s, Elapsed: 500.95s, RTF: 82.338
+
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0047.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0047.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0048.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0048.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0049.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0049.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0050.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0050.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0051.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0051.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0052.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0052.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0053.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0053.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0054.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0054.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0055.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0055.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0056.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0056.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0057.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0057.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0058.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0058.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0059.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0059.mp3 --outdir results/transcripts --save-json --hint-lang hu
+
+
+============================================================
+Audio: data/wav/hu/hu0040.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.41s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0040.txt
+
+[WAV2VEC2] (6.42s)
+  EZ VOLT AZ ELSŐ HÁBORÚS CSEREKMÉNY A FÉNYES ÖSSVÉNY RÉSZÉDŐL
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0041.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.25s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0041.txt
+
+[WAV2VEC2] (6.06s)
+  A SZÁMLEGYEK KÓDÓLÁSÁRA A KETTŐ AZ ŐTBŐL KÓDOLÁSSAL TÖRTÉNT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0042.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.07s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0042.txt
+
+[WAV2VEC2] (7.52s)
+  AZ ELSŐ VILÁGHÁBORÚ UTÁNA GÖRÖGKATRŰKUS EGYHÁZ VÁSSÁ ROLTTA MEG
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0043.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (7.90s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0043.txt
+
+[WAV2VEC2] (7.57s)
+  ENNEK ÉRDEKÉBEN AZ ISTEN FEDÉTÖREK VÜLT EGY MESTER SEGÍTETTE ÉS TÁMOGATTA A MISZTIKUSÚTON
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0044.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.34s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0044.txt
+
+[WAV2VEC2] (6.34s)
+  ÁLVASZOK ASZ NÉHÁNY HÉT ÉS KÉTÉV KÖZÖT TART
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0045.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.49s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0045.txt
+
+[WAV2VEC2] (6.49s)
+  ROBINZON AZ UTÓBBI HATÁZSÁRA VÁLASZTOTTA A SZERVES KÉMIÁT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0046.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.45s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0046.txt
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0047.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.17s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0047.txt
+
+[WAV2VEC2] (7.29s)
+  ANYJAIG NAGYAPJA VÖRÖS VÁRNI NAPBI VOLT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0048.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.01s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0048.txt
+
+[WAV2VEC2] (6.45s)
+  A FÜÖNBEN A DIÁKOK KÖZTI SZERELMI VISZONYOKRA IS FÉNYDERÜL
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0049.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.23s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0049.txt
+
+[WAV2VEC2] (6.78s)
+  KÖZÖDÖK KÉT CSALÁDNAK SIKERÜLT ÁMENEKÜLNIE
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0050.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.80s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0050.txt
+
+[WAV2VEC2] (6.68s)
+  TÁVAZÁSÁVAL A POLITIKAI ÉLETŐR IS VÉGLEG VISSZAVONULT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0051.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.82s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0051.txt
+
+[WAV2VEC2] (6.32s)
+  ISMERTÉK MÁR AZ ÓKORI EGYIPTOMIAK ÉS A GÖRÖGÖK IS
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0052.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.04s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0052.txt
+
+[WAV2VEC2] (6.41s)
+  A PROBLAM KEDETÉBEN ÖTFÉLE KATEGÓRIÁBAN KAPHATNAK ELISMERÉST A SÖTÉT HELYEK
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0053.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.72s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0053.txt
+
+[WAV2VEC2] (6.22s)
+  AZ ERNYŐ BEVANNATÁTÓL FÜGGÜLEN VÁLTOZIK A KIBOCSÁTOTT FÉNYSZINE
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0054.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.11s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0054.txt
+
+[WAV2VEC2] (6.48s)
+  A LAKOZSÁG FŐKÉNT ÁLLAT TARTÁSBÓL ÉS ERDÉSZETI MUNKÁKBÓL ÉLT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0055.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.79s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0055.txt
+
+[WAV2VEC2] (7.01s)
+  FIATAL KORÁTÓL SZÁMOS POLITIKAI MOZGALOMNAK ÉS SZERVEZETNEK A TAGJA
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0056.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.49s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0056.txt
+
+[WAV2VEC2] (6.51s)
+  A TÖRTÉNETI JOGI ISKON A KÉPVIS ELŐJE VOLT
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0057.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (4.90s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0057.txt
+
+[WAV2VEC2] (6.32s)
+  A MELLÉNETRE VALÓ TEKINTETTEL AZ ÚTFOLANAT MAJGBÁLTOZTATTE
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0058.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (6.13s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0058.txt
+
+[WAV2VEC2] (6.90s)
+  A KÉT VÁR KÖZÖTTI VÖLGYETKÉSŐBB A DUNA-ÉRSZ FELDUZZASZTÁSÁVAL LÉTRE JÖTT SOR SZ-TINÉT- TÓÓ TÖLTÖT TE KÉ
+
+============================================================
+
+
+============================================================
+Audio: data/wav/hu/hu0059.mp3
+Mode: hinted, Language: hu
+============================================================
+
+
+[WHISPER] (5.34s)
+  Wrote: results/transcripts/hinted/whisper-small/hu/hu0059.txt
+
+[WAV2VEC2] (6.93s)
+  NÉMELYI HA GYOMÁNYOS RENDSZÖREG SZERINTE RENDBESOROT CSERÁDOK KÖZÜLT TÖBB ÖNNEL LÚ RENDKÉNT SZEREPE[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0060.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0060.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0061.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0061.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0062.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0062.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0063.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0063.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0064.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0064.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0065.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0065.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0066.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0066.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0067.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0067.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0068.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0068.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0069.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0069.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0070.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0070.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0071.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0071.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0072.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0072.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0073.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0073.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0074.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0074.mp3 --outdir results/transcripts --save-json --hint-lang hu
+[Whisper] Running: python scripts/run_whisper.py --mode hinted --model small --device cpu --infile data/wav/hu/hu0075.mp3 --outdir results/transcripts --hint-lang hu
+[Wav2Vec2] Running: python scripts/asr_wav2vec2.py --mode hinted --device cpu --infile data/wav/hu/hu0075.mp3 --outdir results/transcripts --save-json --hint-lang hu

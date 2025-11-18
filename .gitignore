@@ -24,3 +24,5 @@ __pycache__/
 !results/
 !results/metrics/
 !results/metrics/run_summary_combined.csv
+*.tar.gz
+gpu_experiment.tar.gz

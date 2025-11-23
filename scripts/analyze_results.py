@@ -35,6 +35,16 @@ def results_to_dataframe(results):
     
     df = pd.DataFrame(results)
     
+    # Infer system from model name for rows missing system field
+    if 'model' in df.columns:
+        if 'system' not in df.columns:
+            df['system'] = ''
+        # Fill in missing system values from model name
+        mask = df['system'].isna() | (df['system'] == '')
+        df.loc[mask, 'system'] = df.loc[mask, 'model'].apply(
+            lambda x: 'wav2vec2' if 'wav2vec2' in str(x).lower() else 'whisper'
+        )
+    
     # Add derived columns
     if 'system' in df.columns:
         # Extract model size from system field (e.g., "whisper-small" -> "small")
@@ -42,9 +52,11 @@ def results_to_dataframe(results):
         # Normalize system names (whisper-small -> whisper)
         df['system'] = df['system'].str.replace(r'whisper-(tiny|base|small)', 'whisper', regex=True)
         df['system'] = df['system'].fillna('whisper')
-    elif 'model' in df.columns:
-        # Fallback: Extract model name (tiny/base/small) from model field
-        df['model_size'] = df['model'].str.extract(r'(tiny|base|small)', expand=False)
+    
+    if 'model' in df.columns:
+        # Extract model size (tiny/base/small) from model field
+        if 'model_size' not in df.columns or df['model_size'].isna().all():
+            df['model_size'] = df['model'].str.extract(r'(tiny|base|small)', expand=False)
     
     # Compute RTF if not present (RTF = processing_time / duration)
     if 'rtf' not in df.columns and 'elapsed_sec' in df.columns and 'duration_sec' in df.columns:

@@ -63,6 +63,9 @@ else:
 segments, info = model.transcribe(args.infile, task="transcribe", language=language, vad_filter=True)
 text = "".join(s.text for s in segments)
 
+# Get audio duration
+duration_sec = getattr(info, "duration", None)
+
 stem = os.path.splitext(os.path.basename(args.infile))[0]
 sysname = f"whisper-{args.model}"
 # Include model size in path to prevent overwriting
@@ -72,10 +75,13 @@ os.makedirs(outbase, exist_ok=True)
 with open(os.path.join(outbase, f"{stem}.txt"), "w", encoding="utf-8") as f:
     f.write(text.strip()+"\n")
 
+elapsed = round(time.time()-t0, 3)
 sidecar = {
   "file": args.infile, "system": sysname, "mode": args.mode,
   "language_used": language, "avg_logprob": getattr(info, "avg_logprob", None),
-  "elapsed_sec": round(time.time()-t0, 3),
+  "elapsed_sec": elapsed,
+  "duration_sec": duration_sec,
+  "rtf": round(elapsed / duration_sec, 4) if duration_sec else None,
   "device": args.device
 }
 sidecar.update(lid_meta)

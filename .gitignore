@@ -26,3 +26,11 @@ __pycache__/
 !results/metrics/run_summary_combined.csv
 *.tar.gz
 gpu_experiment.tar.gz
+
+# Mac system files
+.DS_Store
+
+# Temporary files
+*.log
+*_files.txt
+results_*/

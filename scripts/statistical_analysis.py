@@ -12,38 +12,37 @@ from scipy import stats
 from typing import List, Tuple, Dict
 import pandas as pd
 
-def load_results(results_dir: str, mode: str) -> Dict[str, List[float]]:
-    """Load processing times by language from results"""
-    results_path = Path(results_dir) / mode
-    times_by_lang = {'es': [], 'fr': [], 'hu': [], 'mn': []}
+def load_results(results_dir: str, system: str, mode: str, metric: str = 'rtf') -> Dict[str, List[float]]:
+    """Load metrics by language from results
     
-    for json_file in results_path.glob('*.json'):
-        try:
-            with open(json_file) as f:
-                data = json.load(f)
-                
-            # Extract language from filename
-            filename = json_file.stem
-            if filename.startswith('es'):
-                lang = 'es'
-            elif filename.startswith('fr'):
-                lang = 'fr'
-            elif filename.startswith('hu'):
-                lang = 'hu'
-            elif filename.startswith('mn'):
-                lang = 'mn'
-            else:
-                continue
-            
-            # Get processing time
-            if 'processing_time' in data:
-                times_by_lang[lang].append(data['processing_time'])
-                
-        except Exception as e:
-            print(f"Warning: Could not process {json_file}: {e}")
+    Args:
+        results_dir: Base results directory
+        system: System name (e.g., 'whisper-small', 'wav2vec2')
+        mode: Mode (e.g., 'hinted', 'lid2asr')
+        metric: Metric to load ('rtf', 'elapsed_sec', 'duration_sec')
+    """
+    results_path = Path(results_dir) / mode / system
+    data_by_lang = {'es': [], 'fr': [], 'hu': [], 'mn': []}
+    
+    for lang in ['es', 'fr', 'hu', 'mn']:
+        lang_path = results_path / lang
+        if not lang_path.exists():
             continue
+            
+        for json_file in lang_path.glob('*.json'):
+            try:
+                with open(json_file) as f:
+                    data = json.load(f)
+                    
+                # Get metric
+                if metric in data and data[metric] is not None:
+                    data_by_lang[lang].append(data[metric])
+                    
+            except Exception as e:
+                print(f"Warning: Could not process {json_file}: {e}")
+                continue
     
-    return times_by_lang
+    return data_by_lang
 
 def wilcoxon_test(group1: List[float], group2: List[float]) -> Tuple[float, float]:
     """
@@ -81,15 +80,15 @@ def cohens_d(group1: List[float], group2: List[float]) -> float:
     
     return mean_diff / pooled_std if pooled_std > 0 else 0
 
-def analyze_lid_vs_hinted(results_dir: str = 'results/transcripts'):
+def analyze_lid_vs_hinted(results_dir: str = 'results/transcripts', system: str = 'whisper-small', metric: str = 'rtf'):
     """Compare LID→ASR vs Language-Hinted modes"""
     print("="*60)
-    print("STATISTICAL ANALYSIS: LID→ASR vs Language-Hinted")
+    print(f"STATISTICAL ANALYSIS: LID→ASR vs Language-Hinted ({metric.upper()})")
     print("="*60)
     
     # Load data
-    lid_times = load_results(results_dir, 'lid2asr')
-    hinted_times = load_results(results_dir, 'hinted')
+    lid_times = load_results(results_dir, system, 'lid2asr', metric)
+    hinted_times = load_results(results_dir, system, 'hinted', metric)
     
     print(f"\nSample sizes:")
     for lang in ['es', 'fr', 'hu', 'mn']:
@@ -178,13 +177,13 @@ def analyze_lid_vs_hinted(results_dir: str = 'results/transcripts'):
     
     return df
 
-def analyze_language_differences(results_dir: str = 'results/transcripts'):
+def analyze_language_differences(results_dir: str = 'results/transcripts', system: str = 'whisper-small', metric: str = 'rtf'):
     """Compare processing times across languages"""
     print("\n" + "="*60)
-    print("STATISTICAL ANALYSIS: Language Comparison")
+    print(f"STATISTICAL ANALYSIS: Language Comparison ({metric.upper()})")
     print("="*60)
     
-    lid_times = load_results(results_dir, 'lid2asr')
+    hinted_times = load_results(results_dir, system, 'hinted', metric)
     
     languages = ['es', 'fr', 'hu', 'mn']
     lang_names = {
@@ -198,10 +197,10 @@ def analyze_language_differences(results_dir: str = 'results/transcripts'):
     print(f"\nComparing Mongolian vs other languages:")
     print(f"{'-'*60}")
     
-    mn_times = lid_times['mn']
+    mn_times = hinted_times['mn']
     
     for lang in ['es', 'fr', 'hu']:
-        other_times = lid_times[lang]
+        other_times = hinted_times[lang]
         
         if len(mn_times) < 2 or len(other_times) < 2:
             continue

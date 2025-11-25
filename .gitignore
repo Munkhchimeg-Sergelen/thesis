@@ -34,3 +34,6 @@ gpu_experiment.tar.gz
 *.log
 *_files.txt
 results_*/
+# Workspace (too large for Git)
+thesis-workspace/
+organize_thesis.sh

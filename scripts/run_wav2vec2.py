@@ -12,8 +12,11 @@ import torchaudio
 from pathlib import Path
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 
-# Language-specific models (only ES and FR available)
+# Language-specific models
+# MN & HU use base multilingual XLSR-53 (supports 53 languages)
 LANG_MODELS = {
+    'mn': 'facebook/wav2vec2-large-xlsr-53',  # Multilingual (includes Mongolian)
+    'hu': 'facebook/wav2vec2-large-xlsr-53',  # Multilingual (includes Hungarian)
     'es': 'facebook/wav2vec2-large-xlsr-53-spanish',
     'fr': 'facebook/wav2vec2-large-xlsr-53-french',
 }
@@ -86,8 +89,8 @@ class Wav2Vec2ASR:
 def main():
     parser = argparse.ArgumentParser(description='Wav2Vec2-XLSR-53 ASR Evaluation')
     parser.add_argument('--infile', required=True, help='Input audio file (WAV)')
-    parser.add_argument('--hint-lang', required=True, choices=['es', 'fr'],
-                      help='Target language (only ES and FR supported)')
+    parser.add_argument('--hint-lang', required=True, choices=['mn', 'hu', 'es', 'fr'],
+                      help='Target language (MN, HU use multilingual model; ES, FR use specialized models)')
     parser.add_argument('--device', default='cuda', choices=['cuda', 'cpu'],
                       help='Device to use for inference')
     parser.add_argument('--save-json', action='store_true',

@@ -1,0 +1,16 @@
+{
+  "file": "data/wav/mn/mn0037.mp3",
+  "system": "whisper-small",
+  "mode": "lid2asr",
+  "language_used": "mn",
+  "avg_logprob": null,
+  "elapsed_sec": 43.164,
+  "duration_sec": 7.056,
+  "rtf": 6.1173,
+  "device": "cpu",
+  "lid_language": "mn",
+  "lid_prob": 0.9349449872970581,
+  "tried": [
+    "vad_filter=True"
+  ]
+}

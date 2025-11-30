@@ -1,0 +1,17 @@
+{
+  "file": "data/wav/es/es0067.mp3",
+  "system": "whisper-small",
+  "mode": "lid2asr",
+  "language_used": "es",
+  "avg_logprob": null,
+  "elapsed_sec": 3.396,
+  "duration_sec": 6.0,
+  "rtf": 0.566,
+  "device": "cpu",
+  "lid_language": "gl",
+  "lid_prob": 0.5582520365715027,
+  "tried": [
+    "vad_filter=True"
+  ],
+  "fallback": "folder_on_low_conf"
+}

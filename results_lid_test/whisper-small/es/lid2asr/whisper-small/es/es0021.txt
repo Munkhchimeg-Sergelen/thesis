@@ -1,0 +1,1 @@
+La información meteorológica se transmite mediante una voz sintetizada.

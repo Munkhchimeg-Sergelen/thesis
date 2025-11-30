@@ -1,0 +1,1 @@
+Girando el recipiente se logra que el líquido gire dentro de la taza.

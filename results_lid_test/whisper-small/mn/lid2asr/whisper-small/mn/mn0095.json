@@ -1,0 +1,17 @@
+{
+  "file": "data/wav/mn/mn0095.mp3",
+  "system": "whisper-small",
+  "mode": "lid2asr",
+  "language_used": "mn",
+  "avg_logprob": null,
+  "elapsed_sec": 49.716,
+  "duration_sec": 3.744,
+  "rtf": 13.2788,
+  "device": "cpu",
+  "lid_language": "ar",
+  "lid_prob": 0.2757711410522461,
+  "tried": [
+    "vad_filter=True"
+  ],
+  "fallback": "folder_on_low_conf"
+}

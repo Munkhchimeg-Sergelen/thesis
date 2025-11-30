@@ -1,0 +1,16 @@
+{
+  "file": "data/wav/hu/hu0069.mp3",
+  "system": "whisper-small",
+  "mode": "lid2asr",
+  "language_used": "hu",
+  "avg_logprob": null,
+  "elapsed_sec": 4.268,
+  "duration_sec": 7.524,
+  "rtf": 0.5673,
+  "device": "cpu",
+  "lid_language": "hu",
+  "lid_prob": 0.9890535473823547,
+  "tried": [
+    "vad_filter=True"
+  ]
+}

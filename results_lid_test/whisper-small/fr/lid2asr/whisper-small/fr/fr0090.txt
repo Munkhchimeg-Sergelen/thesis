@@ -1,0 +1,1 @@
+Une même larve peut miner plusieurs tiges successivement et les détruire.

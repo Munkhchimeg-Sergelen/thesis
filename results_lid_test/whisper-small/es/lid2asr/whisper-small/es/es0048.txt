@@ -1,0 +1,1 @@
+Un programa era especificado como una secuencia de sus rutinas y argumento.

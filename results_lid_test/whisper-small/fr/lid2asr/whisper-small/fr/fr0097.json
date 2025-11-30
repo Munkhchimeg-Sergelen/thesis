@@ -1,0 +1,16 @@
+{
+  "file": "data/wav/fr/fr0097.mp3",
+  "system": "whisper-small",
+  "mode": "lid2asr",
+  "language_used": "fr",
+  "avg_logprob": null,
+  "elapsed_sec": 3.77,
+  "duration_sec": 4.464,
+  "rtf": 0.8445,
+  "device": "cpu",
+  "lid_language": "fr",
+  "lid_prob": 0.9980257749557495,
+  "tried": [
+    "vad_filter=True"
+  ]
+}

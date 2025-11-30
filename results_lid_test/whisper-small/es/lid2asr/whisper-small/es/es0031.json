@@ -1,0 +1,16 @@
+{
+  "file": "data/wav/es/es0031.mp3",
+  "system": "whisper-small",
+  "mode": "lid2asr",
+  "language_used": "es",
+  "avg_logprob": null,
+  "elapsed_sec": 3.54,
+  "duration_sec": 5.736,
+  "rtf": 0.6172,
+  "device": "cpu",
+  "lid_language": "es",
+  "lid_prob": 0.9650639295578003,
+  "tried": [
+    "vad_filter=True"
+  ]
+}

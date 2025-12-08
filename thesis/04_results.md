@@ -365,9 +365,9 @@ RQ3 (Cross-Language Performance): Dramatic performance disparities emerged, with
 
 RQ4 (Model Architecture Comparison): CTC-based models (OmniLingual) achieved 20-2500× faster processing than encoder-decoder architecture (Whisper), with the largest advantages on low-resource languages. Accuracy trade-offs depend on specific model variants, with OmniLingual LLM 1B approaching Whisper accuracy while maintaining superior speed.
 
-RQ5 (Practical Deployment): For high-resource languages (Spanish, French), multiple models provide adequate performance. For low-resource languages (Mongolian), only CTC-based models achieve practical processing speeds. Unified multilingual models (Whisper) suffer severe efficiency degradation on low-resource languages, while specialized architectures (OmniLingual) maintain consistent performance.
+RQ5 (Practical Deployment): For high-resource languages (Spanish, French), multiple models provide adequate performance. For low-resource languages (Mongolian), only CTC-based models achieve practical processing speeds. Unified multilingual models (Whisper) suffer severe efficiency degradation on low-resource languages, while specialized architectures (OmniLingual) maintain consistent performance. Resource profiling revealed consistent memory requirements (~17 GB) across all models, precluding mobile deployment, while CPU utilization patterns (Whisper 11.5% average, OmniLingual 26-27%) demonstrated that Whisper's inefficiency stems from excessive processing duration rather than computational intensity. All models require substantial RAM for deployment, with processing speed representing the primary deployment differentiator.
 
-These findings provide actionable guidance for multilingual ASR deployment, revealing critical limitations of current unified models and highlighting architectural approaches that maintain robust cross-language performance.
+These findings provide actionable guidance for multilingual ASR deployment, revealing critical limitations of current unified models and highlighting architectural approaches that maintain robust cross-language performance. Resource consumption analysis confirms that deployment constraints extend beyond accuracy-speed trade-offs to include memory requirements and computational efficiency patterns.
 
 ---
 

@@ -353,7 +353,7 @@ Practical Significance Interpretation
 
 Statistical significance (p < 0.000001) confirms that observed differences are not due to chance. Effect sizes (d > 3.5 for Mongolian RTF) indicate that differences are not merely statistically detectable but practically overwhelming. The 74× speed disparity far exceeds any threshold for deployment viability, representing complete system failure for the low-resource language rather than acceptable performance degradation.
 
-## 4.6 Summary of Key Findings
+## 4.7 Summary of Key Findings
 
 The experimental evaluation yielded five critical findings addressing the research questions:
 

@@ -1,0 +1,5 @@
+model,CPU Avg (%),CPU Peak (%),Memory Peak (GB),Avg Time (s)
+omniASR_CTC_1B,27.18,34.6,17.16,1.05
+omniASR_CTC_300M,26.07,34.0,17.22,1.06
+omniASR_LLM_1B,26.52,35.0,17.17,1.04
+small,11.45,20.3,17.1,0.11

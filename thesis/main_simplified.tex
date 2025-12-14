@@ -1,0 +1,50 @@
+% Multilingual ASR Thesis - SIMPLIFIED for Free Overleaf
+\documentclass[12pt,a4paper]{report}
+
+% Essential packages only
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{geometry}
+
+% Page layout
+\geometry{margin=2.5cm}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=cyan,
+}
+
+% Title page information
+\title{Multilingual Automatic Speech Recognition:\\
+Evaluation and Failure Mode Analysis}
+\author{Munkhchimeg Sergelen}
+\date{\today}
+
+\begin{document}
+
+% Title page
+\maketitle
+
+% Abstract
+\begin{abstract}
+This thesis presents a comprehensive evaluation of multilingual automatic speech recognition (ASR) systems across four diverse languages: Mongolian, Hungarian, Spanish, and French. We evaluate four state-of-the-art models using two inference modes, comprising 16,000 transcriptions on the Common Voice v23.0 dataset.
+
+Our results reveal significant performance variations across languages and models. Whisper demonstrates superior accuracy but exhibits substantial speed variations, processing Mongolian 74 times slower than Spanish. We identify and analyze key failure modes: language identification confusion, low-resource language degradation, long-form drift, and processing speed variation.
+
+\textbf{Keywords:} Multilingual ASR, Speech Recognition, Language Identification, Failure Mode Analysis, Low-Resource Languages, Whisper
+\end{abstract}
+
+% Table of contents
+\tableofcontents
+
+% Chapters - ONLY Results for now
+\chapter{Results}
+\input{chapters/04_results_merged}
+
+\end{document}

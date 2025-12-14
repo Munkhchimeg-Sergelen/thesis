@@ -1,0 +1,85 @@
+% Chapter 4: Results - QUICK VERSION (key sections only)
+
+This chapter presents the experimental results from our comprehensive evaluation of multilingual ASR systems. We evaluated 4 models across 4 languages with 16,000 total transcriptions.
+
+\section{Overall Performance}
+
+\subsection{Word Error Rate by Language}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../thesis_plots/01_wer_by_model_language.png}
+    \caption{Word Error Rate by model and language. Lower is better.}
+\end{figure}
+
+\textbf{Key Findings}:
+\begin{itemize}
+    \item Spanish achieves best performance: 13.5\% WER
+    \item French: 41.0\% WER
+    \item Hungarian: 79.0\% WER  
+    \item Mongolian: 103.6\% WER (10× worse than Spanish)
+\end{itemize}
+
+\subsection{Character Error Rate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../thesis_plots/02_cer_by_model_language.png}
+    \caption{Character Error Rate by model and language.}
+\end{figure}
+
+CER follows WER trends, with Mongolian showing fundamental recognition challenges (94.7-139.2\% CER).
+
+\section{Processing Speed}
+
+\subsection{Critical Finding: 74× Speed Difference}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../thesis_plots/07_rtf_by_model_language.png}
+    \caption{Real-Time Factor by language. Dramatic variation observed.}
+\end{figure}
+
+\textbf{Shocking discovery}:
+\begin{itemize}
+    \item Spanish: RTF = 0.50 (2× faster than real-time)
+    \item Mongolian: RTF = 36.98 (37× slower than real-time)
+    \item \textbf{74× speed difference!} Critical for deployment
+\end{itemize}
+
+\section{Language Identification}
+
+\subsection{LID Accuracy: 84.4\% Overall}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{../thesis_plots/14_lid_accuracy.png}
+    \caption{Language identification accuracy by language.}
+\end{figure}
+
+\begin{itemize}
+    \item Spanish: 90.9\% (high confidence)
+    \item French: 90.9\% (high confidence)
+    \item Hungarian: 83.3\% (medium confidence)
+    \item Mongolian: 72.7\% (low confidence)
+\end{itemize}
+
+\section{Long-form Drift}
+
+Tested on 9 French samples (120-240 seconds):
+\begin{itemize}
+    \item All samples correctly identified as French
+    \item No language model collapse
+    \item Variable error patterns (19.8-99.0\% WER)
+    \item Quality-dependent, not time-dependent
+\end{itemize}
+
+\section{Key Findings Summary}
+
+\begin{enumerate}
+    \item \textbf{Resource hierarchy}: 10× performance gap between high/low-resource languages
+    \item \textbf{Speed variation}: 74× RTF difference - critical deployment factor
+    \item \textbf{LID reliability}: 84.4\% overall, but language-dependent
+    \item \textbf{Long-form stability}: No collapse, but quality matters
+    \item \textbf{No universal solution}: Model choice depends on scenario
+\end{enumerate}

@@ -20,7 +20,7 @@ Mongolian (mn) represents a low-resource language with approximately 5.2 million
 
 Hungarian (hu) constitutes a medium-resource language with approximately 13 million native speakers. Like Mongolian, Hungarian exhibits agglutinative morphology but uses Latin script. This combination allows analysis of morphological complexity effects independent of script differences.
 
-Spanish (es) and French (fr) represent high-resource languages with approximately 500 million and 280 million native speakers respectively. Both employ Latin script and fusional morphology, where inflections encode multiple grammatical features simultaneously. These languages benefit from abundant training data and extensive prior research.
+Spanish (es) and French (fr) represent high-resource languages with approximately 559 million and over 300 million native speakers respectively. Both employ Latin script and fusional morphology, where inflections encode multiple grammatical features simultaneously. These languages benefit from abundant training data and extensive prior research.
 
 This language selection enables controlled comparison across resource levels (low, medium, high), scripts (Cyrillic, Latin), and morphological typologies (agglutinative, fusional).
 

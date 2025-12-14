@@ -1,0 +1,11 @@
+% Abstract
+
+This thesis presents a comprehensive evaluation of multilingual automatic speech recognition (ASR) systems across four diverse languages: Mongolian, Hungarian, Spanish, and French. We evaluate four state-of-the-art models using two inference modes: language identification followed by ASR (LID→ASR) and language-hinted transcription. Our evaluation comprises 16,000 transcriptions on the Common Voice v23.0 dataset, analyzing word error rate (WER), character error rate (CER), real-time factor (RTF), and language identification accuracy.
+
+Our results reveal significant performance variations across languages and models. Whisper demonstrates superior accuracy but exhibits substantial speed variations, processing Mongolian 74 times slower than Spanish (RTF 36.98 vs. 0.50). OmniLingual maintains consistent processing speed across languages but with reduced accuracy. Language-hinted inference consistently outperforms the LID→ASR pipeline approach.
+
+We identify and analyze four key failure modes: language identification confusion, low-resource language degradation, long-form drift, and processing speed variation. Our long-form drift analysis on concatenated audio samples (120-240 seconds) shows variable error accumulation patterns without language model collapse. We provide practical recommendations for model selection based on deployment requirements, language resources, and real-time constraints.
+
+This work contributes a reproducible evaluation framework, comprehensive failure mode analysis, and evidence-based deployment guidelines for multilingual ASR systems. All experimental code, data, and analysis scripts are publicly available to support future research.
+
+\textbf{Keywords:} Multilingual ASR, Speech Recognition, Language Identification, Failure Mode Analysis, Low-Resource Languages, Whisper

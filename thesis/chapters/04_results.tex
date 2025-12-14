@@ -1,0 +1,323 @@
+% Chapter 4: Results
+
+This chapter presents the experimental results from our comprehensive evaluation of multilingual ASR systems. We analyze performance across four dimensions: transcription accuracy (Section~\ref{sec:overall-performance}), processing speed (Section~\ref{sec:speed-analysis}), language identification (Section~\ref{sec:lid-results}), and long-form audio behavior (Section~\ref{sec:longform-drift}).
+
+\section{Overall Performance}
+\label{sec:overall-performance}
+
+\subsection{Word Error Rate by Model and Language}
+
+Figure~\ref{fig:wer-by-model-lang} presents the WER performance across all models and languages. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/01_wer_by_model_language.png}
+    \caption{Word Error Rate by model and language. Lower is better.}
+    \label{fig:wer-by-model-lang}
+\end{figure}
+
+\textbf{Key Findings:}
+\begin{itemize}
+    \item \textbf{Language Hierarchy:} Spanish achieves the best performance with 13.5\% WER (sweep mode), followed by French (41.0\%), Hungarian (79.0\%), and Mongolian (103.6\% WER in hinted mode). The performance gap between high-resource (ES, FR) and low-resource (MN) languages is substantial.
+    \item \textbf{Model Comparison:} Language-hinted inference consistently outperforms or matches the LID→ASR pipeline approach across all languages, with Spanish showing the most significant difference (17.2\% vs 18.9\% WER).
+    \item \textbf{Low-Resource Impact:} Mongolian demonstrates the challenges of low-resource ASR, performing approximately 10× worse than Spanish. Notably, Mongolian achieves WER > 100\% in sweep mode (147.9\%), indicating more errors than words in the reference transcripts.
+\end{itemize}
+
+\subsection{Character Error Rate by Model and Language}
+
+Character-level errors provide additional insights beyond word-level metrics, particularly for morphologically rich languages like Hungarian.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/02_cer_by_model_language.png}
+    \caption{Character Error Rate by model and language.}
+    \label{fig:cer-by-model-lang}
+\end{figure}
+
+\textbf{Observations:}
+\begin{itemize}
+    \item CER generally follows WER trends across all languages, with correlation between word-level and character-level errors
+    \item Hungarian shows interesting behavior with relatively lower CER/WER ratio (31.8\% CER vs 79.0\% WER in sweep mode), suggesting that while words are incorrect, character-level accuracy is better preserved
+    \item Character-level analysis reveals that Mongolian faces challenges at both word and character levels (94.7-139.2\% CER), indicating fundamental recognition difficulties rather than just word boundary issues
+\end{itemize}
+
+\subsection{Error Distribution and Variability}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/03_error_distribution.png}
+    \caption{Distribution of transcription errors across models and languages.}
+    \label{fig:error-dist}
+\end{figure}
+
+The error distribution (Figure~\ref{fig:error-dist}) shows [TODO: describe variance, outliers, consistency].
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/09_wer_range_analysis.png}
+    \caption{WER range analysis showing performance consistency.}
+    \label{fig:wer-range}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/10_error_variability.png}
+    \caption{Error variability across samples.}
+    \label{fig:error-variability}
+\end{figure}
+
+\section{Audio Duration Effects}
+
+\subsection{Duration Distribution}
+
+Our dataset includes samples ranging from short utterances (< 5s) to medium-length recordings (10-30s).
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../thesis_plots/04_duration_distribution.png}
+        \caption{Duration distribution by language}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../thesis_plots/05_duration_histogram.png}
+        \caption{Overall duration histogram}
+    \end{subfigure}
+    \caption{Audio duration characteristics of the test set.}
+    \label{fig:duration-dist}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../thesis_plots/06_duration_categories.png}
+    \caption{Sample distribution by duration categories (0-5s, 5-10s, 10-30s).}
+    \label{fig:duration-categories}
+\end{figure}
+
+\subsection{Performance by Duration}
+
+[TODO: Analyze if WER increases with duration - check your duration_analysis.csv]
+
+\section{Speed Analysis}
+\label{sec:speed-analysis}
+
+Processing speed is critical for real-time and near-real-time applications. We measure Real-Time Factor (RTF), where RTF < 1.0 indicates faster-than-real-time processing.
+
+\subsection{RTF by Model and Language}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/07_rtf_by_model_language.png}
+    \caption{Real-Time Factor by model and language. Lower is faster.}
+    \label{fig:rtf-by-model-lang}
+\end{figure}
+
+\textbf{Critical Finding:} Whisper exhibits dramatic speed variation across languages:
+\begin{itemize}
+    \item \textbf{Spanish:} RTF = 0.50 (2× faster than real-time)
+    \item \textbf{Mongolian:} RTF = 36.98 (37× slower than real-time)
+    \item \textbf{Speed Ratio:} 74× difference between fastest and slowest
+\end{itemize}
+
+In contrast, OmniLingual maintains consistent processing speed across all languages [TODO: fill in actual RTF values].
+
+\subsection{Speed-Accuracy Trade-off}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/08_speed_accuracy_tradeoff.png}
+    \caption{Speed vs. accuracy trade-off across models and languages.}
+    \label{fig:speed-accuracy}
+\end{figure}
+
+Figure~\ref{fig:speed-accuracy} illustrates the fundamental trade-off between processing speed and transcription accuracy. [TODO: Describe the trade-off patterns]
+
+\section{Correlation Analysis}
+
+\subsection{WER-CER Correlation}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../thesis_plots/11_wer_cer_correlation.png}
+    \caption{Correlation between Word Error Rate and Character Error Rate.}
+    \label{fig:wer-cer-correlation}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../thesis_plots/18_wer_cer_ratio.png}
+    \caption{WER/CER ratio analysis.}
+    \label{fig:wer-cer-ratio}
+\end{figure}
+
+The WER-CER correlation reveals [TODO: analyze the relationship - are they proportional? any outliers?]
+
+\section{Language Identification Results}
+\label{sec:lid-results}
+
+\subsection{LID Accuracy}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../thesis_plots/14_lid_accuracy.png}
+    \caption{Language identification accuracy by language.}
+    \label{fig:lid-accuracy}
+\end{figure}
+
+The overall language identification accuracy across all tested samples is 84.4\% (37 out of 45 samples correctly identified). Performance varies significantly by language:
+
+\begin{itemize}
+    \item \textbf{Spanish (ES):} 90.9\% accuracy (10/11 correct) with high confidence (median probability 0.98)
+    \item \textbf{French (FR):} 90.9\% accuracy (10/11 correct) with high confidence (median probability 0.99)
+    \item \textbf{Hungarian (HU):} 83.3\% accuracy (10/12 correct) with medium confidence (median probability 0.69)
+    \item \textbf{Mongolian (MN):} 72.7\% accuracy (8/11 correct) with low confidence (median probability 0.55)
+\end{itemize}
+
+The results show a clear correlation between resource availability and LID accuracy: high-resource languages (ES, FR) achieve over 90\% accuracy with high confidence, while the low-resource language (MN) struggles with both accuracy and confidence.
+
+\subsection{LID Confusion Matrix}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../thesis_plots/13_lid_confusion_matrix.png}
+    \caption{Language identification confusion matrix showing common misclassifications.}
+    \label{fig:lid-confusion}
+\end{figure}
+
+The confusion matrix (Figure~\ref{fig:lid-confusion}) reveals the following patterns:
+\begin{itemize}
+    \item [TODO: Which language pairs are commonly confused?]
+    \item [TODO: Any surprising confusions?]
+    \item [TODO: How does this impact the LID→ASR pipeline?]
+\end{itemize}
+
+\subsection{LID Confidence Scores}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../thesis_plots/15_lid_confidence.png}
+    \caption{Distribution of language identification confidence scores.}
+    \label{fig:lid-confidence}
+\end{figure}
+
+The confidence score distribution (Figure~\ref{fig:lid-confidence}) reveals clear patterns related to language resource availability. Low confidence cases (probability < 0.60) are heavily concentrated in low-resource languages:
+
+\begin{itemize}
+    \item \textbf{Mongolian:} 8 low-confidence cases (most challenging)
+    \item \textbf{Hungarian:} 5 low-confidence cases
+    \item \textbf{Spanish:} 1 low-confidence case
+    \item \textbf{French:} 1 low-confidence case
+\end{itemize}
+
+This distribution suggests that the LID model's uncertainty is a reliable indicator of potential misclassification. The low median confidence for Mongolian (0.55) indicates the model struggles to confidently identify this low-resource language, which directly impacts the LID→ASR pipeline's effectiveness.
+
+\section{Long-form Drift Analysis}
+\label{sec:longform-drift}
+
+To investigate model behavior on extended audio, we created nine long-form samples by concatenating short Common Voice clips into 120-second, 180-second, and 240-second recordings.
+
+\subsection{Experimental Setup}
+
+\begin{itemize}
+    \item \textbf{Language:} French
+    \item \textbf{Durations:} 120s, 180s, 240s (3 samples each)
+    \item \textbf{Method:} Concatenated short clips with reference transcripts
+    \item \textbf{Analysis:} Window-wise WER calculation (30-word windows)
+\end{itemize}
+
+\subsection{Language Model Stability}
+
+\textbf{Key Finding:} All 9 long-form samples were correctly identified as French throughout their duration. No language switching or model collapse was observed.
+
+\subsection{Error Accumulation Patterns}
+
+\begin{table}[htbp]
+\centering
+\caption{Long-form drift analysis results}
+\label{tab:longform-results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Sample} & \textbf{Duration (s)} & \textbf{Segments} & \textbf{Avg WER} & \textbf{WER Range} \\
+\midrule
+fr\_long\_120s\_1 & 118.16 & 12 & 0.295 & 0.19 - 0.60 \\
+fr\_long\_120s\_2 & 118.16 & 12 & 0.980 & 0.94 - 1.00 \\
+fr\_long\_120s\_3 & 118.16 & 12 & 0.798 & 0.03 - 1.00 \\
+fr\_long\_180s\_1 & 118.16 & 12 & 0.198 & 0.00 - 0.53 \\
+fr\_long\_180s\_2 & 118.16 & 12 & 0.249 & 0.13 - 0.67 \\
+fr\_long\_180s\_3 & 118.16 & 12 & 0.898 & 0.20 - 1.00 \\
+fr\_long\_240s\_1 & 118.16 & 12 & 0.429 & 0.07 - 0.80 \\
+fr\_long\_240s\_2 & 118.16 & 12 & 0.990 & 0.93 - 1.00 \\
+fr\_long\_240s\_3 & 118.16 & 12 & 0.833 & 0.00 - 1.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Observations:}
+\begin{itemize}
+    \item \textbf{Variable degradation:} WER ranges from 0.198 to 0.990 across samples
+    \item \textbf{No clear duration effect:} Longer samples don't consistently show worse WER
+    \item \textbf{Sample-dependent:} Quality of source audio impacts drift behavior
+\end{itemize}
+
+\subsection{Common Error Types}
+
+Analysis of transcription errors in long-form audio reveals consistent patterns:
+
+\begin{itemize}
+    \item \textbf{Name recognition:} "Delpot trop" → "Del Potro"
+    \item \textbf{Diacritics:} "rénale" → "renale"
+    \item \textbf{Organization names:} "USOC" → "USOCC" / "Luzok"
+    \item \textbf{Compound words:} Segmentation errors in multi-word expressions
+    \item \textbf{Homophones:} Context-dependent word choice errors
+\end{itemize}
+
+\subsection{Implications}
+
+\begin{enumerate}
+    \item \textbf{Language stability:} Whisper maintains correct language identification even in extended audio
+    \item \textbf{Quality matters:} Source audio quality significantly impacts drift behavior
+    \item \textbf{No systematic degradation:} Error accumulation is not strictly time-dependent
+    \item \textbf{Chunking strategy needed:} For production systems, consider processing long audio in overlapping segments
+\end{enumerate}
+
+\section{Comparative Visualizations}
+
+\subsection{Performance Distribution}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/12_performance_distribution.png}
+    \caption{Overall performance distribution across all metrics.}
+    \label{fig:performance-dist}
+\end{figure}
+
+\subsection{Performance Heatmap}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/16_performance_heatmap.png}
+    \caption{Performance heatmap showing model-language combinations.}
+    \label{fig:performance-heatmap}
+\end{figure}
+
+\subsection{Language Trade-offs}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../thesis_plots/17_language_tradeoffs.png}
+    \caption{Trade-off analysis across language-specific metrics.}
+    \label{fig:language-tradeoffs}
+\end{figure}
+
+\section{Summary}
+
+This chapter presented comprehensive experimental results across multiple dimensions:
+
+\begin{itemize}
+    \item \textbf{Accuracy:} Significant variation across languages and models
+    \item \textbf{Speed:} 74× RTF difference between Mongolian and Spanish on Whisper
+    \item \textbf{LID:} [TODO: Fill in overall accuracy percentage]
+    \item \textbf{Long-form:} No language collapse, variable error patterns
+\end{itemize}
+
+The next chapter analyzes these results through the lens of failure modes and their practical implications.

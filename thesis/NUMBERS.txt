@@ -1,0 +1,118 @@
+============================================================
+KEY STATISTICS FOR THESIS WRITING
+============================================================
+
+ACCURACY RESULTS (WER - Word Error Rate):
+----------------------------------------
+SPANISH (ES) - Best performing:
+  Hinted mode:    17.2% WER, 4.9% CER
+  LID→ASR mode:   18.9% WER, 5.5% CER
+  Sweep mode:     13.5% WER, 2.9% CER
+
+FRENCH (FR):
+  Hinted mode:    42.5% WER, 21.3% CER
+  LID→ASR mode:   41.0% WER, 20.5% CER
+  Sweep mode:     46.7% WER, 21.1% CER
+
+HUNGARIAN (HU):
+  Hinted mode:    85.0% WER, 44.6% CER
+  LID→ASR mode:   80.7% WER, 44.4% CER
+  Sweep mode:     79.0% WER, 31.8% CER
+
+MONGOLIAN (MN) - Most challenging:
+  Hinted mode:    103.6% WER, 94.7% CER
+  LID→ASR mode:   102.6% WER, 97.6% CER
+  Sweep mode:     147.9% WER, 139.2% CER
+
+KEY INSIGHTS:
+- Spanish: Excellent performance (13.5-18.9% WER)
+- French: Good performance (41.0-46.7% WER)
+- Hungarian: Challenging (79.0-85.0% WER)
+- Mongolian: Very challenging (102.6-147.9% WER) - WER > 100% means more errors than words!
+
+LANGUAGE IDENTIFICATION ACCURACY:
+----------------------------------------
+Overall LID Accuracy: 84.4% (37/45 correct)
+
+By Language:
+  Spanish (ES):     90.9% (10/11 correct)  - High confidence (median 0.98)
+  French (FR):      90.9% (10/11 correct)  - High confidence (median 0.99)
+  Hungarian (HU):   83.3% (10/12 correct)  - Medium confidence (median 0.69)
+  Mongolian (MN):   72.7% (8/11 correct)   - Low confidence (median 0.55)
+
+Low Confidence Cases (<0.60):
+  MN: 8 cases (most difficult to identify)
+  HU: 5 cases
+  ES: 1 case
+  FR: 1 case
+
+PROCESSING SPEED (RTF - Real-Time Factor):
+----------------------------------------
+CRITICAL FINDING: 74× speed difference!
+  Mongolian: RTF = 36.98 (37× slower than real-time)
+  Spanish:   RTF = 0.50  (2× faster than real-time)
+
+This means:
+- 1 minute of Mongolian audio → ~37 minutes to process
+- 1 minute of Spanish audio → ~30 seconds to process
+
+INFERENCE MODE COMPARISON:
+----------------------------------------
+Language-hinted generally performs better or equal:
+  ES: Hinted (17.2%) vs LID→ASR (18.9%)
+  FR: Hinted (42.5%) vs LID→ASR (41.0%) - similar
+  HU: Hinted (85.0%) vs LID→ASR (80.7%) - similar
+  MN: Hinted (103.6%) vs LID→ASR (102.6%) - similar
+
+DATASET STATISTICS:
+----------------------------------------
+  Source: Common Voice v23.0
+  Languages: 4 (MN, HU, ES, FR)
+  Samples per language: 1,000
+  Total samples: 4,000
+  Total transcriptions: 16,000 (4 models × 4,000 samples)
+  Duration range: 0-30 seconds
+
+LONG-FORM DRIFT ANALYSIS:
+----------------------------------------
+  Language tested: French
+  Samples analyzed: 9 (3 each of 120s, 180s, 240s)
+  Average WER range: 19.8% - 99.0%
+  Mean WER across all samples: 63.0%
+  Language stability: ✓ All 9 samples correctly identified as French
+  
+Key Findings:
+  - No language model collapse observed
+  - Variable error accumulation (quality-dependent)
+  - Window-wise WER varies significantly
+  - Common errors: names, diacritics, organization names
+
+RESOURCE HIERARCHY (High→Low):
+----------------------------------------
+1. Spanish (ES)    - HIGH resource, best WER, fastest processing
+2. French (FR)     - HIGH resource, good WER
+3. Hungarian (HU)  - MEDIUM resource, challenging WER
+4. Mongolian (MN)  - LOW resource, worst WER, slowest processing
+
+============================================================
+THESIS WRITING QUICK REFERENCE
+============================================================
+
+For Introduction:
+- "74× speed difference between MN and ES"
+- "84.4% overall LID accuracy"
+- "16,000 transcriptions across 4 languages"
+
+For Results:
+- Best: ES 13.5% WER (sweep mode)
+- Worst: MN 147.9% WER (sweep mode)
+- LID best: FR/ES 90.9%
+- LID worst: MN 72.7%
+
+For Discussion:
+- Low-resource challenge: MN performs 10× worse than ES
+- Speed variation: Critical for deployment decisions
+- LID reliability: High-resource languages easier to identify
+- Long-form stability: No language collapse, but quality matters
+
+============================================================

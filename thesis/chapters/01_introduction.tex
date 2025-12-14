@@ -1,0 +1,137 @@
+% Chapter 1: Introduction
+
+\section{Motivation}
+
+Automatic Speech Recognition (ASR) has become ubiquitous in modern technology, powering voice assistants, transcription services, and accessibility tools. However, the majority of ASR research and commercial systems focus on high-resource languages like English, leaving billions of speakers of other languages with limited or no access to speech technology.
+
+The challenge of multilingual ASR is multifaceted:
+\begin{itemize}
+    \item \textbf{Resource disparity:} Training data varies dramatically across languages
+    \item \textbf{Linguistic diversity:} Different phonetic systems, writing systems, and morphology
+    \item \textbf{Deployment constraints:} Real-time processing requirements vs. accuracy needs
+    \item \textbf{Language identification:} Determining the correct language before or during transcription
+\end{itemize}
+
+This thesis addresses these challenges through a comprehensive evaluation of state-of-the-art multilingual ASR systems, with particular attention to low-resource languages and practical deployment considerations.
+
+\section{Research Questions}
+
+This work investigates the following research questions:
+
+\begin{enumerate}
+    \item \textbf{Performance across languages:} How do modern multilingual ASR models perform across languages with different resource levels (low, medium, high)?
+    
+    \item \textbf{Failure modes:} What are the key failure modes in multilingual ASR systems, and how can they be identified and mitigated?
+    
+    \item \textbf{Inference strategies:} How do different inference approaches (language identification followed by ASR vs. language-hinted transcription) compare in practice?
+    
+    \item \textbf{Trade-offs:} What are the practical trade-offs between accuracy, speed, and resource usage for different deployment scenarios?
+\end{enumerate}
+
+\section{Contributions}
+
+This thesis makes the following contributions:
+
+\begin{enumerate}
+    \item \textbf{Comprehensive Evaluation:} Systematic evaluation of 4 multilingual ASR models across 4 languages with different resource levels, comprising 16,000 transcriptions
+    
+    \item \textbf{Failure Mode Analysis:} Identification and analysis of key failure modes:
+    \begin{itemize}
+        \item Language identification confusion
+        \item Low-resource language degradation  
+        \item Long-form drift in extended audio
+        \item Processing speed variation
+    \end{itemize}
+    
+    \item \textbf{Long-form Drift Study:} Novel analysis of ASR behavior on extended audio (120-240 seconds) through concatenation of short samples
+    
+    \item \textbf{Practical Recommendations:} Evidence-based guidelines for model selection and deployment based on specific requirements
+    
+    \item \textbf{Reproducible Framework:} Publicly available evaluation framework with complete code, scripts, and documentation
+\end{enumerate}
+
+\section{Evaluation Overview}
+
+Our evaluation encompasses:
+
+\textbf{Languages (4):}
+\begin{itemize}
+    \item Mongolian (MN) - Low-resource language
+    \item Hungarian (HU) - Medium-resource language
+    \item Spanish (ES) - High-resource language
+    \item French (FR) - High-resource language
+\end{itemize}
+
+\textbf{Models (4):}
+\begin{itemize}
+    \item Whisper-small (OpenAI)
+    \item OmniLingual variants (3 models)
+\end{itemize}
+
+\textbf{Inference Modes (2):}
+\begin{itemize}
+    \item Mode A: Language Identification → ASR (400 samples)
+    \item Mode B: Language-hinted ASR (16,000 samples)
+\end{itemize}
+
+\textbf{Metrics:}
+\begin{itemize}
+    \item Word Error Rate (WER)
+    \item Character Error Rate (CER)
+    \item Real-Time Factor (RTF)
+    \item Language Identification Accuracy
+\end{itemize}
+
+\textbf{Dataset:}
+\begin{itemize}
+    \item Common Voice v23.0
+    \item 1,000 validated samples per language
+    \item Duration range: 0-30 seconds
+\end{itemize}
+
+\section{Key Findings (Preview)}
+
+Our evaluation reveals several critical insights:
+
+\begin{itemize}
+    \item \textbf{Dramatic speed variation:} Whisper processes Mongolian 74× slower than Spanish (RTF 36.98 vs. 0.50), indicating significant challenges with low-resource languages
+    
+    \item \textbf{Language stability:} No language model collapse observed in long-form audio, though error accumulation varies
+    
+    \item \textbf{Inference mode impact:} Language-hinted inference consistently outperforms LID→ASR pipeline
+    
+    \item \textbf{Model trade-offs:} No single model optimal for all scenarios; choice depends on accuracy vs. speed requirements
+\end{itemize}
+
+\section{Thesis Structure}
+
+The remainder of this thesis is organized as follows:
+
+\begin{description}
+    \item[Chapter 2: Background and Literature Review] provides foundational concepts in ASR, multilingual modeling, language identification, and reviews related work
+    
+    \item[Chapter 3: Methodology] describes our experimental setup, dataset, models, evaluation metrics, and reproducibility framework
+    
+    \item[Chapter 4: Results] presents comprehensive experimental results across accuracy, speed, language identification, and long-form behavior
+    
+    \item[Chapter 5: Failure Mode Analysis] analyzes key failure modes including LID confusion, low-resource degradation, drift, and speed variation
+    
+    \item[Chapter 6: Discussion] interprets results, provides practical recommendations, and discusses limitations
+    
+    \item[Chapter 7: Conclusions and Future Work] summarizes contributions and outlines directions for future research
+\end{description}
+
+\section{Reproducibility}
+
+All code, scripts, and documentation for this work are publicly available at:
+
+\texttt{https://github.com/Munkhchimeg-Sergelen/thesis}
+
+This includes:
+\begin{itemize}
+    \item Evaluation scripts for all models
+    \item Analysis and visualization code
+    \item Environment configuration (Conda, Docker)
+    \item Complete documentation
+    \item Result data (excluding audio for privacy)
+\end{itemize}

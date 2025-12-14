@@ -1,0 +1,97 @@
+% Multilingual ASR Thesis
+% Author: Munkhchimeg Sergelen
+
+\documentclass[12pt,a4paper]{report}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{setspace}
+
+% Page layout
+\geometry{margin=2.5cm}
+\onehalfspacing
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left
+}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=green
+}
+
+% Title page information
+\title{Multilingual Automatic Speech Recognition:\\
+Evaluation and Failure Mode Analysis}
+\author{Munkhchimeg Sergelen}
+\date{\today}
+
+\begin{document}
+
+% Title page
+\maketitle
+
+% Abstract
+\begin{abstract}
+\input{chapters/00_abstract}
+\end{abstract}
+
+% Table of contents
+\tableofcontents
+\listoffigures
+\listoftables
+
+% Chapters
+\chapter{Introduction}
+\input{chapters/01_introduction}
+
+% TODO: Uncomment as you write each chapter
+%\chapter{Background and Literature Review}
+%\input{chapters/02_background}
+
+%\chapter{Methodology}
+%\input{chapters/03_methodology}
+
+\chapter{Results}
+\input{chapters/04_results}
+
+%\chapter{Failure Mode Analysis}
+%\input{chapters/05_failure_modes}
+
+%\chapter{Discussion}
+%\input{chapters/06_discussion}
+
+%\chapter{Conclusions and Future Work}
+%\input{chapters/07_conclusions}
+
+% Bibliography
+%\bibliographystyle{plain}
+%\bibliography{references}
+
+% Appendices - TODO: Uncomment when ready
+%\appendix
+%\chapter{Complete Result Tables}
+%\input{chapters/appendix_a}
+
+%\chapter{Reproducibility Guide}
+%\input{chapters/appendix_b}
+
+\end{document}

@@ -359,7 +359,7 @@ The experimental evaluation yielded five critical findings addressing the resear
 
 RQ1 (Language Identification Accuracy): Whisper's built-in LID achieved 94.43% overall accuracy across the four evaluation languages (395 samples). Per-language accuracy varied substantially: high-resource languages (Spanish 97.00%, French 98.99%, Hungarian 98.99%) achieved reliable detection, while low-resource Mongolian (82.47%) exhibited significantly degraded accuracy with nearly 1 in 5 samples misidentified. Statistical analysis confirms Mongolian's lower accuracy represents genuine performance degradation rather than sampling variation (non-overlapping confidence intervals).
 
-RQ2 (Inference Mode Comparison): [Comparison between LID→ASR and language-hinted modes once LID experiments complete, examining both accuracy and efficiency trade-offs].
+RQ2 (Inference Mode Comparison): LID→ASR using Whisper’s built-in language identification proved viable for high-resource languages but introduced additional failure modes through misclassification and confidence uncertainty, whereas language-hinted ASR—used for the main 16,000-utterance evaluation—remains the preferred mode whenever the target language is known in advance.
 
 RQ3 (Cross-Language Performance): Dramatic performance disparities emerged, with Whisper exhibiting 74× slower processing on Mongolian versus Spanish (RTF 36.98 versus 0.50). OmniLingual models maintained consistent speed across languages (RTF 0.014-0.024 for CTC variants), demonstrating architecture-dependent robustness to language resource level.
 

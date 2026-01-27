@@ -62,24 +62,27 @@ Created analysis script (`analyze_resource_profiling.py`) generating:
 
 ## Key Findings
 
-### CPU Usage
-| Model | Avg % | Peak % | Interpretation |
-|-------|-------|--------|----------------|
-| Whisper | 11.5 | 20.3 | Low per-unit-time, but LONG duration = inefficient |
-| CTC 300M | 26.1 | 34.0 | Higher usage, but BRIEF duration = efficient |
-| CTC 1B | 27.2 | 34.6 | Similar to 300M |
-| LLM 1B | 26.5 | 35.0 | Balanced profile |
+### CPU Usage (All 6 Models)
+| Model | Avg % | Peak % | Memory (GB) | GPU % | Interpretation |
+|-------|-------|--------|-------------|-------|----------------|
+| Whisper-small | 11.5 | 20.3 | 17.1 | 0.0 | CPU-only, low utilization |
+| Whisper-medium | 43.6 | 73.2 | 38.1 | 9.9 | GPU-accelerated, high CPU overhead |
+| Whisper-large-v3 | 46.1 | 76.1 | 39.6 | 10.7 | GPU-accelerated, highest resources |
+| CTC 300M | 26.1 | 34.0 | 17.2 | 0.0 | Efficient, moderate CPU |
+| CTC 1B | 27.2 | 34.6 | 17.2 | 0.0 | Similar to 300M |
+| LLM 1B | 26.5 | 35.0 | 17.2 | 0.0 | Balanced profile |
 
-**Insight:** Whisper's slowness isn't from intense computation—it's from excessive processing duration!
+**Insight:** Larger Whisper models require significantly more memory (38-40 GB vs 17 GB) and show higher CPU overhead during GPU inference.
 
 ### Memory Usage
-- **All models:** ~17 GB peak
-- **Implication:** Requires substantial RAM, precludes mobile deployment
-- **Note:** Memory dominated by model loading, not inference
+- **Whisper-small & OmniLingual:** ~17 GB peak
+- **Whisper-medium:** ~38 GB peak
+- **Whisper-large-v3:** ~40 GB peak
+- **Implication:** Larger Whisper models require 48+ GB RAM systems
 
 ### GPU Usage
-- **0% in profiling** (CPU-only evaluation)
-- Full evaluation used GPU for OmniLingual (explains their speed advantage in RTF analysis)
+- **Whisper-medium/large-v3:** 10-11% GPU utilization (room for batch processing)
+- **Whisper-small & OmniLingual:** 0% (CPU-only profiling)
 
 ---
 
